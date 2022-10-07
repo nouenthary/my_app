@@ -3,6 +3,7 @@
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SaleController;
+use App\Http\Controllers\CategoryController;
 use Illuminate\Support\Facades\Route;
 /*
 |--------------------------------------------------------------------------
@@ -81,6 +82,10 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('post_sale', [SaleController::class,'post_sale'])->name('post_sale');
     Route::get('invoice/{id}', [SaleController::class,'invoice'])->name('invoice');
     Route::get('count_stock', [SaleController::class,'count_stock'])->name('count_stock');
+
+    // categories
+    Route::resource('categories', CategoryController::class);
+    Route::get('get_categories', [CategoryController::class,'get_categories']);
 });
 
 Route::get('lang/{locale}', function ($locale) {

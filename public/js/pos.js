@@ -137,7 +137,7 @@ $(function () {
         if (count.length > 0) {
             for (let i in count) {
                 if (count[i].id == id) {
-                    let qty = count[i].qty + 1;
+                    let qty = parseInt(count[i].qty) + 1;
                     count[i].qty = qty
                     count[i].amount = qty * count[i].price;
 

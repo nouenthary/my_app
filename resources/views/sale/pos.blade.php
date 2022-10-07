@@ -438,13 +438,13 @@
                             <div id="list-table-div" style="overflow: hidden; width: auto; height: 491px;">
 
                                 <table id="posTable"
-                                    class="table table-striped table-condensed table-hover list-table"
+                                    class="table table-striped table-bordered table-condensed table-hover list-table"
                                     style="margin:0px;" data-height="100">
                                     <thead>
                                         <tr class="info">
                                             <th>{{ __('language.product') }}</th>
-                                            <th style="width: 15%;text-align:center;">{{ __('language.price') }}</th>
-                                            <th style="width: 15%;text-align:center;">{{ __('language.qty') }}</th>
+                                            <th style="width: 80px;text-align:center;">{{ __('language.price') }}</th>
+                                            <th style="width: 80px;text-align:center;">{{ __('language.qty') }}</th>
                                             <th style="width: 20%;text-align:center;">{{ __('language.amount') }}</th>
                                             <th style="width: 20px;" class=""><i class="fa fa-trash-o"></i>
                                             </th>
