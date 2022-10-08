@@ -162,8 +162,15 @@
             get_data();
 
             $(document).on('click','#btn-create',function(){
-                $('#modal-create').modal('show')
-            })
+                $('#modal-create').modal('show');
+                $('#id').val(0);
+                $('#code').val('');
+                $('#name').val('');
+                $('#parent_id').val('');
+                $('#status').val(1);
+                $('#photo').val('');
+                $('#code').val(barcode());
+            });
 
             $(document).on('submit', '#form-create', function (e) {
                 e.preventDefault();
@@ -187,10 +194,34 @@
                         }
                         $('#modal-create').modal('hide');
                         $('#form-create').get(0).reset();
+                        get_data();
                     }
                 });
             });
 
+            // row click
+            $(document).on('dblclick','tbody tr',function () {
+                let data = $(this).attr('data');
+                if(data){
+                    let data_source = JSON.parse(data);
+                    $('#modal-create').modal('show');
+                    $('#id').val(data_source.id);
+                    $('#code').val(data_source.code);
+                    $('#name').val(data_source.name);
+                    $('#parent_id').val(data_source.parent_id);
+                    $('#status').val(data_source.is_active);
+                    $('#photo').val(data_source.image);
+                }
+            });
+
+            // generate
+            $(document).on('click','.generate',function () {
+                $('#code').val(barcode());
+            });
+
+            let barcode = function(){
+                return Math.floor(Math.random() * 10000000000000);
+            }
 
             $('.form-search select, input').change(function () {
                 get_data();

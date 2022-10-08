@@ -15,7 +15,8 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        return view('categories.index');
+        $data['categories'] = Category::select('id','name')->where('is_active','=','1')->get();
+        return view('categories.index', $data);
     }
 
     /**
@@ -32,28 +33,57 @@ class CategoryController extends Controller
      * Store a newly created resource in storage.
      *
      * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
+     * @return string[]
      */
     public function store(Request $request)
     {
-        $name = 'no_image.png';
+        $names = $request->photo;
         if ($request->hasFile('image')) {
             $image = $request->file('image');
-            $name = date('Y_m_d_H_i_s') . '.' . $image->getClientOriginalExtension();
+            $names = date('Y_m_d_H_i_s') . '.' . $image->getClientOriginalExtension();
             $destinationPath = public_path('/uploads/categories');
-            $image->move($destinationPath, $name);
+            $image->move($destinationPath, $names);
+        }
+
+        $name = DB::table('tec_categories')
+            ->where('name', '=', $request->name)
+            ->first();
+
+        if($name != '' && $request->id == 0){
+            return ['error' => "name `$request->name` is exist..."];
+        }
+
+        $code = DB::table('tec_categories')
+            ->where('code', '=', $request->code)
+            ->first();
+
+        if($code != '' && $request->id == 0){
+            return ['error' => "code `$request->code` is exist..."];
         }
 
         $data = array(
             'code' => $request->code,
             'name' => $request->name,
-            'image' => $name,
-            'is_active' => 0,
+            'image' => $names,
+            'is_active' => 1,
             'parent_id' => (int)$request->parent_id,
             'default_store_cate' => 1,
-            'store_id' => 1
+            'store_id' => 1,
+            'user_id' => auth()->user()->user_id,
+            'created_at' => date('Y_m_d_H_i_s')
         );
-        DB::table('tec_categories')->insert($data);
+
+        if($request->id == '0'){
+            DB::table('tec_categories')->insert($data);
+            return ['message' => 'created.'];
+        }
+
+        $data['is_active'] = $request->is_active;
+        $data['image'] = $names;
+
+        DB::table('tec_categories')->where('id',$request->id)->update($data);
+
+        return ['message' => 'updated.'];
     }
 
     /**
@@ -117,18 +147,21 @@ class CategoryController extends Controller
             $cols = $cols . html('th', $col, 'class="active"');
         }
 
-        $data = Category::paginate($request->page_size, ['*'], 'page', $request->page);
+        $data = Category::orderBy('name', 'asc')->paginate($request->page_size, ['*'], 'page', $request->page);
 
         $value = '';
 
         foreach ($data as $col) {
 
+            $json = json_encode($col);
+
+            $row = "id='$col->id' data='$json' " ;
+
             $value = $value . html('tr',
-                    html('td', image($col->image), 'class="text-left"') .
+                    html('td',  image("/categories/$col->image" ), 'class="text-center" width="50px"') .
                     html('td', '' . $col->code, 'width="100px"') .
                     html('td', '' . $col->name, '')
-
-                    , '');
+                    , $row);
         }
 
         $footer = '';

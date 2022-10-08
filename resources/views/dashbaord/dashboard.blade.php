@@ -114,7 +114,7 @@
         }
     </style>
 
-    <figure class="highcharts-figure">
+    <figure class="highcharts-figure" style="display: none">
         <div id="container"></div>
 
     </figure>

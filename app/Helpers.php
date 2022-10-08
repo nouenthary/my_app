@@ -38,6 +38,8 @@ if (!function_exists('image')) {
      * @return string
      */
     function image($img, $width = '25px'){
-      // return '<img src="/uploads/'.$img.'"  width="'.$width.'" alt="User Image"  onerror="this.src='"."/uploads/none.jpg. "'">';
+        $src = "/uploads/$img";
+        $error = "this.src='/uploads/none.jpg'";
+        return  "<img src='$src' width='$width' onerror=".$error." > ";
     }
 }

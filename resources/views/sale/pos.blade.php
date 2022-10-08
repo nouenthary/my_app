@@ -89,7 +89,7 @@
     </style>
 </head>
 
-<body class="hold-transition fixed skin-blue-light sidebar-collapse sidebar-mini">
+<body class="hold-transition fixed skin-blue sidebar-collapse sidebar-mini">
     <!-- Site wrapper -->
     <div class="wrapper">
 
@@ -811,9 +811,60 @@
             <!-- /.content -->
         </div>
         <!-- /.content-wrapper -->
+         <style>
+             ul, #myUL {
+                 list-style-type: none;
+             }
 
+             #myUL {
+                 margin: 0;
+                 padding: 0;
+             }
+
+             .carets {
+                 cursor: pointer;
+                 -webkit-user-select: none; /* Safari 3.1+ */
+                 -moz-user-select: none; /* Firefox 2+ */
+                 -ms-user-select: none; /* IE 10+ */
+                 user-select: none;
+             }
+
+             .carets::before {
+                 content: "\25B6";
+                 color: #fff;
+                 display: inline-block;
+                 margin-right: 6px;
+             }
+
+             .caret-down::before {
+                 -ms-transform: rotate(90deg); /* IE 9 */
+                 -webkit-transform: rotate(90deg); /* Safari */'
+             transform: rotate(90deg);
+             }
+
+             .nested {
+                 display: none;
+
+             }
+
+             .active {
+                 display: block;
+             }
+
+             .list-tree{
+                 padding: 10px 0;
+                 background-color: #2c393f;
+             }
+
+             .list-tree-small{
+                 padding: 5px 0;
+             }
+
+
+
+         </style>
         <!-- Control Sidebar -->
-        <aside class="control-sidebar control-sidebar-dark">
+        <aside class="control-sidebar control-sidebar-dark control-sidebar-open" >
             <!-- Create the tabs -->
             <ul class="nav nav-tabs nav-justified control-sidebar-tabs">
                 <li><a href="#control-sidebar-home-tab" data-toggle="tab"><i class="fa fa-home"></i></a></li>
@@ -823,17 +874,41 @@
             <div class="tab-content">
                 <!-- Home tab content -->
                 <div class="tab-pane" id="control-sidebar-home-tab">
-                    <h3 class="control-sidebar-heading">Recent Activity</h3>
-                    <ul class="control-sidebar-menu">
+
+                    <!-- /.control-sidebar-menu -->
+                    <ul id="myUL">
+                        <li class="list-tree">
+                            <span class="carets list-tree-small" >T Shirt</span>
+                            <ul class="nested">
+
+                                <li class="list-tree"><span class="carets list-tree">Tea</span>
+                                    <ul class="nested">
+
+                                        <li class="list-tree-small"><i class="fa fa-circle-o "></i> T Shirt</li>
+                                        <li class="list-tree-small"><span class="carets list-tree-small" >T Shirt</span></li>
+                                        <li class="list-tree-small"><span class="carets list-tree-small" >T Shirt</span></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="list-tree">
+                            <span class="carets list-tree" >T Shirt</span>
+                            <ul class="nested">
+
+                                <li class="list-tree"><span class="carets list-tree">Tea</span>
+                                    <ul class="nested">
+
+                                        <li><span class="carets list-tree" >T Shirt</span></li>
+                                        <li><span class="carets list-tree" >T Shirt</span></li>
+                                        <li><span class="carets list-tree" >T Shirt</span></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
 
                     </ul>
-                    <!-- /.control-sidebar-menu -->
 
-                    <h3 class="control-sidebar-heading">Tasks Progress</h3>
-                    <ul class="control-sidebar-menu">
 
-                    </ul>
-                    <!-- /.control-sidebar-menu -->
 
                 </div>
                 <!-- /.tab-pane -->
@@ -916,6 +991,18 @@
      immediately after the control sidebar -->
         <div class="control-sidebar-bg"></div>
     </div>
+
+    <script>
+        var toggler = document.getElementsByClassName("carets");
+        var i;
+
+        for (i = 0; i < toggler.length; i++) {
+            toggler[i].addEventListener("click", function() {
+                this.parentElement.querySelector(".nested").classList.toggle("active");
+                this.classList.toggle("caret-down");
+            });
+        }
+    </script>
     <!-- ./wrapper -->
 
     <!-- jQuery 3 -->

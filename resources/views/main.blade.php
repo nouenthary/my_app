@@ -82,6 +82,20 @@
         .skin-blue-light .sidebar-menu>li>.treeview-menu {
             {{-- background: #fff; --}}
         }
+
+        input[type=file]::file-selector-button {
+            border: none;
+            background: #00a65a;
+            padding: 0px 20px;
+            border-radius: 3px;
+            color: #fff;
+            cursor: pointer;
+            transition: background .2s ease-in-out;
+        }
+
+        input[type=file]::file-selector-button:hover {
+            background: #0d45a5;
+        }
     </style>
 </head>
 
