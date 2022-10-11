@@ -143,13 +143,13 @@
         <form method="POST" action="{{ route('login') }}">
             {{csrf_field()}}
             <div class="form-group has-feedback">
-                <input type="text" class="form-control" id="username" name="username" placeholder="គណនី" value="admin">
+                <input type="text" class="form-control" id="username" name="username" placeholder="គណនី" value="">
                 <span class="glyphicon glyphicon-user form-control-feedback"></span>
 
             </div>
             <div class="form-group has-feedback">
                 <input type="password" id="password" name="password" class="form-control" placeholder="ពាក្យសម្ងាត់"
-                       value="admin@123">
+                       value="">
                 <span class="glyphicon glyphicon-lock form-control-feedback" id="show-password"></span>
             </div>
             <div class="row">
