@@ -7,8 +7,6 @@
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     <title>POS</title>
     <!-- Tell the browser to be responsive to screen width -->
-    {{--    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport"> --}}
-    {{--    <meta name="viewport" content="width=device-width, initial-scale=1.0"> --}}
 
     <!-- Bootstrap 3.3.7 -->
     <link rel="stylesheet" href="{{ asset('bower_components/bootstrap/dist/css/bootstrap.min.css') }}">
@@ -27,69 +25,10 @@
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Nokora&display=swap" rel="stylesheet">
-
-    <style>
-        body {
-            font-family: 'Nokora', 'auto';
-            font-size: 14px;
-        }
-
-        .qty {
-            height: 21px;
-        }
-
-        .mailbox-attachments li {
-            width: 120px;
-        }
-
-        .mailbox-attachment-icon.has-img>img {
-            height: 110px;
-            border: 4px solid #fff;
-        }
-
-        .mailbox-attachment-info {
-            text-align: center;
-            height: 30px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            padding: 2px;
-            font-size: 12px;
-
-        }
-
-        .clearfix li {
-            cursor: pointer;
-        }
-
-        .badge-right {
-            float: right;
-        }
-
-        .content-wrapper {
-            background-image: url("{{ asset('uploads/well.jpg') }}");
-            background-position: center;
-            background-repeat: no-repeat;
-            background-size: cover;
-        }
-
-        .well {
-            background-color: #fff;
-        }
-
-        .close {
-            font-size: 27px;
-        }
-
-        .quick-cash {
-            margin: 10px 0;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ asset('css/pos.css') }}">
 </head>
 
-<body class="hold-transition fixed skin-blue sidebar-collapse sidebar-mini">
+<body class="hold-transition fixed skin-blue-light sidebar-collapse sidebar-mini">
     <!-- Site wrapper -->
     <div class="wrapper">
 
@@ -236,7 +175,7 @@
                                 <!-- Menu Footer-->
                                 <li class="user-footer">
                                     <div class="pull-left">
-                                        <a href="#"
+                                        <a href="{{route('profile')}}"
                                             class="btn btn-default btn-flat">{{ __('language.profile') }}</a>
                                     </div>
                                     <div class="pull-right">
@@ -390,10 +329,10 @@
         <!-- =============================================== -->
 
         <!-- Content Wrapper. Contains page content -->
-        <div class="content-wrapper">
+        <div class="content-wrapper ">
             <!-- Content Header (Page header) -->
-            <div style="display: flex; margin: 10px;" id="table-1">
-                <div class="well well-sm" style="min-width: 450px; height: 100%">
+            <div class="thumbnail-component" style="display: flex; margin: 10px;" id="table-1">
+                <div class="well well-sm thumbnail-components" style="min-width: 450px; height: 100%">
                     <div class="form-group" style="margin-bottom:5px;">
                         <input type="text" name="scan_phone" id="search_customers_phone"
                             class="form-control ui-autocomplete-input" placeholder="{{ __('language.scan_phone') }}"
@@ -411,8 +350,8 @@
 
                             </select>
                             <div class="input-group-addon no-print" style="padding: 2px 5px;">
-                                <a href="#" id="add-customer" class="external" data-toggle="modal"
-                                    data-target="#modal-customer"><i class="fa fa-2x fa-plus-circle"
+                                <a href="#" id="add-customer" class="external " data-toggle="modal"  style="color: #1890ff"
+                                    data-target="#modal-customer" ><i class="fa fa-2x fa-plus-circle "
                                         id="addIcon"></i></a>
                             </div>
                         </div>
@@ -811,60 +750,9 @@
             <!-- /.content -->
         </div>
         <!-- /.content-wrapper -->
-         <style>
-             ul, #myUL {
-                 list-style-type: none;
-             }
 
-             #myUL {
-                 margin: 0;
-                 padding: 0;
-             }
-
-             .carets {
-                 cursor: pointer;
-                 -webkit-user-select: none; /* Safari 3.1+ */
-                 -moz-user-select: none; /* Firefox 2+ */
-                 -ms-user-select: none; /* IE 10+ */
-                 user-select: none;
-             }
-
-             .carets::before {
-                 content: "\25B6";
-                 color: #fff;
-                 display: inline-block;
-                 margin-right: 6px;
-             }
-
-             .caret-down::before {
-                 -ms-transform: rotate(90deg); /* IE 9 */
-                 -webkit-transform: rotate(90deg); /* Safari */'
-             transform: rotate(90deg);
-             }
-
-             .nested {
-                 display: none;
-
-             }
-
-             .active {
-                 display: block;
-             }
-
-             .list-tree{
-                 padding: 10px 0;
-                 background-color: #2c393f;
-             }
-
-             .list-tree-small{
-                 padding: 5px 0;
-             }
-
-
-
-         </style>
         <!-- Control Sidebar -->
-        <aside class="control-sidebar control-sidebar-dark control-sidebar-open" >
+        <aside class="control-sidebar control-sidebar-dark " >
             <!-- Create the tabs -->
             <ul class="nav nav-tabs nav-justified control-sidebar-tabs">
                 <li><a href="#control-sidebar-home-tab" data-toggle="tab"><i class="fa fa-home"></i></a></li>
@@ -874,40 +762,6 @@
             <div class="tab-content">
                 <!-- Home tab content -->
                 <div class="tab-pane" id="control-sidebar-home-tab">
-
-                    <!-- /.control-sidebar-menu -->
-                    <ul id="myUL">
-                        <li class="list-tree">
-                            <span class="carets list-tree-small" >T Shirt</span>
-                            <ul class="nested">
-
-                                <li class="list-tree"><span class="carets list-tree">Tea</span>
-                                    <ul class="nested">
-
-                                        <li class="list-tree-small"><i class="fa fa-circle-o "></i> T Shirt</li>
-                                        <li class="list-tree-small"><span class="carets list-tree-small" >T Shirt</span></li>
-                                        <li class="list-tree-small"><span class="carets list-tree-small" >T Shirt</span></li>
-                                    </ul>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="list-tree">
-                            <span class="carets list-tree" >T Shirt</span>
-                            <ul class="nested">
-
-                                <li class="list-tree"><span class="carets list-tree">Tea</span>
-                                    <ul class="nested">
-
-                                        <li><span class="carets list-tree" >T Shirt</span></li>
-                                        <li><span class="carets list-tree" >T Shirt</span></li>
-                                        <li><span class="carets list-tree" >T Shirt</span></li>
-                                    </ul>
-                                </li>
-                            </ul>
-                        </li>
-
-                    </ul>
-
 
 
                 </div>
@@ -991,19 +845,6 @@
      immediately after the control sidebar -->
         <div class="control-sidebar-bg"></div>
     </div>
-
-    <script>
-        var toggler = document.getElementsByClassName("carets");
-        var i;
-
-        for (i = 0; i < toggler.length; i++) {
-            toggler[i].addEventListener("click", function() {
-                this.parentElement.querySelector(".nested").classList.toggle("active");
-                this.classList.toggle("caret-down");
-            });
-        }
-    </script>
-    <!-- ./wrapper -->
 
     <!-- jQuery 3 -->
     <script src="{{ asset('bower_components/jquery/dist/jquery.min.js') }}"></script>

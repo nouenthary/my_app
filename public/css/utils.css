@@ -21,4 +21,110 @@
     width: 5px;
 }
 
+body {
+    /*font-family: 'Nokora', 'auto';*/
+    font-size: 14px;
+}
 
+.form-control-smm {
+    height: 30px;
+}
+
+.table {
+    white-space: nowrap;
+    width: 100%;
+}
+
+.table-striped>tbody>tr:nth-of-type(odd) {
+    background-color: #fbfbfb;
+}
+
+.skin-blue-light .wrapper, .skin-blue-light .main-sidebar, .skin-blue-light .left-side {
+    background-color: #fff;
+}
+
+.skin-blue-light .sidebar-menu>li:hover>a, .skin-blue-light .sidebar-menu>li.active>a {
+    color: #000;
+    background: #fff;
+}
+
+.skin-blue-light .sidebar-menu>li>.treeview-menu {
+
+}
+
+input[type=file]::file-selector-button {
+    border: none;
+    background: #00a65a;
+    padding: 0px 20px;
+    border-radius: 3px;
+    color: #fff;
+    cursor: pointer;
+    transition: background .2s ease-in-out;
+}
+
+input[type=file]::file-selector-button:hover {
+    background: #0d45a5;
+}
+
+.modal-dialog{
+    overflow-y: initial !important
+}
+.modal-body{
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
+}
+
+.close{
+    font-size: 30px;
+}
+
+svg {
+    border: 1px solid #08c;
+}
+
+img {
+    border: 1px solid #08c;
+}
+
+@font-face {
+    font-family: 'Khmer OS Battambang Regular';
+    src: url("/css/KhmerOSBattambangRegular.ttf") /* TTF file for CSS3 browsers */
+}
+
+body {
+    font-family: 'Khmer OS Battambang Regular';
+}
+
+.btn-danger, .bg-red{
+    background-color: #ff4d4f !important;
+}
+
+.btn-primary , .btn-dropbox{
+    background-color: #1890ff !important;
+}
+
+.btn-success , .bg-green{
+    background-color: #389e0d !important;
+}
+
+
+.skin-blue-light , .navbar , .logo, .user-header, .bg-aqua, .sidebar-toggle:hover{
+    background-color: #1890ff !important;
+}
+
+.sidebar-menu i{
+    color: #1890ff !important;
+}
+
+@keyframes thumbnail {
+    0% {
+        transform: translateY(-100%);
+    }
+    100% {
+        transform: translateY(0%);
+    }
+}
+
+.thumbnail-component {
+    animation: 0.5s ease 0s 1 thumbnail;
+}

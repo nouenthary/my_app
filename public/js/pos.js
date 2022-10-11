@@ -102,7 +102,6 @@ $(function () {
     //add item
     $(document).on('click', '.product-item', function () {
 
-        console.log(location);
         let id = $(this).attr('id');
         let name = $(this).attr('data-name');
         let price = $(this).attr('data-price');
@@ -110,12 +109,25 @@ $(function () {
         let data = {
             id, name, price, qty: 1, amount: price * 1, code
         };
-
+        // check stock
         let stock = check_stock(id);
+        let store = JSON.parse(localStorage.getItem('items'));
+        let qty_has = 1;
+        if (store != null) {
+            let items = store.filter(i => i.id == id);
+            if (items.length > 0) {
+                qty_has = items[0].qty;
+            }
+        }
 
-        if(stock.quantity == 0){
+        if (stock.quantity == 0) {
             showModal('ទំនិញអស់ស្តុក');
-            return;
+            return
+        }
+
+        if (qty_has == stock.quantity) {
+            showModal('ទំនិញអស់ស្តុក');
+            return
         }
 
         let count = JSON.parse(localStorage.getItem(key));
@@ -124,44 +136,37 @@ $(function () {
             data
         ];
 
-        if (count == null) {
+        if (count == '' || count == null) {
             localStorage.setItem(key, JSON.stringify(arr));
             getItem();
+            return;
         }
 
-        if (count.length == 0) {
-            localStorage.setItem(key, JSON.stringify(arr));
-            getItem();
-        }
+        for (let i in count) {
+            if (count[i].id == id) {
+                let qty = parseInt(count[i].qty) + 1;
+                count[i].qty = qty
+                count[i].amount = qty * count[i].price;
 
-        if (count.length > 0) {
-            for (let i in count) {
-                if (count[i].id == id) {
-                    let qty = parseInt(count[i].qty) + 1;
-                    count[i].qty = qty
-                    count[i].amount = qty * count[i].price;
+                arr = [
+                    ...count,
+                ];
 
-                    arr = [
-                        ...count,
-                    ];
-
-                    localStorage.setItem(key, JSON.stringify(arr));
-                    getItem();
-                    return;
-                }
-                if (count[i].id != id) {
-                    arr = [
-                        ...count,
-                        data
-                    ];
-
-                    localStorage.setItem(key, JSON.stringify(arr));
-                    getItem();
-                }
+                localStorage.setItem(key, JSON.stringify(arr));
+                getItem();
+                return;
             }
+            if (count[i].id != id) {
+                arr = [
+                    ...count,
+                    data
+                ];
 
-
+                localStorage.setItem(key, JSON.stringify(arr));
+                getItem();
+            }
         }
+
     });
 
     let getItem = function () {
@@ -217,7 +222,7 @@ $(function () {
 
         let item = JSON.parse(localStorage.getItem(key));
 
-        if (item == null) {
+        if (item == null || item.length < 1) {
             showModal('សូមបញ្ចូលផលិតផល');
             return;
         }
@@ -321,13 +326,31 @@ $(function () {
     });
 
     //
+    $(document).on("cut copy paste", ".qty", function (e) {
+        e.preventDefault();
+    });
     $(document).on('change', '.qty', function () {
+
         let qty = $(this).val();
         let id = $(this).closest('tr').attr('id');
         let items = JSON.parse(localStorage.getItem(key));
+
+        if (qty == '' || qty == 0) {
+            qty = 1
+        }
+
+        // check stock
+        let stock = check_stock(id);
+
+        if (qty > parseInt(stock.quantity)) {
+            showModal('ទំនិញអស់ស្តុក');
+            getItem();
+            return;
+        }
+
         if (items != null) {
             let i = items.findIndex(i => i.id == id);
-            items[i].qty = qty;
+            items[i].qty = parseInt(qty);
             let price = items[i].price;
             items[i].amount = qty * price;
         }
@@ -347,6 +370,11 @@ $(function () {
         if (parseFloat(amount_main) >= parseFloat(amount_pay)) {
 
             let items = JSON.parse(localStorage.getItem(key));
+
+            if(items.length == 0){
+                location.reload();
+                return;
+            }
 
             let total = 0;
             let qty = 0;

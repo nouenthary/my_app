@@ -20,7 +20,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Battambang:wght@100&family=Roboto:wght@100;300;400&display=swap"
         rel="stylesheet">
-
+    <link rel="stylesheet" href="{{ asset('css/pos.css') }}">
     <style>
         body {
             font-family: 'Battambang';
@@ -66,6 +66,7 @@
             }
         }
     </style>
+
 
 </head>
 

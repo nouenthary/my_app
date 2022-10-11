@@ -172,6 +172,7 @@
                         }
                         $('#modal-create').modal('hide');
                         $('#form-create').get(0).reset();
+                        table.draw();
                     }
                 });
             });
@@ -184,7 +185,7 @@
                 $('#modal-create').modal('show');
                 $('#status').parent('div').css('display','none');
                 $('#form-create').attr('action','create_import');
-                $('#modal-title').text('Add Import');
+                $('#modal-title').text('{{lang('add_import')}}');
             });
 
             $(document).on('click', '.btn-export', function () {
@@ -194,7 +195,7 @@
                 $('#modal-create').modal('show');
                 $('#status').parent('div').css('display','block');
                 $('#form-create').attr('action','create_export');
-                $('#modal-title').text('Add Export');
+                $('#modal-title').text('{{lang('add_export')}}');
             });
 
             $(document).on('change', '.minimal', function () {

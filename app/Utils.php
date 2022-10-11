@@ -28,4 +28,10 @@ class Utils
 
         return $id;
     }
+
+    public static function get_permissions(){
+        return DB::table('tec_permission')
+            ->where('user_id', Auth::user()->user_id)
+            ->first();
+    }
 }

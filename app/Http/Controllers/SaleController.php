@@ -6,7 +6,6 @@ use App\Utils;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Yajra\DataTables\DataTables;
 
 class SaleController extends Controller
 {
@@ -23,7 +22,6 @@ class SaleController extends Controller
 
     public function get_table($request)
     {
-
         $columns = [
             __("language.invoice"),
             'កាលបរិច្ឆេទ',
@@ -97,8 +95,6 @@ class SaleController extends Controller
 
         $value = '';
 
-        //   return $data->lastPage()
-
         $qty = 0;
         $total = 0;
         $paid = 0;
@@ -118,25 +114,25 @@ class SaleController extends Controller
             }
 
             $value = $value . $this->html('tr',
-                $this->html('td', '#' . $col->id, 'width="100px"') .
-                $this->html('td', $col->date, '') .
-                $this->html('td', $col->customer_name, '') .
-                $this->html('td', number_format($col->quantity), 'class="text-right" ') .
-                $this->html('td', number_format($col->total_discount) . '៛', 'class="text-right" ') .
-                $this->html('td', number_format($col->total) . '៛', 'class="text-right"') .
-                $this->html('td', number_format($col->paid) . '៛', 'class="text-right"') .
-                $this->html('td', $status, 'class="text-centers" ') .
-                $this->html('td', $col->username, 'class="text-centers" ') .
-                $this->html('td', '
+                    $this->html('td', '#' . $col->id, 'width="100px"') .
+                    $this->html('td', $col->date, '') .
+                    $this->html('td', $col->customer_name, '') .
+                    $this->html('td', number_format($col->quantity), 'class="text-right" ') .
+                    $this->html('td', number_format($col->total_discount) . '៛', 'class="text-right" ') .
+                    $this->html('td', number_format($col->total) . '៛', 'class="text-right"') .
+                    $this->html('td', number_format($col->paid) . '៛', 'class="text-right"') .
+                    $this->html('td', $status, 'class="text-centers" ') .
+                    $this->html('td', $col->username, 'class="text-centers" ') .
+                    $this->html('td', '
                         <div class="btn-group" >
                       <a href="/invoice/' . $col->id . '" target="_blank" type="button" class="btn btn-default btn-flat btn-xs"><i class="fa fa-list"></i></a>
                       <a type="button" class="btn btn-default btn-flat btn-xs"><i class="fa fa-money"></i></a>
                       <a type="button" class="btn btn-default btn-flat btn-xs"><i class="fa fa-briefcase"></i></a>
                       <a type="button" class="btn btn-primary btn-flat btn-xs"><i class="fa fa-pencil"></i></a>
-                      <a type="button" class="btn btn-danger btn-flat btn-xs"><i class="fa fa-trash"></i></a>
+                      <a type="button" class="btn btn-danger btn-flat btn-xs btn-remove"><i class="fa fa-trash"></i></a>
                     </div>
                     ', 'style="width: 130px"')
-                , '');
+                    , "id='$col->id'");
         }
 
         $footer = $this->html('tr',
@@ -162,73 +158,59 @@ class SaleController extends Controller
         ];
     }
 
+    //
     public function get_list_sale(Request $request)
     {
         return $this->get_table($request);
+    }
 
-        return $request;
+    // remove
+    public function return_sale(Request $request)
+    {
+        $sale = DB::table('tec_sales')
+            ->join('tec_sale_items', 'tec_sales.id', '=', 'tec_sale_items.sale_id')
+            ->where('tec_sales.id', $request->sale_id)
+            ->get();
 
-        if ($request->ajax()) {
-            $store_id = (int) $request->store_id;
-
-            $date = $request->date;
-
-            $sql = "
-                SELECT
-                    tec_sales.id,
-                    tec_sales.customer_name,
-                    DATE_FORMAT(tec_sales.date, '%a %d %b %Y %h:%i %p') as date,
-                    tec_sales.`status`,
-                    Sum(tec_sale_items.quantity) as quantity,
-                    Sum(tec_sale_items.subtotal) as grand_total,
-                    tec_users.username
-                FROM
-                    tec_sales
-                    INNER JOIN tec_sale_items ON tec_sales.id = tec_sale_items.sale_id
-                    INNER JOIN tec_users ON tec_sales.created_by = tec_users.id
-            ";
-
-//            if ($store_id > 0) {
-            //                $sql = $sql . " Where tec_sales.store_id = '$store_id'";
-            //            }
-            //            if ($store_id == 0) {
-            //                $sql = $sql . " Where tec_sales.store_id > '$store_id'";
-            //            }
-            //
-            //            $start = '';
-            //            $end = '';
-            //
-            //            if ($date != '') {
-            //                $date_last = explode('-', $date);
-            //
-            //                $start = date('Y-m-d H:i:s', strtotime($date_last[0]));
-            //
-            //                $end = date('Y-m-d H:i:s', strtotime($date_last[1]));
-            //            }
-            //
-            //            if ($start != '') {
-            //                $sql = $sql . " and tec_sales.date >= '$start'";
-            //            }
-            //
-            //            if ($end != '') {
-            //                $sql = $sql . " and tec_sales.date <= '$end'";
-            //            }
-
-            $sql = $sql . "
-                GROUP BY
-                    tec_sales.id
-                ORDER BY
-                    tec_sales.id DESC
-                    LIMIT 1000
-            ";
-
-            $data = DB::select(DB::raw($sql));
-
-            try {
-                return Datatables::of($data)->make(true);
-            } catch (\Exception $e) {
-            }
+        if(Auth::user()->user_id != $sale[0]->created_by){
+            return ['error' => 'You can not delete.'];
         }
+
+        foreach ($sale as $data) {
+            $item = [
+                'sale_date' => $data->date,
+                'customer_name' => $data->customer_name,
+                'total_sale' => $data->total,
+                'tax' => 0,
+                'discount' => 0,
+                'grand_total' => $data->total,
+                'paid' => $data->total,
+                'status' => $data->status,
+                'product_id' => $data->product_id,
+                'product_name' => $data->product_name,
+                'user_updated' => $data->created_by,
+                'date_delete' => date('Y-m-d H:i:s'),
+                'customer_id' => $data->customer_id,
+                'sale_id' => $data->sale_id,
+                'store_id' => $data->store_id,
+                'quantity' => $data->quantity,
+                'user_delete' => Auth::user()->name
+            ];
+
+            DB::table('tec_sale_history')->insert($item);
+
+            $current_qty = DB::table('tec_product_store_qty')->where('product_id', $data->product_id)->where('store_id', $data->store_id)->first();
+
+            $total_qty = $current_qty->quantity + $data->quantity;
+
+            DB::update('update tec_product_store_qty set quantity = ? where product_id = ?  and store_id = ? ', [$total_qty, $data->product_id, $data->store_id]);
+
+            DB::table('tec_sales')->where('id', $request->sale_id)->delete();
+            DB::table('tec_sale_items')->where('sale_id', $request->sale_id)->delete();
+            DB::table('tec_payments')->where('sale_id', $request->sale_id)->delete();
+        }
+
+        return ['data' => 'successfully.'];
     }
 
     // sale record
@@ -320,30 +302,30 @@ class SaleController extends Controller
             $commission = $commission + ($col->quantity * 500);
 
             $value = $value . $this->html('tr',
-                $this->html('td', $col->name, '') .
-                $this->html('td', '#' . $col->id, 'width="100px"') .
-                $this->html('td', $col->date, '') .
-                $this->html('td', $col->customer_name, '') .
-                $this->html('td', $col->product_name, 'class="text-left" ') .
-                $this->html('td', number_format($col->unit_price) . '៛', 'class="text-right"') .
-                $this->html('td', number_format($col->quantity), 'class="text-right"') .
-                $this->html('td', number_format($col->subtotal) . '៛', 'class="text-right"') .
-                $this->html('td', number_format($col->quantity * 500) . '៛', 'class="text-right"')
-                , '');
+                    $this->html('td', $col->name, '') .
+                    $this->html('td', '#' . $col->id, 'width="100px"') .
+                    $this->html('td', $col->date, '') .
+                    $this->html('td', $col->customer_name, '') .
+                    $this->html('td', $col->product_name, 'class="text-left" ') .
+                    $this->html('td', number_format($col->unit_price) . '៛', 'class="text-right"') .
+                    $this->html('td', number_format($col->quantity), 'class="text-right"') .
+                    $this->html('td', number_format($col->subtotal) . '៛', 'class="text-right"') .
+                    $this->html('td', number_format($col->quantity * 500) . '៛', 'class="text-right"')
+                    , '');
         }
 
         $footer =
-        $this->html('tr',
-            $this->html('th', 'សរុប', 'class="text-uppercase" width="100px"') .
-            $this->html('th', '', '') .
-            $this->html('th', '', '') .
-            $this->html('th', '', '') .
-            $this->html('th', '', '') .
-            $this->html('th', '', '') .
-            $this->html('th', number_format($qty), 'class="text-right"') .
-            $this->html('th', number_format($total) . '៛', 'class="text-right"') .
-            $this->html('th', number_format($commission) . '៛', 'class="text-right"')
-            , 'class="active"');
+            $this->html('tr',
+                $this->html('th', 'សរុប', 'class="text-uppercase" width="100px"') .
+                $this->html('th', '', '') .
+                $this->html('th', '', '') .
+                $this->html('th', '', '') .
+                $this->html('th', '', '') .
+                $this->html('th', '', '') .
+                $this->html('th', number_format($qty), 'class="text-right"') .
+                $this->html('th', number_format($total) . '៛', 'class="text-right"') .
+                $this->html('th', number_format($commission) . '៛', 'class="text-right"')
+                , 'class="active"');
 
         $table = $this->html('table', $this->html('tr', $cols, '') . $this->html('tr', $value, '') . $footer, 'class="table table-bordered table-stripeds" id="table"');
 
@@ -429,33 +411,33 @@ class SaleController extends Controller
             $total = $total + $col->subtotal;
             $commission = $commission + ($col->quantity * 500);
 
-            $price = (float) $col->subtotal / 4000;
+            $price = (float)$col->subtotal / 4000;
 
             $usd = $usd + $price;
 
             $value = $value . $this->html('tr',
-                $this->html('td', $col->name, '') .
-                $this->html('td', '' . $col->date, 'width="100px"') .
-                $this->html('td', $col->product_name, 'class="text-left"') .
-                $this->html('td', number_format($col->unit_price) . '៛', 'class="text-right"') .
-                $this->html('td', number_format($col->quantity), 'class="text-right" ') .
-                $this->html('td', number_format($col->subtotal) . '៛', 'class="text-right"') .
-                $this->html('td', '$' . sprintf('%0.3f', $price), 'class="text-right"') .
-                $this->html('td', number_format($col->quantity * 500) . '៛', 'class="text-right"')
-                , '');
+                    $this->html('td', $col->name, '') .
+                    $this->html('td', '' . $col->date, 'width="100px"') .
+                    $this->html('td', $col->product_name, 'class="text-left"') .
+                    $this->html('td', number_format($col->unit_price) . '៛', 'class="text-right"') .
+                    $this->html('td', number_format($col->quantity), 'class="text-right" ') .
+                    $this->html('td', number_format($col->subtotal) . '៛', 'class="text-right"') .
+                    $this->html('td', '$' . sprintf('%0.3f', $price), 'class="text-right"') .
+                    $this->html('td', number_format($col->quantity * 500) . '៛', 'class="text-right"')
+                    , '');
         }
 
         $footer =
-        $this->html('tr',
-            $this->html('th', 'សរុប', 'class="text-uppercase" width="100px"') .
-            $this->html('th', '', '') .
-            $this->html('th', '', '') .
-            $this->html('th', '', '') .
-            $this->html('th', number_format($qty), 'class="text-right"') .
-            $this->html('th', number_format($total) . '៛', 'class="text-right"') .
-            $this->html('th', '$' . sprintf('%0.3f', $usd) . '', 'class="text-right"') .
-            $this->html('th', number_format($commission) . '៛', 'class="text-right"')
-            , 'class="active"');
+            $this->html('tr',
+                $this->html('th', 'សរុប', 'class="text-uppercase" width="100px"') .
+                $this->html('th', '', '') .
+                $this->html('th', '', '') .
+                $this->html('th', '', '') .
+                $this->html('th', number_format($qty), 'class="text-right"') .
+                $this->html('th', number_format($total) . '៛', 'class="text-right"') .
+                $this->html('th', '$' . sprintf('%0.3f', $usd) . '', 'class="text-right"') .
+                $this->html('th', number_format($commission) . '៛', 'class="text-right"')
+                , 'class="active"');
 
         $table = $this->html('table', $this->html('tr', $cols, '') . $this->html('tr', $value, '') . $footer, 'class="table table-bordered table-stripeds" id="table"');
 
@@ -570,6 +552,13 @@ class SaleController extends Controller
                 'tax' => 0,
                 'item_tax' => 0,
             ];
+
+            $current_qty = DB::table('tec_product_store_qty')->where('product_id', $i['id'])->where('store_id', $utils->get_store_id())->first();
+
+            $total_qty = $current_qty->quantity - $i['qty'];
+
+            DB::update('update tec_product_store_qty set quantity = ? where product_id = ?  and store_id = ? ', [$total_qty, $i['id'], $utils->get_store_id()]);
+
             DB::table('tec_sale_items')->insert($product);
         }
 
@@ -631,11 +620,13 @@ class SaleController extends Controller
             ->first();
         return $data;
     }
+
     //stock_report
     public function stock_report()
     {
         return view('sale.stock_report');
     }
+
     //get_stock_report
     public function get_stock_report(Request $request)
     {
@@ -699,24 +690,24 @@ class SaleController extends Controller
             $balance = $balance + $col->qty_balance;
 
             $value = $value . $this->html('tr',
-                $this->html('td', '' . $col->name, 'width="120px"') .
-                $this->html('td', $col->product_name, 'class="text-left"') .
-                $this->html('td', number_format($col->in_qty) . 'pcs', 'class="text-right"') .
-                $this->html('td', number_format($col->out_qty) . 'pcs', 'class="text-right" ') .
-                $this->html('td', number_format($col->qty_sold) . 'pcs', 'class="text-right"') .
-                $this->html('td', number_format($col->qty_balance) . 'pcs', 'class="text-right"')
-                , '');
+                    $this->html('td', '' . $col->name, 'width="120px"') .
+                    $this->html('td', $col->product_name, 'class="text-left"') .
+                    $this->html('td', number_format($col->in_qty) . 'pcs', 'class="text-right"') .
+                    $this->html('td', number_format($col->out_qty) . 'pcs', 'class="text-right" ') .
+                    $this->html('td', number_format($col->qty_sold) . 'pcs', 'class="text-right"') .
+                    $this->html('td', number_format($col->qty_balance) . 'pcs', 'class="text-right"')
+                    , '');
         }
 
         $footer =
-        $this->html('tr',
-            $this->html('th', 'សរុប', 'class="text-uppercase" width="100px"') .
-            $this->html('th', '', '') .
-            $this->html('th', number_format($in), 'class="text-right"') .
-            $this->html('th', number_format($out) . 'pcs', 'class="text-right"') .
-            $this->html('th', number_format($sold) . 'pcs', 'class="text-right"') .
-            $this->html('th', number_format($balance) . 'pcs', 'class="text-right"')
-            , 'class="active"');
+            $this->html('tr',
+                $this->html('th', 'សរុប', 'class="text-uppercase" width="100px"') .
+                $this->html('th', '', '') .
+                $this->html('th', number_format($in), 'class="text-right"') .
+                $this->html('th', number_format($out) . 'pcs', 'class="text-right"') .
+                $this->html('th', number_format($sold) . 'pcs', 'class="text-right"') .
+                $this->html('th', number_format($balance) . 'pcs', 'class="text-right"')
+                , 'class="active"');
 
         $table = $this->html('table', $this->html('tr', $cols, '') . $this->html('tr', $value, '') . $footer, 'class="table table-bordered table-stripeds" id="table"');
 
@@ -733,6 +724,7 @@ class SaleController extends Controller
     {
         return view('sale.chart_report');
     }
+
     //get_chart_report
     public function get_chart_report(Request $request)
     {
@@ -770,7 +762,7 @@ class SaleController extends Controller
             ->get();
 
         foreach ($data as $row) {
-            array_push($dataSource, [$row->city, (int) $row->quantity]);
+            array_push($dataSource, [$row->city, (int)$row->quantity]);
         }
 
         return [

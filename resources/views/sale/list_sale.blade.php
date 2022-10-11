@@ -4,9 +4,9 @@
 
 
     <!-- /.box-header -->
-    <div class="form-search">
+    <div class="form-search ">
 
-        <div class="row">
+        <div class="row ">
             <div class="col-md-12">
                 @include('components.store')
             </div>
@@ -156,7 +156,7 @@
                         document.querySelector('#per_page').innerHTML = data.per_page;
                         document.querySelector('#total').innerHTML = data.total;
                         document.querySelector('#table-show').innerHTML = data.table;
-                        console.log(data);
+
                     }
                 });
 
@@ -164,6 +164,30 @@
             }
 
             get_data();
+
+            $(document).on('click', '.btn-remove', function () {
+                //alert($(this).closest('tr').attr('id'));
+
+                if(confirm('Are u sure delete ?') == false){
+                    return;
+                }
+                $.ajax({
+                    url: "{{ url('return_sale') }}",
+                    type: 'post',
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        sale_id: $(this).closest('tr').attr('id')
+                    },
+                    success: function (data) {
+                        if (data.error) {
+                            alert(data.error);
+                            return;
+                        }
+                        get_data();
+                    }
+                });
+
+            });
 
             $('.form-search select, input').change(function () {
                 get_data();
@@ -184,7 +208,7 @@
                 fnExcelReport();
             });
 
-            let filename = location.href.replace(location.host,'').replace('http:///','');
+            let filename = location.href.replace(location.host, '').replace('http:///', '');
 
             function CreatePDFfromHTML() {
                 let HTML_Width = $("#table").width();
@@ -246,7 +270,7 @@
                 html2canvas(document.querySelector("#table")).then(canvas => {
                     a = document.createElement('a');
                     document.body.appendChild(a);
-                    a.download = filename +  ".png";
+                    a.download = filename + ".png";
                     a.href = canvas.toDataURL();
                     a.click();
                 });

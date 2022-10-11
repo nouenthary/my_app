@@ -69,13 +69,13 @@
         <div class="col-lg-6 col-md-8 col-sm-12">
             <div class="btn-group">
                 <button type="button" id="btn-all" class=" btn btn-success btn-flat" value="All"><i
-                        class="fa fa-calendar"></i> All Report</button>
+                        class="fa fa-calendar"></i> {{lang('all_report')}}</button>
                 <button type="button" id="btn-year" class="btn btn-warning btn-flat" value="Year"><i
-                        class="fa fa-calendar"></i> Report Year</button>
+                        class="fa fa-calendar"></i> {{lang('report_year')}}</button>
                 <button type="button" id="btn-month" class="btn btn-primary btn-flat" value="Month"><i
-                        class="fa fa-calendar"></i> Report Monthly</button>
+                        class="fa fa-calendar"></i> {{lang('report_monthly')}}</button>
                 <button type="button" id="btn-day" class="btn btn-danger btn-flat" value="day"><i
-                        class="fa fa-calendar"></i> Report Daily</button>
+                        class="fa fa-calendar"></i> {{lang('report_daily')}}</button>
             </div>
         </div>
 
@@ -91,7 +91,7 @@
             </select>
         </div>
         <div class=" col-lg-2" id="d">
-            <input class="form-control form-control-sm datepicker" id="date" placeholder="yyyy/mm/dd"
+            <input class="form-control form-control-sm datepicker" id="date" placeholder="{{lang('input_date')}}"
                 autocomplete="off">
         </div>
 

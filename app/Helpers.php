@@ -40,6 +40,6 @@ if (!function_exists('image')) {
     function image($img, $width = '25px'){
         $src = "/uploads/$img";
         $error = "this.src='/uploads/none.jpg'";
-        return  "<img src='$src' width='$width' onerror=".$error." > ";
+        return  "<img src='$src' width='$width' height='$width' onerror=".$error." > ";
     }
 }

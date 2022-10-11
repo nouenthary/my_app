@@ -166,7 +166,7 @@ class CategoryController extends Controller
 
         $footer = '';
 
-        $table = html('table', html('tr', $cols, '') . html('tr', $value, '') . $footer, 'class="table table-bordered table-stripeds" id="table"');
+        $table = html('table', html('tr', $cols, '') . html('tr', $value, '') . $footer, 'class="table table-bordered table-hover" id="table" ');
 
         return [
             'table' => $table,

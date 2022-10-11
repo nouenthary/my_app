@@ -22,7 +22,19 @@ class UserController extends Controller
 
     function dashboard()
     {
-        return view('dashbaord.dashboard');
+        $utils = new Utils();
+        $store_id = $utils->get_store_id();
+        $data['qty_in'] = DB::select("select COALESCE(SUM(qty),0) qty from tec_stock_in where fk_store_id = '$store_id'");
+        $data['qty_out'] = DB::select("select COALESCE(SUM(qty),0) qty from tec_stock_out where fk_store_id = '$store_id'");
+        $data['qty_sold'] = DB::select("
+            SELECT COALESCE(SUM(tec_sale_items.quantity),0) qty
+            FROM `tec_sales`
+            INNER JOIN tec_sale_items
+            ON tec_sales.id = tec_sale_items.sale_id
+            WHERE tec_sales.store_id = '$store_id'
+        ");
+        $data['qty_balance'] = $data['qty_in'][0]->qty - $data['qty_out'][0]->qty - $data['qty_sold'][0]->qty;
+        return view('dashbaord.dashboard', $data);
     }
 
     public function get_users(Request $request)
@@ -129,22 +141,6 @@ class UserController extends Controller
         return view('auth.login');
     }
 
-    public function get_login(Request $request)
-    {
-
-        $credentials = [
-            'name' => $request['username'],
-            'password' => $request['password'],
-        ];
-
-
-        if (Auth::attempt($credentials)) {
-
-            return redirect()->route('users');
-        }
-
-        return view('auth.login');
-    }
 
     public function logout(Request $request)
     {
@@ -171,6 +167,47 @@ class UserController extends Controller
         $id = DB::table('tec_customers')->insertGetId($data);
 
         return $id;
+    }
+
+    // profile
+    public function profile(){
+        return view('users.profile');
+    }
+
+    //
+    public function update_profile(Request $request){
+
+        $names = $request->photo;
+        if ($request->hasFile('file')) {
+            $image = $request->file('file');
+            $names = date('Y_m_d_H_i_s') . '.' . $image->getClientOriginalExtension();
+            $destinationPath = public_path('/uploads/');
+            $image->move($destinationPath, $names);
+        }
+
+        $data = [
+            'username' => $request->name,
+            'first_name' => $request->first_name,
+            'last_name' => $request->last_name,
+            'avatar' => $names,
+            'password' => 'deae17c9925f9da5551724805a5ff480557816d6',
+        ];
+
+        $user = DB::table('users')->where('name', 'LIKE' ,$request->name)->where('id','<>',Auth::user()->user_id)->first();
+
+        if($user != null){
+            return redirect()->back()->with('error', 'username is exist');
+        }
+
+        DB::table('tec_users')->where('id',$request->id)->update($data);
+
+        DB::update('update users set name = ?, updated_at = ? where user_id = ?', [$request->name , date('Y_m_d_H_i_s')  ,$request->id]);
+
+        if($request->password != ''){
+            DB::update('update users set password = ? , updated_at = ?  where user_id = ?', [Hash::make($request->password), date('Y_m_d_H_i_s') , $request->id]);
+        }
+
+        return redirect()->back()->with('success', 'update successfully.');
     }
 
 }

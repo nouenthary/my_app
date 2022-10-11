@@ -1,173 +1,326 @@
 @extends('main')
 @section('content')
-    {{-- {{ $title }} --}}
-    <div>
-        <button type="button" class="btn btn-default" data-toggle="modal" data-target="#modal-create">
-            <i class="fa fa-users"></i> Add User
-        </button>
-    </div>
 
-    <div class="box">
+    <!-- /.box-header -->
+    <div class="form-search">
 
-        <!-- /.box-header -->
-        <div class="box-body">
+        <div class="row">
 
-            <div class="card">
-                <div class="box-body table-responsive no-padding">
-                    <table class="table table-bordered table-striped table-sm" id="table">
-                        <thead>
-                            <tr>
-                                <th style="width: 25px">Photo</th>
-                                <th class="col-md-1">Code</th>
-                                <th>Name</th>
-                                <th class="col-md-1">Category</th>
-                                <th class="col-md-1">Unit Cost</th>
-                                <th class="col-md-1">Sell Price</th>
-                                <th style="width: 25px">Action</th>
-                            </tr>
-                        </thead>
-                        <tfoot>
-                            <tr>
-                                <th> </th>
-                                <th> <input class="form-control" placeholder="[Code]" /></th>
-                                <th>Name</th>
-                                <th>Category</th>
-                                <th>Unit Cost</th>
-                                <th>Sell Price</th>
-                                <th width="80px" align="center">Action</th>
-                            </tr>
-                        </tfoot>
-                    </table>
+
+            <div class="col-md-12">
+
+                <div class="row">
+                    <div class="col-md-1">
+
+                    </div>
+                    <div class="col-md-3">
+                        <div>
+                            <div class="mailbox-controls">
+                                <!-- Check all button -->
+                                <!-- /.btn-group -->
+                                <div class="" style="display: flex; justify-content: center; align-items: center">
+                                    <span id="page">1</span>-<span id="per_page">50</span>/<span id="total"
+                                                                                                 style="padding-right: 10px">200</span>
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-default btn-flat btn-md btn-previous"
+                                                style="background-color: #fff"><i
+                                                class="fa fa-chevron-left"></i></button>
+                                        <button type="button" class="btn btn-default btn-flat btn-md btn-next"
+                                                style="background-color: #fff"><i
+                                                class="fa fa-chevron-right"></i></button>
+                                    </div>
+
+                                    <select class="form-control form-control-smm pull-right select2"
+                                            style="width: 70px " id="page_size" name="page_size">
+                                        <option value="10" selected="">10</option>
+                                        <option value="20">20</option>
+                                        <option value="50">50</option>
+                                        <option value="100">100</option>
+                                        <option value="1000">All</option>
+
+                                    </select>
+                                    <!-- /.btn-group -->
+                                </div>
+                                <!-- /.pull-right -->
+                            </div>
+                        </div>
+                    </div>
                 </div>
+
+
             </div>
 
         </div>
-        <!-- /.box-body -->
+        <!-- /.row -->
     </div>
-@endsection
 
+
+
+    <div class="test">
+        <!-- Custom Tabs (Pulled to the right) -->
+        <div class="nav-tabs-custom">
+            <ul class="nav nav-tabs pull-right">
+
+                <li class="pull-left header"><i class="fa fa-th"></i>
+                    {{$title}}
+                </li>
+
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">
+                        <i class="fa fa-gear"></i>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li role="presentation"><a role="menuitem" tabindex="-1" href="#" id="cmd-excel">Excel</a></li>
+                        <li role="presentation"><a role="menuitem" tabindex="-1" href="#" id="cmd-pdf">PDF</a></li>
+                        <li role="presentation"><a role="menuitem" tabindex="-1" href="#" id="cmd-img">Image</a></li>
+                    </ul>
+                </li>
+
+                <li>
+                    <a class="btn btn-default" id="btn-create"><i class="fa fa-file-o"></i> New </a>
+                </li>
+
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane active" id="tab_1-1">
+                    <div class="box-body table-responsive no-padding">
+                        <div id="table-show">
+                            <img src="uploads/loading.gif" style="width: 100%; height: 10%">
+
+                        </div>
+                    </div>
+                </div>
+                <!-- /.tab-pane -->
+                <!-- /.tab-pane -->
+            </div>
+            <!-- /.tab-content -->
+        </div>
+        <!-- nav-tabs-custom -->
+    </div>
+
+    <br/>
+
+    @include('products.modal_create')
+
+@endsection
 
 @push('scripts')
     <script>
-        $(function() {
-            let table = $('#table').DataTable({
-                processing: true,
-                serverSide: true,
-                ajax: '{{ url('get_products') }}',
-                columns: [{
-                        data: 'image',
-                        name: 'image',
-                        "sortable": false,
-                        "orderable": false,
-                        render: function(data, type, full, meta) {
-                            console.log(full);
-                            return '<img src="http://192.168.1.55:8009/dist/img/user2-160x160.jpg" width="30px"/>';
-                        }
-                    },
-                    {
-                        data: 'code',
-                        name: 'code'
-                    },
-                    {
-                        data: 'name',
-                        name: 'name'
-                    },
-                    {
-                        data: 'cate_name',
-                        name: 'cate_name'
-                    },
-                    {
-                        data: 'cost',
-                        name: 'cost',
-                        render: currency
-                    },
-                    {
-                        data: 'price',
-                        name: 'price',
-                        render: currency
-                    },
+        $(function () {
 
-                    {
-                        data: 'total',
-                        name: 'total',
-                        render: intQty
-                    }
-                ],
-                "lengthMenu": [
-                    [10, 20, 50, 100, -1],
-                    [10, 20, 50, 100, "All"]
-                ],
-                "pageLength": 20,
-                searching: false,
-                "footerCallback": function(row, data, start, end, display) {
-                    var api = this.api(),
-                        data;
-                    //  $(api.column(0).footer()).html('Total');
-                    // $(api.column(1).footer()).html(monTotal);
-                    //    $(api.column(2).footer()).html(tueTotal);
-                    //   $(api.column(3).footer()).html(wedTotal);
-                    //   $(api.column(4).footer()).html(thuTotal);
+            $(document).on('click', '.btn-previous', function () {
+                let page = parseInt($('#page').text());
+                let per_page = $('#p_page').text();
 
-                    $(api.column(6).footer()).html(intQty(api
-                        .column(6)
-                        .data()
-                        .reduce(function(a, b) {
-                            return intVal(a) + intVal(b);
-                        }, 0)));
+                if (page == '1') {
+                    return;
                 }
+                page -= 1;
+
+                $('#page').text(page);
+                get_data();
             });
 
-            //
-            $(document).on('submit', '#form-create', function(e) {
+            $(document).on('click', '.btn-next', function () {
+                let page = parseInt($('#page').text());
+                let per_page = parseInt($('#p_page').text());
+
+                if (page == per_page - 1) {
+                    return;
+                }
+
+                page += 1;
+
+                $('#page').text(page);
+                get_data();
+            });
+
+            let get_data = function () {
+                let data = {
+                    _token: "{{ csrf_token() }}",
+                    page_size: $('#page_size').val() ?? 10,
+                    page: parseInt($('#page').text()) ?? 1
+                };
+                let params = new URLSearchParams(data).toString();
+                $.ajax({
+                    url: "{{ url('get_products') }}" + "?" + params,
+                    type: 'get',
+                    success: function (data) {
+                        if (data.error) {
+                            alert(data.error);
+                            return;
+                        }
+                        document.querySelector('#page').innerHTML = data.page;
+                        document.querySelector('#per_page').innerHTML = data.per_page;
+                        document.querySelector('#total').innerHTML = data.total;
+                        document.querySelector('#table-show').innerHTML = data.table;
+                    }
+                });
+
+                return;
+            }
+
+            get_data();
+
+            $(document).on('click','#btn-create',function(){
+                $('#modal-create').modal('show');
+                $('#id').val(0);
+                $('#code').val('');
+                $('#name').val('');
+                $('#is_active').val(1);
+                $('#photo').val('');
+                $('#code').val(barcode());
+            });
+
+            $(document).on('submit', '#form-create', function (e) {
                 e.preventDefault();
-                let form = $(this).serializeArray();
+
+                let form = $('#form-create')[0];
+                let formData = new FormData(form);
+                formData.append('image', $('input[type=file]')[0].files[0]);
 
                 $.ajax({
-                    url: "{{ url('create_users') }}",
-                    data: form,
+                    url: $(this).attr('action'),
+                    data: formData,
                     type: 'post',
-                    success: function(data) {
+                    enctype: 'multipart/form-data',
+                    processData: false,
+                    contentType: false,
+                    cache: false,
+                    success: function (data) {
                         if (data.error) {
                             alert(data.error);
                             return;
                         }
                         $('#modal-create').modal('hide');
-                        table.draw();
                         $('#form-create').get(0).reset();
+                        get_data();
                     }
                 });
             });
 
-
-            $(document).on('click', '.btn-pencil', function() {
-
-                let form = {
-                    id: $(this).attr('id')
-                };
-
-                $.ajax({
-                    url: "{{ url('get_user_id', '1') }}",
-                    data: form,
-                    type: 'get',
-                    success: function(data) {
-                        if (data.error) {
-                            alert(data.error);
-                            return;
-                        }
-                        $('#modal-create').modal('show');
-                        $('#id').val(data.id);
-                        $('#first_name').val(data.first_name);
-                        $('#last_name').val(data.last_name);
-                        $('#phone').val(data.phone);
-                        $('#gender').val(data.gender);
-                        $('#store_id').val(data.store_id);
-                        $('#group_id').val(data.group_id);
-
-                    }
-                });
-
+            // add variant
+            $(document).on('click','.add-variant',function () {
+                let new_line = $('#list_variant').find('tr:last').clone();
+                let index = new_line.find('th').text();
+                new_line.find('th').text(parseInt(index) + 1);
+                new_line.find('input:eq(0)').val('S');
+                $('#list_variant').append(new_line);
             });
+
+
+            // row click
+            $(document).on('dblclick','tbody tr',function () {
+                let data = $(this).attr('data');
+                if(data){
+                    let data_source = JSON.parse(data);
+                    $('#modal-create').modal('show');
+                    $('#id').val(data_source.id);
+                    $('#code').val(data_source.code);
+                    $('#name').val(data_source.brand_name);
+                    $('#is_active').val(data_source.is_active);
+                    $('#photo').val(data_source.image);
+                }
+            });
+
+            // generate
+            $(document).on('click','.generate',function () {
+                $('#code').val(barcode());
+            });
+
+            let barcode = function(){
+                return Math.floor(Math.random() * 10000000000000);
+            }
+
+            $('.form-search select, input').change(function () {
+                get_data();
+            });
+
+            $('div.dataTables_length select').addClass('select2');
+
+
+            $('#cmd-pdf').click(function () {
+                CreatePDFfromHTML();
+            });
+
+            $('#cmd-img').click(function () {
+                exportCanvasAsPNG();
+            });
+
+            $('#cmd-excel').click(function () {
+                fnExcelReport();
+            });
+
+
+            let filename = location.href.replace(location.host,'').replace('http:///','');
+
+            function CreatePDFfromHTML() {
+                let HTML_Width = $("#table").width();
+                let HTML_Height = $("#table").height();
+                let top_left_margin = 15;
+                let PDF_Width = HTML_Width + (top_left_margin * 2);
+                let PDF_Height = (PDF_Width * 1.5) + (top_left_margin * 2);
+                let canvas_image_width = HTML_Width;
+                let canvas_image_height = HTML_Height;
+
+                let totalPDFPages = Math.ceil(HTML_Height / PDF_Height) - 1;
+
+                html2canvas($("#table")[0]).then(function (canvas) {
+                    let imgData = canvas.toDataURL("image/jpeg", 1.0);
+                    let pdf = new jsPDF('p', 'pt', [PDF_Width, PDF_Height]);
+                    pdf.addImage(imgData, 'JPG', top_left_margin, top_left_margin, canvas_image_width, canvas_image_height);
+                    for (let i = 1; i <= totalPDFPages; i++) {
+                        pdf.addPage(PDF_Width, PDF_Height);
+                        pdf.addImage(imgData, 'JPG', top_left_margin, -(PDF_Height * i) + (top_left_margin * 4), canvas_image_width, canvas_image_height);
+                    }
+                    pdf.save(filename +".pdf");
+                });
+            }
+
+
+            function fnExcelReport() {
+                var tab_text = "<table border='2px'><tr bgcolor='#87AFC6'>";
+                var textRange;
+                var j = 0;
+                tab = document.getElementById('table'); // id of table
+
+                for (j = 0; j < tab.rows.length; j++) {
+                    tab_text = tab_text + tab.rows[j].innerHTML + "</tr>";
+                }
+
+                tab_text = tab_text + "</table>";
+                tab_text = tab_text.replace(/<A[^>]*>|<\/A>/g, "");//remove if u want links in your table
+                tab_text = tab_text.replace(/<img[^>]*>/gi, ""); // remove if u want images in your table
+                tab_text = tab_text.replace(/<input[^>]*>|<\/input>/gi, ""); // reomves input params
+
+                var ua = window.navigator.userAgent;
+                var msie = ua.indexOf("MSIE ");
+
+                if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./))      // If Internet Explorer
+                {
+                    txtArea1.document.open("txt/html", "replace");
+                    txtArea1.document.write(tab_text);
+                    txtArea1.document.close();
+                    txtArea1.focus();
+                    sa = txtArea1.document.execCommand("SaveAs", true, "Say Thanks to Sumit.xls");
+                } else                 //other browser not tested on IE 11
+                    sa = window.open('data:application/vnd.ms-excel,' + encodeURIComponent(tab_text));
+
+                return (sa);
+            }
+
+
+            function exportCanvasAsPNG() {
+                html2canvas(document.querySelector("#table")).then(canvas => {
+                    a = document.createElement('a');
+                    document.body.appendChild(a);
+                    a.download = filename + ".png";
+                    a.href = canvas.toDataURL();
+                    a.click();
+                });
+            }
 
         });
     </script>
 @endpush
+

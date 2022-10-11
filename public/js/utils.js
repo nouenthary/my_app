@@ -66,6 +66,10 @@ if(active === 'list_sale' || active == 'sale_record' || active == 'sale_report' 
     active = 'sale';
 }
 
+if(active === 'categories' || active == 'brands'){
+    active = 'categories';
+}
+
 $('#' + active).addClass('active');
 
 //iCheck for checkbox and radio inputs
@@ -86,7 +90,7 @@ $('.date-range-picker').daterangepicker({
 
 $(document).on('change', 'form input[type=text], select', function () {
 
-    if ($(this).val().length === 0) {
+    if ($(this).val().length === 0 && $(this).attr('required') == '') {
         $(this).parent().addClass('has-error');
         $(this).parent().children('span').addClass('select2-selections')
     }

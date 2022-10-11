@@ -1,0 +1,95 @@
+@font-face {
+    font-family: 'Khmer OS Battambang Regular';
+    src: url("/css/KhmerOSBattambangRegular.ttf") /* TTF file for CSS3 browsers */
+}
+
+body {
+    font-family: 'Khmer OS Battambang Regular';
+}
+
+.qty {
+    height: 21px;
+}
+
+.mailbox-attachments li {
+    width: 120px;
+}
+
+.mailbox-attachment-icon.has-img>img {
+    height: 110px;
+    border: 4px solid #fff;
+}
+
+.mailbox-attachment-info {
+    text-align: center;
+    height: 30px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 2px;
+    font-size: 12px;
+
+}
+
+.clearfix li {
+    cursor: pointer;
+}
+
+.badge-right {
+    float: right;
+}
+
+.content-wrapper {
+    background-image: url('/uploads/well.jpg');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.well {
+    background-color: #fff;
+}
+
+.close {
+    font-size: 27px;
+}
+
+.quick-cash {
+    margin: 10px 0;
+}
+
+.btn-danger, .bg-red{
+    background-color: #ff4d4f !important;
+}
+
+.btn-primary , .btn-dropbox{
+    background-color: #1890ff !important;
+}
+
+.btn-success , .bg-green{
+    background-color: #389e0d !important;
+}
+
+
+.skin-blue-light,
+.navbar ,
+.logo,
+.user-header,
+.bg-aqua,
+.sidebar-toggle:hover
+{
+    background-color: #1890ff !important;
+}
+
+
+@keyframes thumbnail {
+    0% {
+        transform: translateY(-100%);
+    }
+    100% {
+        transform: translateY(0%);
+    }
+}
+
+.thumbnail-component {
+    animation: 0.5s ease 0s 1 thumbnail;
+}

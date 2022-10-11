@@ -4,7 +4,7 @@
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title"><i class="fa fa-cube"></i> <span id="modal-title">Add Import</span></h4>
+                <h4 class="modal-title"><i class="fa fa-cube"></i> <span id="modal-title">{{lang('add_import')}}</span></h4>
             </div>
             <form id="form-create" role="form" method="POST" enctype="multipart/form-data"
                   action="{{ url('create_import') }}">
@@ -29,7 +29,7 @@
                                 @include('components.warehouse',['style' => ''])
 
                                 <div class="form-group">
-                                    <label for="qty">Quantity </label>
+                                    <label for="qty">{{lang('qty')}} </label>
                                     <input type="text" class="form-control numeric" id="qty" name="qty"
                                            placeholder="Enter Quantity" required value="0">
 
@@ -39,7 +39,7 @@
 
 
                                 <div class="form-group">
-                                    <label for="file">Reference</label>
+                                    <label for="file">{{lang('photo')}}</label>
                                     <input type="file" class="form-control" id="file" name="file">
                                 </div>
 
@@ -57,8 +57,8 @@
 
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-success"><i class="fa fa-save"></i> Save changes</button>
+                    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">{{lang('close')}}</button>
+                    <button type="submit" class="btn btn-success"><i class="fa fa-save"></i> {{lang('save')}}</button>
                 </div>
             </form>
         </div>

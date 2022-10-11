@@ -16,28 +16,94 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $data['title'] = 'Products';
+        $data['title'] = lang('list_product');
+        $data['categories'] = DB::table('tec_categories')->orderBy('name', 'asc')->get();
+        $data['brands'] = DB::table('brands')->orderBy('brand_name', 'asc')->get();
         return view('products.index', $data);
     }
 
     public function get_products(Request $request)
     {
-        if ($request->ajax()) {
-            $data = DB::table('tec_categories as uu')
-                ->selectRaw("u.* , uu.id , uu.name as cate_name, (SELECT COALESCE(SUM(qty),0) FROM `tec_stock_in` WHERE fk_pro_id = u.id ) as total")
-                ->join('tec_products as u', 'u.category_id', '=', 'uu.id')
-                ->orderBy('u.name')
-                ->get();
+        $columns = [
+            lang("image"),
+            lang("code"),
+            lang("product"),
+            lang('unit_cost'),
+            lang('sale_price'),
+            lang('qty'),
+            lang('category'),
+            lang('brand'),
+        ];
 
-            return Datatables::of($data)
-                ->addIndexColumn()
-                ->addColumn('action', function ($row) {
-                    $actionBtn = '<a href="javascript:void(0)" class="edit btn btn-success btn-sm">Edit</a> <a href="javascript:void(0)" class="delete btn btn-danger btn-sm">Delete</a>';
-                    return $this->get_button_action($row->id);
-                })
-                ->rawColumns(['action'])
-                ->make(true);
+        $cols = '';
+
+        foreach ($columns as $col) {
+            $cols = $cols . html('th', $col, 'class="active"');
         }
+        $data = DB::table('tec_products as p')
+            ->selectRaw(
+                'p.id, p.name, p.cost, p.price, p.image, p.code, p.unit,
+                    p.category_id, p.brand_id, p.alert_quantity, p.details, p.type,
+                    c.name as cate_name,
+                    b.id as brand_id ,b.brand_name,
+                    (SELECT COALESCE (SUM(quantity),0) FROM `tec_product_store_qty` WHERE product_id=p.id ) as quantity
+                '
+            )
+            ->join('tec_categories as c', 'p.category_id', '=', 'c.id')
+            ->join('brands as b', 'p.brand_id', '=', 'b.id');
+
+        if ($request->product_id != '') {
+            $data = $data->where('p.id', '=', $request->product_id);
+        }
+
+        if ($request->code != '') {
+            $data = $data->where('p.code', '=', $request->code);
+        }
+
+        $data = $data->paginate($request->page_size, ['*'], 'page', $request->page);
+
+        $value = '';
+
+        $qty = 0;
+
+        foreach ($data as $col) {
+
+            $json = json_encode($col);
+            $qty = $qty + $col->quantity;
+            $row = "id='$col->id' data='$json' ";
+            $value = $value . html('tr',
+                    html('td', image("/products/$col->image", "25px"), 'class="text-center" width="25px"') .
+                    html('td', '' . $col->code, 'width="100px"') .
+                    html('td', '' . $col->name, '') .
+                    html('td', '' . number_format($col->cost) . '៛', 'width="80px" class="text-right"') .
+                    html('td', '' . number_format($col->price) . '៛', 'width="80px" class="text-right"') .
+                    html('td', '' . number_format($col->quantity) . ' ' . $col->unit, 'width="100px" class="text-right"') .
+                    html('td', '' . $col->cate_name, 'width="100px"') .
+                    html('td', '' . $col->brand_name, 'width="100px"')
+                    , $row);
+        }
+
+        $footer = html('tr',
+            html('th', 'សរុប', 'class="text-uppercase" width="100px"') .
+            html('th', '', '') .
+            html('th', '', '') .
+            html('th', '', 'class="text-right"') .
+            html('th', '', 'class="text-right"') .
+            html('th', number_format($qty) . '', 'class="text-right text-primary"') .
+            html('th', '', 'class="text-right"') .
+            html('th', '', 'class="text-right"')
+
+            , 'class="active"');
+
+        $table = html('table', html('tr', $cols, '') . html('tr', $value, '') . $footer, 'class="table table-bordered table-striped table-hover" id="table" ');
+
+        return [
+            'table' => $table,
+            'page' => $data->currentPage(),
+            'per_page' => $data->lastPage(),
+            'total' => $data->total(),
+        ];
+
     }
 
     public function get_button_action($row)
@@ -68,7 +134,70 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $names = $request->photo;
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $names = date('Y_m_d_H_i_s') . '.' . $image->getClientOriginalExtension();
+            $destinationPath = public_path('/uploads/products');
+            $image->move($destinationPath, $names);
+        }
+
+        $code = DB::table('tec_products')
+            ->where('code', '=', $request->code)
+            ->first();
+
+        if ($code != '') {
+            return ['error' => "code `$request->code` is exist..."];
+        }
+
+        $data = [
+            'type' => 'standard',
+            'code' => $request->code,
+            'name' => $request->name,
+            'category_id' => $request->category_id,
+            'price' => $request->price,
+            'cost' => $request->cost,
+            'price_wholesale' => 0,
+            'image' => $names,
+            'tax' => 0,
+            'tax_method' => 0,
+            'quantity' => 0,
+            'barcode_symbology' => $request->barcode_symbology,
+            'details' => $request->deatils,
+            'alert_quantity' => 0,
+            'brand_id' => $request->brand_id,
+            'unit' => $request->unit,
+            'is_active' => $request->is_active,
+            'user_id' => auth()->user()->user_id,
+            'created_at' => date('Y_m_d_H_i_s')
+        ];
+
+        $id = $request->id;
+
+        if ($id == 0) {
+            $id = DB::table('tec_products')->insertGetId($data);
+        }
+
+        if (count($request->variant_name) > 0) {
+            foreach ($request->variant_name as $item) {
+                $data = [
+                    'variant' => $item,
+                    'product_id' => $id
+                ];
+
+                $variant = DB::table('variants')
+                    ->where('variant', '=', $item)
+                    ->where('product_id','=',$id)
+                    ->first();
+
+                if ($variant == '') {
+                    DB::table('variants')->insert($data);
+                }
+
+            }
+
+        }
+        return $request->all();
     }
 
     /**
@@ -127,9 +256,9 @@ class ProductController extends Controller
     {
         if ($request->ajax()) {
 
-            $store_id = (int) $request->store_id;
+            $store_id = (int)$request->store_id;
 
-            $product_id = (int) $request->product_id;
+            $product_id = (int)$request->product_id;
 
             $data = DB::table('tec_categories as uu');
 
@@ -164,7 +293,7 @@ class ProductController extends Controller
             ->orderByDesc('id')
             ->first();
         if ($no != null) {
-            $last_no = (int) $no->no + 1;
+            $last_no = (int)$no->no + 1;
             $invoice = str_pad($last_no, 7, '0', STR_PAD_LEFT);
         }
 
@@ -302,32 +431,32 @@ class ProductController extends Controller
             $token = csrf_token();
 
             $value = $value . $this->html('tr',
-                $this->html('td', '#' . $col->no, 'width="80px"') .
-                $this->html('td', '' . $col->date, 'width="160px"') .
-                $this->html('td', $col->product_name, 'class="text-left"') .
-                $this->html('td', number_format($col->qty) . ' pcs', 'class="text-right"') .
-                $this->html('td', $col->username, 'class="text-rights" ') .
-                $this->html('td', $col->remark, 'class="text-rights" ') .
-                $this->html('td', $col->store_name, 'class="text-rights" ') .
-                $this->html('td', $col->ware_name, 'class="text-rights" ') .
-                $this->html('td', "
+                    $this->html('td', '#' . $col->no, 'width="80px"') .
+                    $this->html('td', '' . $col->date, 'width="160px"') .
+                    $this->html('td', $col->product_name, 'class="text-left"') .
+                    $this->html('td', number_format($col->qty) . ' pcs', 'class="text-right"') .
+                    $this->html('td', $col->username, 'class="text-rights" ') .
+                    $this->html('td', $col->remark, 'class="text-rights" ') .
+                    $this->html('td', $col->store_name, 'class="text-rights" ') .
+                    $this->html('td', $col->ware_name, 'class="text-rights" ') .
+                    $this->html('td', "
                     <a class='btn btn-xs' href='/receipt?id=$col->id&token=$token' target='_blank'><i class='fa fa-file-text-o'></i></a>
                 ", 'class="text-rights" ')
-                , 'class="text-center"');
+                    , 'class="text-center"');
         }
 
         $footer =
-        $this->html('tr',
-            $this->html('th', 'សរុប', 'class="text-uppercase" width="100px"') .
-            $this->html('th', '', '') .
-            $this->html('th', '', '') .
-            $this->html('th', number_format($qty) . ' pcs', 'class="text-right text-primary"') .
-            $this->html('th', '', 'class="text-right"') .
-            $this->html('th', '', 'class="text-right"') .
-            $this->html('th', '', 'class="text-right"') .
-            $this->html('th', '', 'class="text-right"') .
-            $this->html('th', '', 'class="text-right"')
-            , 'class="active"');
+            $this->html('tr',
+                $this->html('th', 'សរុប', 'class="text-uppercase" width="100px"') .
+                $this->html('th', '', '') .
+                $this->html('th', '', '') .
+                $this->html('th', number_format($qty) . ' pcs', 'class="text-right text-primary"') .
+                $this->html('th', '', 'class="text-right"') .
+                $this->html('th', '', 'class="text-right"') .
+                $this->html('th', '', 'class="text-right"') .
+                $this->html('th', '', 'class="text-right"') .
+                $this->html('th', '', 'class="text-right"')
+                , 'class="active"');
 
         $table = $this->html('table', $this->html('tr', $cols, '') . $this->html('tr', $value, '') . $footer, 'class="table table-bordered table-stripeds" id="table"');
 
@@ -454,30 +583,30 @@ class ProductController extends Controller
             }
 
             $value = $value . $this->html('tr',
-                $this->html('td', '#' . $col->id, 'width="80px"') .
-                $this->html('td', '' . $col->date, 'width="160px"') .
-                $this->html('td', $col->product_name, 'class="text-left"') .
-                $this->html('td', number_format($col->qty) . ' pcs', 'class="text-right"') .
-                $this->html('td', $status, 'class="text-rights" ') .
-                $this->html('td', $col->username, 'class="text-rights" ') .
-                $this->html('td', $col->remark, 'class="text-rights" ') .
-                $this->html('td', $col->store_name, 'class="text-rights" ') .
-                $this->html('td', $col->ware_name, 'class="text-rights" ')
-                , '');
+                    $this->html('td', '#' . $col->id, 'width="80px"') .
+                    $this->html('td', '' . $col->date, 'width="160px"') .
+                    $this->html('td', $col->product_name, 'class="text-left"') .
+                    $this->html('td', number_format($col->qty) . ' pcs', 'class="text-right"') .
+                    $this->html('td', $status, 'class="text-rights" ') .
+                    $this->html('td', $col->username, 'class="text-rights" ') .
+                    $this->html('td', $col->remark, 'class="text-rights" ') .
+                    $this->html('td', $col->store_name, 'class="text-rights" ') .
+                    $this->html('td', $col->ware_name, 'class="text-rights" ')
+                    , '');
         }
 
         $footer =
-        $this->html('tr',
-            $this->html('th', 'សរុប', 'class="text-uppercase" width="100px"') .
-            $this->html('th', '', '') .
-            $this->html('th', '', '') .
-            $this->html('th', number_format($qty) . ' pcs', 'class="text-right text-primary"') .
-            $this->html('th', '', 'class="text-right"') .
-            $this->html('th', '', 'class="text-right"') .
-            $this->html('th', '', 'class="text-right"') .
-            $this->html('th', '', 'class="text-right"') .
-            $this->html('th', '', 'class="text-right"')
-            , 'class="active"');
+            $this->html('tr',
+                $this->html('th', 'សរុប', 'class="text-uppercase" width="100px"') .
+                $this->html('th', '', '') .
+                $this->html('th', '', '') .
+                $this->html('th', number_format($qty) . ' pcs', 'class="text-right text-primary"') .
+                $this->html('th', '', 'class="text-right"') .
+                $this->html('th', '', 'class="text-right"') .
+                $this->html('th', '', 'class="text-right"') .
+                $this->html('th', '', 'class="text-right"') .
+                $this->html('th', '', 'class="text-right"')
+                , 'class="active"');
 
         $table = $this->html('table', $this->html('tr', $cols, '') . $this->html('tr', $value, '') . $footer, 'class="table table-bordered table-stripeds" id="table"');
 
@@ -505,7 +634,6 @@ class ProductController extends Controller
             'fk_pro_id' => $request->product_id_no,
             'fk_store_id' => $request->store_id_no,
             'qty' => $request->qty,
-            'image' => $name,
             'user_update' => auth()->user()->user_id,
             'date_update' => date('Y-m-d H:i:s'),
             'time_update' => date('Y-m-d H:i:s'),
@@ -522,6 +650,13 @@ class ProductController extends Controller
                 SET `in` = `in` + '$request->qty'
                 WHERE
                 `warehouse_id` = '$request->warehouse_id'
+            ");
+
+            DB::update("
+                UPDATE `tec_product_store_qty`
+                SET `quantity` = `quantity` - '$request->qty'
+                WHERE
+                `product_id` = '$request->product_id_no' AND `store_id` = '$request->store_id_no'
             ");
         }
 
@@ -624,7 +759,7 @@ class ProductController extends Controller
         if ($request->ajax()) {
             $data = DB::table('tec_transfers as u');
 
-            $warehouse_id = (int) $request->warehouse_id;
+            $warehouse_id = (int)$request->warehouse_id;
 
             $date = $request->date;
 

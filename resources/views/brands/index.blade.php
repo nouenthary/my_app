@@ -1,6 +1,23 @@
 @extends('main')
 @section('content')
 
+
+
+{{--    <div class="container mt-4">--}}
+{{--        <div class="mb-3">{!! DNS2D::getBarcodeHTML('4445645656', 'QRCODE') !!}</div>--}}
+{{--        <div class="mb-3">{!! DNS1D::getBarcodeHTML('4445645656', 'C128B') !!}</div>--}}
+{{--        <div class="mb-3">{!! DNS1D::getBarcodeHTML('4445645656', 'PHARMA2T') !!}</div>--}}
+{{--        <div class="mb-3">{!! DNS1D::getBarcodeHTML('4445645656', 'CODABAR') !!}</div>--}}
+{{--        <div class="mb-3">{!! DNS1D::getBarcodeHTML('4445645656', 'KIX') !!}</div>--}}
+{{--        <div class="mb-3">{!! DNS1D::getBarcodeHTML('4445645656', 'RMS4CC') !!}</div>--}}
+{{--        <div class="mb-3">{!! DNS1D::getBarcodeHTML('4445645656', 'UPCA') !!}</div>--}}
+{{--    </div>--}}
+
+{{--    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>--}}
+
+{{--    <svg id="barcode"></svg>--}}
+{{--    <img id="image"></img>--}}
+
     <!-- /.box-header -->
     <div class="form-search">
 
@@ -61,7 +78,7 @@
         <div class="nav-tabs-custom">
             <ul class="nav nav-tabs pull-right">
 
-                <li class="pull-left header"><i class="fa fa-th"></i> {{__("language.category")}}</li>
+                <li class="pull-left header"><i class="fa fa-th"></i> {{lang("brand")}}</li>
 
                 <li class="dropdown">
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">
@@ -98,13 +115,24 @@
 
     <br/>
 
-    @include('categories.modal_create')
+    @include('brands.modal_create')
 
 @endsection
 
 @push('scripts')
     <script>
         $(function () {
+
+            // JsBarcode("#barcode", "Hi world!");
+            // var svg = $("#barcode")[0];
+            //
+            // var xml = new XMLSerializer().serializeToString(svg);
+            //
+            // var base64 = 'data:image/svg+xml;base64,' + btoa(xml);
+            //
+            // var img = $("#image")[0];
+            //
+            // img.src = base64;
 
             $(document).on('click', '.btn-previous', function () {
                 let page = parseInt($('#page').text());
@@ -141,7 +169,7 @@
                 };
                 let params = new URLSearchParams(data).toString();
                 $.ajax({
-                    url: "{{ url('get_categories') }}" + "?" + params,
+                    url: "{{ url('get_brands') }}" + "?" + params,
                     type: 'get',
                     success: function (data) {
                         if (data.error) {
@@ -152,7 +180,6 @@
                         document.querySelector('#per_page').innerHTML = data.per_page;
                         document.querySelector('#total').innerHTML = data.total;
                         document.querySelector('#table-show').innerHTML = data.table;
-                        console.log(data);
                     }
                 });
 
@@ -166,7 +193,6 @@
                 $('#id').val(0);
                 $('#code').val('');
                 $('#name').val('');
-                $('#parent_id').val('');
                 $('#is_active').val(1);
                 $('#photo').val('');
                 $('#code').val(barcode());
@@ -207,8 +233,7 @@
                     $('#modal-create').modal('show');
                     $('#id').val(data_source.id);
                     $('#code').val(data_source.code);
-                    $('#name').val(data_source.name);
-                    $('#parent_id').val(data_source.parent_id);
+                    $('#name').val(data_source.brand_name);
                     $('#is_active').val(data_source.is_active);
                     $('#photo').val(data_source.image);
                 }

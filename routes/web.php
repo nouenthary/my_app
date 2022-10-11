@@ -4,6 +4,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\BrandController;
 use Illuminate\Support\Facades\Route;
 /*
 |--------------------------------------------------------------------------
@@ -16,30 +17,26 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-
-//Route::get('sign_in', [UserController::class,'sign_in']);
-//Route::post('get_login', [UserController::class,'get_login'])->name('get_login');
-
 Route::group(['middleware' => ['auth']], function () {
 
-    Route::get('/', function () {
-        return view('dashbaord.dashboard');
-    });
+    Route::get('/', [UserController::class,'dashboard']);
 
     Route::get('post_logout', [UserController::class,'logout']);
 
     Route::get('shop', [UserController::class,'dashboard']);
-    Route::get('dashboard', [UserController::class,'dashboard'])->name('dashboard');
+    Route::get('/dashboard', [UserController::class,'dashboard'])->name('dashboard');
 
     Route::get('users', [UserController::class,'users'])->name('users');
     Route::get('get_users', [UserController::class,'get_users'])->name('get_users');
     Route::get('get_user_id/{id}', [UserController::class,'get_user_id'])->name('get_user_id');
     Route::post('create_users', [UserController::class,'create_users']);
+    Route::get('profile', [UserController::class,'profile'])->name('profile');
+    Route::post('update_profile', [UserController::class,'update_profile'])->name('update_profile');
 
     Route::post('create_customer', [UserController::class,'create_customer']);
 
     //
-    Route::get('products', [ProductController::class,'index'])->name('products');
+    Route::resource('products', ProductController::class);
     Route::get('get_products', [ProductController::class,'get_products'])->name('get_products');
 
 
@@ -66,6 +63,7 @@ Route::group(['middleware' => ['auth']], function () {
     // sale
     Route::get('list_sale', [SaleController::class,'list_sale'])->name('list_sale');
     Route::post('get_list_sale', [SaleController::class,'get_list_sale'])->name('get_list_sale');
+    Route::post('return_sale', [SaleController::class,'return_sale'])->name('return_sale');
     // sale record
     Route::get('sale_record', [SaleController::class,'sale_record'])->name('sale_record');
     Route::post('get_sale_record', [SaleController::class,'get_sale_record'])->name('get_sale_record');
@@ -86,6 +84,9 @@ Route::group(['middleware' => ['auth']], function () {
     // categories
     Route::resource('categories', CategoryController::class);
     Route::get('get_categories', [CategoryController::class,'get_categories']);
+    //
+    Route::resource('brands', BrandController::class);
+    Route::get('get_brands', [BrandController::class,'get_brands']);
 });
 
 Route::get('lang/{locale}', function ($locale) {
@@ -96,7 +97,7 @@ Route::get('lang/{locale}', function ($locale) {
 
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/home', [UserController::class,'dashboard'])->name('home');
 
 Route::get('generate-pdf', [ProductController::class, 'generatePDF']);
 
@@ -105,6 +106,3 @@ Route::get('ui',function (){
     return view('ui');
 });
 
-Auth::routes();
-
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

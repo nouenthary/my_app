@@ -7,66 +7,69 @@
     <script src="https://code.highcharts.com/modules/accessibility.js"></script>
 
     <div class="row">
-        <div class="col-lg-3 col-xs-6">
+        <div class="col-lg-3 col-md-6 col-xs-12">
             <!-- small box -->
             <div class="small-box bg-aqua">
                 <div class="inner">
-                    <h3>0 pcs</h3>
+                    <h3>{{  number_format($qty_sold[0]->qty) }} pcs</h3>
 
-                    <p>Sold out</p>
+                    <p>{{ lang('stock_in') }}</p>
                 </div>
                 <div class="icon">
                     <i class="ion ion-bag"></i>
                 </div>
-                <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+                <a href="#" class="small-box-footer">{{ lang('more_info') }} <i class="fa fa-arrow-circle-right"></i></a>
             </div>
         </div>
         <!-- ./col -->
-        <div class="col-lg-3 col-xs-6">
+        <div class="col-lg-3 col-md-6 col-xs-12">
             <!-- small box -->
             <div class="small-box bg-green">
                 <div class="inner">
-                    <h3>0 pcs</h3>
+                    <h3>{{ number_format($qty_in[0]->qty) }} pcs</h3>
 
-                    <p>Stock Import</p>
+                    <p>{{ lang('stock_in') }}</p>
                 </div>
                 <div class="icon">
                     <i class="ion ion-stats-bars"></i>
                 </div>
-                <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+                <a href="#" class="small-box-footer">{{ lang('more_info') }} <i class="fa fa-arrow-circle-right"></i></a>
             </div>
         </div>
-        <!-- ./col -->
-        <div class="col-lg-3 col-xs-6">
-            <!-- small box -->
-            <div class="small-box bg-yellow">
-                <div class="inner">
-                    <h3>0 pcs</h3>
 
-                    <p>Qty Balance </p>
-                </div>
-                <div class="icon">
-                    <i class="ion ion-person-add"></i>
-                </div>
-                <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
-            </div>
-        </div>
-        <!-- ./col -->
-        <div class="col-lg-3 col-xs-6">
+        <div class="col-lg-3 col-md-6 col-xs-12">
             <!-- small box -->
             <div class="small-box bg-red">
                 <div class="inner">
-                    <h3>0 pcs</h3>
+                    <h3>{{ number_format($qty_out[0]->qty) }} pcs</h3>
 
-                    <p>Stock Export</p>
+                    <p>{{ lang('stock_out') }}</p>
                 </div>
                 <div class="icon">
                     <i class="ion ion-pie-graph"></i>
                 </div>
-                <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+                <a href="#" class="small-box-footer">{{ lang('more_info') }} <i class="fa fa-arrow-circle-right"></i></a>
             </div>
         </div>
         <!-- ./col -->
+
+        <!-- ./col -->
+        <div class="col-lg-3 col-md-6 col-xs-12">
+            <!-- small box -->
+            <div class="small-box bg-yellow">
+                <div class="inner">
+                    <h3>{{ number_format($qty_balance) }} pcs</h3>
+
+                    <p>{{ lang('balance') }}</p>
+                </div>
+                <div class="icon">
+                    <i class="ion ion-person-add"></i>
+                </div>
+                <a href="#" class="small-box-footer">{{ lang('more_info') }} <i class="fa fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        <!-- ./col -->
+
     </div>
 
     <style>
