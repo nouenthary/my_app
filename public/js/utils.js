@@ -62,7 +62,7 @@ if(active === 'adjustment'){
     active = 'warehouse';
 }
 
-if(active === 'list_sale' || active == 'sale_record' || active == 'sale_report' || active == 'stock_report'){
+if(active === 'list_sale' || active == 'sale_record' || active == 'sale_report' || active == 'stock_report' || active == 'chart_report'){
     active = 'sale';
 }
 

@@ -259,7 +259,7 @@
                     success: function(r) {
                         let store = r.data;
 
-                        console.log(store);
+                        //console.log(store);
 
                         var qty = store;
 
