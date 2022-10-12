@@ -363,12 +363,11 @@ $(function () {
     //payment
     $('#btn-payment').click(function () {
 
-        $('#btn-payment').attr('disabled', 'disabled');
-
         let amount_pay = $('#md-riel').text().replace(',', '').replace('៛', '');
         let amount_main = $('#amount_main').val();
+        $('#amount_main').focus()
         if (parseFloat(amount_main) >= parseFloat(amount_pay)) {
-
+            $('#btn-payment').attr('disabled', 'disabled');
             let items = JSON.parse(localStorage.getItem(key));
 
             if(items.length == 0){

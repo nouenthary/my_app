@@ -172,7 +172,7 @@ class SaleController extends Controller
             ->where('tec_sales.id', $request->sale_id)
             ->get();
 
-        if(Auth::user()->user_id != $sale[0]->created_by){
+        if (Auth::user()->user_id != $sale[0]->created_by) {
             return ['error' => 'You can not delete.'];
         }
 
@@ -243,20 +243,28 @@ class SaleController extends Controller
         }
 
         $data = DB::table('tec_sales')
-            ->select('tec_sales.id',
-                DB::raw("DATE_FORMAT(tec_sales.date, ' %d/%m/%Y %h:%i %p') as date"),
-                'tec_sales.customer_name',
-                'tec_sale_items.quantity',
-                'tec_sales.total',
-                'tec_sales.status',
-                'tec_sales.total_discount',
-                'tec_sales.paid',
-                'tec_stores.name',
-                'tec_sale_items.product_name',
-                'tec_sale_items.unit_price',
-                'tec_sale_items.subtotal'
+            ->selectRaw("tec_sales.id,
+                DATE_FORMAT(tec_sales.date, ' %d/%m/%Y %h:%i %p') as date,
+                tec_sales.customer_name,
+                tec_sale_items.quantity,
+                tec_sales.total,
+                tec_sales.status,
+                tec_sales.total_discount,
+                tec_sales.paid,
+                tec_stores.name,
+                tec_sale_items.product_id,
+                tec_sale_items.product_name,
+                tec_sale_items.unit_price,
+                tec_sale_items.subtotal,
+                tec_products.branch_commission,
+                tec_products.staff_commission,
+                tec_products.other_commission,
+                tec_users.salt
+                "
             )
             ->join('tec_sale_items', 'tec_sales.id', '=', 'tec_sale_items.sale_id')
+            ->join('tec_products', 'tec_sale_items.product_id', '=', 'tec_products.id')
+            ->join('tec_users', 'tec_sales.created_by', '=', 'tec_users.id')
             ->join('tec_stores', 'tec_sales.store_id', '=', 'tec_stores.id');
 
         if ($request->store_id != '') {
@@ -299,10 +307,21 @@ class SaleController extends Controller
 
             $qty = $qty + $col->quantity;
             $total = $total + $col->subtotal;
-            $commission = $commission + ($col->quantity * 500);
+
+            $commission_sale = 0;
+            if ($col->salt == 'branch') {
+                $commission_sale = $col->branch_commission * $col->quantity;
+                $commission = $commission + $col->branch_commission * $col->quantity;
+            } else if ($col->salt == 'other') {
+                $commission_sale = $col->other_commission * $col->quantity;
+                $commission = $commission + $col->other_commission * $col->quantity;
+            } else if($col->salt == "staff") {
+                $commission = $commission + $col->staff_commission * $col->quantity;
+                $commission_sale = $col->staff_commission * $col->quantity;
+            }
 
             $value = $value . $this->html('tr',
-                    $this->html('td', $col->name, '') .
+                    $this->html('td', $col->name  , '') .
                     $this->html('td', '#' . $col->id, 'width="100px"') .
                     $this->html('td', $col->date, '') .
                     $this->html('td', $col->customer_name, '') .
@@ -310,7 +329,7 @@ class SaleController extends Controller
                     $this->html('td', number_format($col->unit_price) . '៛', 'class="text-right"') .
                     $this->html('td', number_format($col->quantity), 'class="text-right"') .
                     $this->html('td', number_format($col->subtotal) . '៛', 'class="text-right"') .
-                    $this->html('td', number_format($col->quantity * 500) . '៛', 'class="text-right"')
+                    $this->html('td', number_format($commission_sale) . '៛', 'class="text-right"')
                     , '');
         }
 
@@ -318,13 +337,13 @@ class SaleController extends Controller
             $this->html('tr',
                 $this->html('th', 'សរុប', 'class="text-uppercase" width="100px"') .
                 $this->html('th', '', '') .
+                $this->html('th', '', 'width="100px"') .
+                $this->html('th', '', 'width="100px"') .
                 $this->html('th', '', '') .
-                $this->html('th', '', '') .
-                $this->html('th', '', '') .
-                $this->html('th', '', '') .
-                $this->html('th', number_format($qty), 'class="text-right"') .
-                $this->html('th', number_format($total) . '៛', 'class="text-right"') .
-                $this->html('th', number_format($commission) . '៛', 'class="text-right"')
+                $this->html('th', '', 'width="100px"') .
+                $this->html('th', number_format($qty), 'class="text-right" width="100px"') .
+                $this->html('th', number_format($total) . '៛', 'class="text-right" width="100px"') .
+                $this->html('th', number_format($commission) . '៛', 'class="text-right" width="100px"')
                 , 'class="active"');
 
         $table = $this->html('table', $this->html('tr', $cols, '') . $this->html('tr', $value, '') . $footer, 'class="table table-bordered table-stripeds" id="table"');
@@ -371,10 +390,17 @@ class SaleController extends Controller
                 'tec_sale_items.product_name',
                 DB::raw("SUM(tec_sale_items.quantity) quantity"),
                 'tec_sale_items.unit_price',
-                DB::raw("SUM(tec_sale_items.subtotal) subtotal")
+                DB::raw("SUM(tec_sale_items.subtotal) subtotal"),
+                "tec_products.branch_commission",
+                "tec_products.staff_commission",
+                "tec_products.other_commission",
+                "tec_users.salt"
             )
             ->join('tec_sale_items', 'tec_sales.id', '=', 'tec_sale_items.sale_id')
+            ->join('tec_products', 'tec_sale_items.product_id', '=', 'tec_products.id')
+            ->join('tec_users', 'tec_sales.created_by', '=', 'tec_users.id')
             ->join('tec_stores', 'tec_sales.store_id', '=', 'tec_stores.id');
+
 
         if ($request->store_id != '') {
             $data = $data->where('tec_sales.store_id', '=', $request->store_id);
@@ -395,7 +421,16 @@ class SaleController extends Controller
         }
 
         $data = $data
-            ->groupBy(DB::raw("DATE_FORMAT(tec_sales.date, '%d/%m/%Y') "), 'tec_sale_items.product_name', 'tec_stores.name', 'tec_sale_items.unit_price')
+            ->groupBy(
+                DB::raw("DATE_FORMAT(tec_sales.date, '%d/%m/%Y') "),
+                'tec_sale_items.product_name',
+                'tec_stores.name',
+                'tec_sale_items.unit_price',
+                "tec_products.branch_commission",
+                "tec_products.staff_commission",
+                "tec_products.other_commission",
+                "tec_users.salt"
+            )
             ->orderByDesc('tec_sales.date')
             ->paginate($request->page_size, ['*'], 'page', $request->page);
 
@@ -409,11 +444,22 @@ class SaleController extends Controller
 
             $qty = $qty + $col->quantity;
             $total = $total + $col->subtotal;
-            $commission = $commission + ($col->quantity * 500);
 
             $price = (float)$col->subtotal / 4000;
 
             $usd = $usd + $price;
+
+            $commission_sale = 0;
+            if ($col->salt == 'branch') {
+                $commission_sale = $col->branch_commission * $col->quantity;
+                $commission = $commission + $col->branch_commission * $col->quantity;
+            } else if ($col->salt == 'other') {
+                $commission_sale = $col->other_commission * $col->quantity;
+                $commission = $commission + $col->other_commission * $col->quantity;
+            } else if($col->salt == "staff") {
+                $commission = $commission + $col->staff_commission * $col->quantity;
+                $commission_sale = $col->staff_commission * $col->quantity;
+            }
 
             $value = $value . $this->html('tr',
                     $this->html('td', $col->name, '') .
@@ -423,7 +469,7 @@ class SaleController extends Controller
                     $this->html('td', number_format($col->quantity), 'class="text-right" ') .
                     $this->html('td', number_format($col->subtotal) . '៛', 'class="text-right"') .
                     $this->html('td', '$' . sprintf('%0.3f', $price), 'class="text-right"') .
-                    $this->html('td', number_format($col->quantity * 500) . '៛', 'class="text-right"')
+                    $this->html('td', number_format($commission_sale) . '៛', 'class="text-right"')
                     , '');
         }
 
@@ -452,6 +498,10 @@ class SaleController extends Controller
     //
     public function sale_report_daily(Request $request)
     {
+        if ($request->store_id == '') {
+            return back();
+        }
+
         $data = DB::table('tec_sales')
             ->select(
                 'tec_stores.name',
@@ -459,9 +509,15 @@ class SaleController extends Controller
                 'tec_sale_items.product_name',
                 DB::raw("SUM(tec_sale_items.quantity) quantity"),
                 'tec_sale_items.unit_price',
-                DB::raw("SUM(tec_sale_items.subtotal) subtotal")
+                DB::raw("SUM(tec_sale_items.subtotal) subtotal"),
+                "tec_products.branch_commission",
+                "tec_products.staff_commission",
+                "tec_products.other_commission",
+                "tec_users.salt"
             )
             ->join('tec_sale_items', 'tec_sales.id', '=', 'tec_sale_items.sale_id')
+            ->join('tec_products', 'tec_sale_items.product_id', '=', 'tec_products.id')
+            ->join('tec_users', 'tec_sales.created_by', '=', 'tec_users.id')
             ->join('tec_stores', 'tec_sales.store_id', '=', 'tec_stores.id');
 
         if ($request->store_id != '') {
@@ -485,7 +541,16 @@ class SaleController extends Controller
         $store = DB::table('tec_stores')->where('id', $request->store_id)->first();
 
         $data = $data
-            ->groupBy(DB::raw("DATE_FORMAT(tec_sales.date, '%d/%m/%Y') "), 'tec_sale_items.product_name', 'tec_stores.name', 'tec_sale_items.unit_price')
+            ->groupBy(
+                DB::raw("DATE_FORMAT(tec_sales.date, '%d/%m/%Y') "),
+                'tec_sale_items.product_name',
+                'tec_stores.name',
+                'tec_sale_items.unit_price',
+                "tec_products.branch_commission",
+                "tec_products.staff_commission",
+                "tec_products.other_commission",
+                "tec_users.salt"
+            )
             ->orderByDesc('tec_sales.date')
             ->paginate($request->page_size, ['*'], 'page', $request->page);
         return view('sale.sale_report_daily', ['data' => $data, 'store' => $store]);

@@ -1,10 +1,30 @@
 @extends('main')
 @section('content')
+    <style>
+        @media print {
+            .printPageButton {
+                display: none;
+            }
 
+            .table-show{
+                height: 100vh;
+            }
+
+            .myDivToPrint {
+
+                height: 100vh;
+                width: 100%;
+                position: relative;
+
+            }
+        }
+    </style>
     <!-- /.box-header -->
-    <div class="form-search">
 
-        <div class="row">
+
+    <div class="form-search printPageButton">
+
+        <div class="row ">
             <div class="col-md-12">
                 @include('components.store')
             </div>
@@ -66,14 +86,15 @@
             </div>
 
         </div>
+
         <!-- /.row -->
     </div>
 
+    @include('import.modal_receipt')
 
-
-    <div class="test">
+    <div class="test printPageButton">
         <!-- Custom Tabs (Pulled to the right) -->
-        <div class="nav-tabs-custom">
+        <div class="nav-tabs-custom ">
             <ul class="nav nav-tabs pull-right">
 
                 <li class="pull-left header"><i class="fa fa-th"></i> {{__("language.sale_record")}}</li>
@@ -93,7 +114,7 @@
             <div class="tab-content">
                 <div class="tab-pane active" id="tab_1-1">
                     <div class="box-body table-responsive no-padding">
-                        <div id="table-show">
+                        <div id="table-show" class="printPageButton" style="height: 100vh">
                             <img src="uploads/loading.gif" style="width: 100%; height: 10%">
 
                         </div>
@@ -165,7 +186,7 @@
                         document.querySelector('#per_page').innerHTML = data.per_page;
                         document.querySelector('#total').innerHTML = data.total;
                         document.querySelector('#table-show').innerHTML = data.table;
-                        console.log(data);
+                       // console.log(data);
                     }
                 });
 
@@ -173,6 +194,28 @@
             }
 
             get_data();
+
+            // $(document).on('click', '.btn-print', function (e) {
+            //     e.preventDefault();
+            //     let data = $(this).closest('tr').attr('data-item')
+            //     let row = JSON.parse(data)
+            //     $('#invoice').text(row.no)
+            //     $('#t-date').text(row.date)
+            //     $('#branch').text(row.store_name + ' - ' + row.city)
+            //     $('#t-body').empty();
+            //     $('#t-body').append(`
+            //         <tr>
+            //             <td style="border: 1px solid black !important">` + row.product_name + `</td>
+            //             <td style="border: 1px solid black !important">` + row.qty + `</td>
+            //             <td style="border: 1px solid black !important">` + (row.remark != null ? row.remark : '') + `</td>
+            //         </tr>
+            //     `);
+            //
+            //     $('#t-total').text(row.qty + ' pcs');
+            //
+            //     console.log(JSON.parse(data))
+            //     $('#modal-receipt').modal('show');
+            // });
 
             $('.form-search select, input').change(function () {
                 get_data();
@@ -194,7 +237,7 @@
             });
 
 
-            let filename = location.href.replace(location.host,'').replace('http:///','');
+            let filename = location.href.replace(location.host, '').replace('http:///', '');
 
             function CreatePDFfromHTML() {
                 let HTML_Width = $("#table").width();
@@ -215,7 +258,7 @@
                         pdf.addPage(PDF_Width, PDF_Height);
                         pdf.addImage(imgData, 'JPG', top_left_margin, -(PDF_Height * i) + (top_left_margin * 4), canvas_image_width, canvas_image_height);
                     }
-                    pdf.save(filename +".pdf");
+                    pdf.save(filename + ".pdf");
                 });
             }
 

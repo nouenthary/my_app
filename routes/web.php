@@ -95,14 +95,21 @@ Route::get('lang/{locale}', function ($locale) {
     return redirect()->back();
 });
 
-Auth::routes();
+Auth::routes([
+    'register' => false, // Registration Routes...
+    'reset' => false, // Password Reset Routes...
+    'verify' => false, // Email Verification Routes...
+]);
 
 Route::get('/home', [UserController::class,'dashboard'])->name('home');
-
-Route::get('generate-pdf', [ProductController::class, 'generatePDF']);
 
 //
 Route::get('ui',function (){
     return view('ui');
 });
+
+// 404
+Route::get('not_found',function (){
+    return view('404');
+})->name('not_found');
 

@@ -373,7 +373,9 @@ class ProductController extends Controller
                 'tec_stores.name as store_name',
                 'tec_users.username',
                 'tec_stock_in.remark',
-                'tec_warehouse.ware_name'
+                'tec_warehouse.ware_name',
+                'tec_stores.name as store_name',
+                'tec_stores.city'
             )
             ->join('tec_products', 'tec_stock_in.fk_pro_id', '=', 'tec_products.id')
             ->join('tec_stores', 'tec_stock_in.fk_store_id', '=', 'tec_stores.id')
@@ -430,6 +432,8 @@ class ProductController extends Controller
 
             $token = csrf_token();
 
+            $row = json_encode($col);
+
             $value = $value . $this->html('tr',
                     $this->html('td', '#' . $col->no, 'width="80px"') .
                     $this->html('td', '' . $col->date, 'width="160px"') .
@@ -439,10 +443,11 @@ class ProductController extends Controller
                     $this->html('td', $col->remark, 'class="text-rights" ') .
                     $this->html('td', $col->store_name, 'class="text-rights" ') .
                     $this->html('td', $col->ware_name, 'class="text-rights" ') .
+
                     $this->html('td', "
-                    <a class='btn btn-xs' href='/receipt?id=$col->id&token=$token' target='_blank'><i class='fa fa-file-text-o'></i></a>
+                    <a id='' href='/receipt?id=$col->id&token=$token' class='btn btn-xs btn-print'  target='_blank'><i class='fa fa-file-text-o'></i></a>
                 ", 'class="text-rights" ')
-                    , 'class="text-center"');
+                    , "class='text-center' data-item='$row'");
         }
 
         $footer =
@@ -468,20 +473,6 @@ class ProductController extends Controller
         ];
     }
 
-    public function generatePDF()
-    {
-        $data = [
-            'title' => 'Welcome to ItSolutionStuff.com',
-            'date' => date('m/d/Y'),
-        ];
-
-        view()->share('welcome', ['']);
-
-        //  if($request->has('download')){
-        $pdf = PDF::loadView('welcome');
-        return $pdf->download('welcome.pdf');
-        // }
-    }
 
     public function html($tag, $text = '', $classname = '')
     {

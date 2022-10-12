@@ -190,10 +190,10 @@ class UserController extends Controller
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
             'avatar' => $names,
-            'password' => 'deae17c9925f9da5551724805a5ff480557816d6',
+            //'password' => 'deae17c9925f9da5551724805a5ff480557816d6',
         ];
 
-        $user = DB::table('users')->where('name', 'LIKE' ,$request->name)->where('id','<>',Auth::user()->user_id)->first();
+        $user = DB::table('users')->where('name', '=' ,$request->name)->where('user_id','!=',Auth::user()->user_id)->first();
 
         if($user != null){
             return redirect()->back()->with('error', 'username is exist');

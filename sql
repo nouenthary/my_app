@@ -15,14 +15,16 @@ CREATE TABLE brands (
     created_at datetime,
     PRIMARY KEY (ID)
 );
-
 -- 3
 ALTER TABLE tec_products
 ADD COLUMN brand_id INT ,
 ADD COLUMN unit VARCHAR(255),
 ADD COLUMN is_active TINYINT DEFAULT 1,
-ADD COLUMN created_at datetime,
-ADD COLUMN user_id INT
+ADD COLUMN created_at datetime DEFAULT CURRENT_TIMESTAMP,
+ADD COLUMN user_id INT,
+ADD COLUMN branch_commission FLOAT DEFAULT 0,
+ADD COLUMN staff_commission FLOAT DEFAULT 0,
+ADD COLUMN other_commission FLOAT DEFAULT 0
 -- 4
 CREATE TABLE variants (
     id INT NOT NULL AUTO_INCREMENT,

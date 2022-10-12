@@ -59,7 +59,7 @@
 <div id="image" style="padding: 10px">
 
     <div style="display: flex">
-        <img width="60px" src="/uploads/photo_2022-01-04_13-55-21.jpg" style="border-radius: 5px"/>
+        <img width="60px" src="{{asset('uploads/none.jpg')}}" style="border-radius: 5px"/>
         <h3 class="text-info" style="padding-left: 10px">របាយការណ៏លក់ប្រចាំថ្ងៃ </h3>
     </div>
     <div style="padding-left: 70px">
@@ -94,6 +94,19 @@
         ?>
 
         @foreach($data as $row)
+            <?php
+                $commission_sale = 0;
+                if ($row->salt == 'branch') {
+                    $commission_sale = $row->branch_commission * $row->quantity;
+                    $commission = $commission + $row->branch_commission * $row->quantity;
+                } else if ($row->salt == 'other') {
+                    $commission_sale = $row->other_commission * $row->quantity;
+                    $commission = $commission + $row->other_commission * $row->quantity;
+                } else if($row->salt == "staff") {
+                    $commission = $commission + $row->staff_commission * $row->quantity;
+                    $commission_sale = $row->staff_commission * $row->quantity;
+                }
+            ?>
             <tr>
                 <th scope="row" width="60px" class="text-center">{{ $loop->iteration }}</th>
                 <td width="120px">{{$row->date}}</td>
@@ -102,7 +115,7 @@
                 <td class="text-right">{{number_format($row->quantity)}} <?php $qty = $qty + $row->quantity;  ?></td>
                 <td class="text-right">{{ number_format($row->subtotal) . '៛'}} <?php $total = $total + $row->subtotal;  ?> </td>
                 <td class="text-right">${{ sprintf('%0.3f', $row->subtotal / 4000)}}</td>
-                <td class="text-right">{{ number_format($row->quantity * 500) . '៛'}}  <?php $commission = $commission + $row->quantity * 500;  ?> </td>
+                <td class="text-right">{{ number_format($commission_sale) . '៛'}}   </td>
             </tr>
         @endforeach
         </tbody>
