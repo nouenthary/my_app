@@ -83,7 +83,7 @@
 
                                 <div class="col-sm-10">
                                     <input type="text" class="form-control" id="name" name="name"
-                                           placeholder="{{lang('username')}}" required value="{{$user->username}}" {{$permission->permission ==1 ? '': 'disabled'}} >
+                                           placeholder="{{lang('username')}}" required value="{{$user->username}}"  {{$permission->permission ==1 ? '': 'readonly'}} >
                                 </div>
                             </div>
                             <div class="form-group">
