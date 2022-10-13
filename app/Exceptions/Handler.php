@@ -46,6 +46,7 @@ class Handler extends ExceptionHandler
             switch (intval($e->getStatusCode())) {
                 // not found
                 case 404:
+                    return redirect('home');
                     return \Response::view('404',array(),500);
                     break;
                 // internal error
