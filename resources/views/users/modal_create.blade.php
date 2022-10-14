@@ -18,14 +18,14 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="firstname">Firstname</label>
+                                    <label for="first_name">First name</label>
                                     <input type="text" class="form-control" id="first_name" name="first_name"
                                            placeholder="Enter First name" required value="admin">
 
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="lastname">Lastname</label>
+                                    <label for="last_name">Last name</label>
                                     <input type="text" class="form-control" id="last_name" name="last_name"
                                            placeholder="Enter Last name" required value="">
 

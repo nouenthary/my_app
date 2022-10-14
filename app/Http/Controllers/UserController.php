@@ -34,7 +34,33 @@ class UserController extends Controller
             WHERE tec_sales.store_id = '$store_id'
         ");
         $data['qty_balance'] = $data['qty_in'][0]->qty - $data['qty_out'][0]->qty - $data['qty_sold'][0]->qty;
-        return view('dashbaord.dashboard', $data);
+
+        $start = date("Y-m"). '-01 00:00:00';
+
+        $end = date("Y-m-d") . ' 23:59:00';
+
+       //return date("Y-m-d");
+
+        $sql = "
+
+            SELECT
+                DATE_FORMAT(tec_sales.date, \"%Y-%m-%d\") date,
+                SUM(tec_sale_items.quantity) quantity
+            FROM
+                tec_sales
+                INNER JOIN tec_sale_items ON tec_sales.id = tec_sale_items.sale_id
+
+                WHERE store_id = $store_id
+
+                AND date BETWEEN '$start' AND '$end'
+
+                GROUP BY DATE_FORMAT(date, \"%Y-%m-%d\")
+
+        ";
+
+        $data['sold_chart'] = DB::select($sql);
+
+        return view('dashboard.dashboard', $data);
     }
 
     public function get_users(Request $request)

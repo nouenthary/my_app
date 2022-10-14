@@ -30,6 +30,7 @@
             margin: 0 5px;
             font-weight: bold;
             background-color: #fff;
+            padding: 15px;
         }
 
         .containers {
