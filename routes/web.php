@@ -25,6 +25,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::get('shop', [UserController::class,'dashboard']);
     Route::get('/dashboard', [UserController::class,'dashboard'])->name('dashboard');
+    Route::get('/get_chart_sale', [UserController::class,'get_chart_sale'])->name('get_chart_sale');
 
     Route::get('users', [UserController::class,'users'])->name('users');
     Route::get('get_users', [UserController::class,'get_users'])->name('get_users');

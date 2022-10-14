@@ -136,7 +136,6 @@
         }
     </style>
 
-    {{print_r($sold_chart)}}
 
     <figure class="highcharts-figure">
         <div id="container"></div>
@@ -149,65 +148,74 @@
     <script>
         $(function () {
 
-            Highcharts.chart('container', {
-                chart: {
-                    type: 'column'
-                },
-                // title: {
-                //     // text: 'Top Sale (' + type + " ~ Summary : " + summary + " Pcs)"
-                // },
-                subtitle: {
-                    text: ''
-                },
-                xAxis: {
-                    type: 'category',
-                    labels: {
-                        rotation: -45,
-                        style: {
-                            fontSize: '13px',
-                            fontFamily: 'Khmer OS Battambang, sans-serif'
-                        }
-                    }
-                },
-                yAxis: {
-                    min: 0,
-                    title: {
-                        text: 'Population (Pcs)'
-                    }
-                },
-                legend: {
-                    enabled: false
-                },
-                tooltip: {
-                    pointFormat: 'Top Sale of K Stock'
-                },
-                series: [{
-                    name: 'Population',
-                    data:
-                        [
-                            ['Beijing', 20.8],
-                            ['Karachi', 14.9],
-                            ['Shenzhen', 13.7],
-                            ['Guangzhou', 13.1],
-                            ['Istanbul', 12.7],
-                            ['Mumbai', 12.4],
-                            ['Moscow', 12.2],
+            fetch('/get_chart_sale')
+                .then((response) => response.json())
+                .then((data) =>
 
-                        ],
-                    dataLabels: {
-                        enabled: true,
-                        rotation: 0,
-                        color: '#FFFFFF',
-                        align: 'right',
-                        // format: '{point.y:.1f}', // one decimal
-                        y: -1, // 10 pixels down from the top
-                        style: {
-                            fontSize: '13px',
-                            fontFamily: 'Verdana, sans-serif'
-                        }
-                    }
-                }]
-            });
+                    Highcharts.chart('container', {
+                        chart: {
+                            type: 'column'
+                        },
+                        title: {
+                            text: 'Top Sale (' + '' + " Summary : " + data.total + " Pcs)"
+                        },
+                        subtitle: {
+                            text: ''
+                        },
+                        xAxis: {
+                            type: 'category',
+                            labels: {
+                                rotation: -45,
+                                style: {
+                                    fontSize: '13px',
+                                    fontFamily: 'Khmer OS Battambang, sans-serif'
+                                }
+                            }
+                        },
+                        yAxis: {
+                            min: 0,
+                            title: {
+                                text: 'Population (Pcs)'
+                            }
+                        },
+                        legend: {
+                            enabled: false
+                        },
+                        tooltip: {
+                            pointFormat: 'Top Sale of K Stock'
+                        },
+                        series: [{
+                            name: 'Population',
+                            data: data.sold,
+                            // [
+                            //     ['Beijing', 20.8],
+                            //     ['Karachi', 14.9],
+                            //     ['Shenzhen', 13.7],
+                            //     ['Guangzhou', 13.1],
+                            //     ['Istanbul', 12.7],
+                            //     ['Mumbai', 12.4],
+                            //     ['Moscow', 12.2],
+                            //
+                            // ],
+                            dataLabels: {
+                                enabled: true,
+                                rotation: 0,
+                                color: '#FFFFFF',
+                                align: 'right',
+                                // format: '{point.y:.1f}', // one decimal
+                                y: -1, // 10 pixels down from the top
+                                style: {
+                                    fontSize: '13px',
+                                    fontFamily: 'Verdana, sans-serif'
+                                }
+                            }
+                        }]
+                    })
+
+                );
+
+
+
 
 
         });

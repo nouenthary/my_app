@@ -35,11 +35,19 @@ class UserController extends Controller
         ");
         $data['qty_balance'] = $data['qty_in'][0]->qty - $data['qty_out'][0]->qty - $data['qty_sold'][0]->qty;
 
-        $start = date("Y-m"). '-01 00:00:00';
+        return view('dashboard.dashboard', $data);
+    }
+
+    public function get_chart_sale(){
+        $utils = new Utils();
+        $store_id = $utils->get_store_id();
+
+        $start = date("Y-m") . '-01 00:00:00';
 
         $end = date("Y-m-d") . ' 23:59:00';
 
-       //return date("Y-m-d");
+
+        $sold = [];
 
         $sql = "
 
@@ -58,9 +66,17 @@ class UserController extends Controller
 
         ";
 
-        $data['sold_chart'] = DB::select($sql);
+        $sale = DB::select($sql);
+        $qty = 0 ;
+        foreach ($sale as $row) {
+            $qty = $qty + (int)$row->quantity;
+            array_push($sold, [$row->date, (int)$row->quantity]);
+        }
 
-        return view('dashboard.dashboard', $data);
+        return [
+            'sold' => $sold,
+            'total' => $qty
+        ];
     }
 
     public function get_users(Request $request)
@@ -196,12 +212,14 @@ class UserController extends Controller
     }
 
     // profile
-    public function profile(){
+    public function profile()
+    {
         return view('users.profile');
     }
 
     //
-    public function update_profile(Request $request){
+    public function update_profile(Request $request)
+    {
 
         $names = $request->photo;
         if ($request->hasFile('file')) {
@@ -219,18 +237,18 @@ class UserController extends Controller
             //'password' => 'deae17c9925f9da5551724805a5ff480557816d6',
         ];
 
-        $user = DB::table('users')->where('name', '=' ,$request->name)->where('user_id','!=',Auth::user()->user_id)->first();
+        $user = DB::table('users')->where('name', '=', $request->name)->where('user_id', '!=', Auth::user()->user_id)->first();
 
-        if($user != null){
+        if ($user != null) {
             return redirect()->back()->with('error', 'username is exist');
         }
 
-        DB::table('tec_users')->where('id',$request->id)->update($data);
+        DB::table('tec_users')->where('id', $request->id)->update($data);
 
-        DB::update('update users set name = ?, updated_at = ? where user_id = ?', [$request->name , date('Y_m_d_H_i_s')  ,$request->id]);
+        DB::update('update users set name = ?, updated_at = ? where user_id = ?', [$request->name, date('Y_m_d_H_i_s'), $request->id]);
 
-        if($request->password != ''){
-            DB::update('update users set password = ? , updated_at = ?  where user_id = ?', [Hash::make($request->password), date('Y_m_d_H_i_s') , $request->id]);
+        if ($request->password != '') {
+            DB::update('update users set password = ? , updated_at = ?  where user_id = ?', [Hash::make($request->password), date('Y_m_d_H_i_s'), $request->id]);
         }
 
         return redirect()->back()->with('success', 'update successfully.');
