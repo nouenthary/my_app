@@ -168,8 +168,8 @@
                 <div class="col-xs-12">
                     <button type="submit" class="btn btn-default btn-block btn-flat" style="color: black">ចូល</button>
                 </div>
-
-                <div class="col-md-12 text-center" style="padding-top: 20px">
+                <br> <br> <br> <br> <br>
+                <div class="col-md-12 text-center" >
                     <a class="btn-link text-white" style="color: #fff; text-decoration: none">ភ្លេច​លេខសំងាត់​ ?</a>
                 </div>
 

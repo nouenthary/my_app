@@ -102,7 +102,7 @@ class UserController extends Controller
 
         $users = array(
             'username' => $request->username,
-            'password' => Hash::make($request->password),
+            'password' => $request->password,
             'email' => $request->email,
             'active' => $request->active,
             'first_name' => $request->first_name,
@@ -117,14 +117,14 @@ class UserController extends Controller
 
         $id = DB::table('tec_users')->insertGetId($users);
 
-        $values = array(
-            'name' => $request->username,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'user_id' => $id
-        );
-
-        DB::table('users')->insert($values);
+//        $values = array(
+//            'name' => $request->username,
+//            'email' => $request->email,
+//            'password' => Hash::make($request->password),
+//            'user_id' => $id
+//        );
+//
+//        DB::table('users')->insert($values);
 
         return ['message' => 'successfully'];
     }

@@ -59,6 +59,12 @@
             margin: auto;
             white-space: nowrap;
         }
+
+        @media print {
+            .printPageButton {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body >
@@ -145,7 +151,7 @@
 {{--    <p>ហត្ថលេខា : ----------</p>--}}
 </div>
 
-<div style="text-align: center;">
+<div style="text-align: center;" class="printPageButton">
 
     <a id="btnConvert" style="cursor: pointer">
         <i class="fa fa-camera-retro text-blue" style="font-size: 30px"></i>
@@ -181,6 +187,7 @@
 
         $(document).on('click','#btnpdf',function () {
             CreatePDFfromHTML();
+            window.print();
         });
 
         function CreatePDFfromHTML() {
