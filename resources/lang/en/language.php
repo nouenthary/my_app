@@ -104,5 +104,10 @@ return [
     'report_year' => 'Report of Year',
     'report_monthly' => 'Report of Monthly',
     'report_daily' => 'Report of Daily',
-    'input_date' => 'mm/dd/yyyy'
+    'input_date' => 'mm/dd/yyyy',
+    'register_sale' => "Register Sale",
+    'cash_in_hand' => 'Cash in Hand',
+    'note' => 'Note',
+    'close_register' => 'បិទការលក់ប្រចាំថ្ងៃ',
+    'register_details' => 'ចុះឈ្មោះព័ត៌មានលម្អិត'
 ];

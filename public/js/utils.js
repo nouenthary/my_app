@@ -165,3 +165,28 @@ let status = function (t) {
     return `<span class="label label-` + color + `">` + text + `</span>`;
 }
 
+function isDecimalNumber(key) {
+    let keycode = (key.which) ? key.which : key.keycode;
+    let parts = key.srcElement.value.split('.');
+
+    if (parts.length > 1 && keycode == 46) {
+        return false;
+    } else {
+        if (keycode == 46 || keycode >= 48 && keycode <= 57)
+            return true;
+        return false;
+    }
+}
+
+function isDecimalInt(key) {
+    let keycode = (key.which) ? key.which : key.keycode;
+    let parts = key.srcElement.value.split('.');
+
+    if (keycode == 46) {
+        return false;
+    } else {
+        if (keycode == 46 || keycode >= 48 && keycode <= 57)
+            return true;
+        return false;
+    }
+}

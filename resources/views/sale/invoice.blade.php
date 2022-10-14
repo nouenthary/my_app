@@ -32,7 +32,7 @@
 
         .containers {
             margin: auto;
-            width: 500px;
+            width: 450px;
         }
 
         ul {
@@ -63,6 +63,11 @@
         @media print {
             .printPageButton {
                 display: none;
+            }
+
+            .containers{
+                margin: 0;
+                width: 100%;
             }
         }
     </style>

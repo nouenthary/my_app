@@ -116,6 +116,7 @@
 
         .login-box-body, .register-box-body {
             border-radius: 3px;
+            width: 330px;
         }
 
         .login-box-body {
@@ -167,6 +168,22 @@
                 <div class="col-xs-12">
                     <button type="submit" class="btn btn-default btn-block btn-flat" style="color: black">ចូល</button>
                 </div>
+
+                <div class="col-md-12 text-center" style="padding-top: 20px">
+                    <a class="btn-link text-white" style="color: #fff; text-decoration: none">ភ្លេច​លេខសំងាត់​ ?</a>
+                </div>
+
+
+                <div class="col-xs-12 social-auth-links text-center">
+                    <p>- OR -</p>
+                    <a href="https://www.facebook.com/K-STOCK-4500-111362717455319/" class="btn btn-block btn-social btn-facebook btn-flat"><i class="fa fa-facebook"></i>
+                        Visit on
+                        Facebook</a>
+                    <a href="https://www.tiktok.com/discover/k-stock-4500?lang=en" class="btn btn-block btn-social btn-default btn-flat">
+                        <img src="{{asset('uploads/tiktok.png')}}"> Visit on Tiktok
+                        </a>
+                </div>
+
                 <!-- /.col -->
             </div>
         </form>

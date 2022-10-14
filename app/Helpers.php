@@ -43,3 +43,15 @@ if (!function_exists('image')) {
         return  "<img src='$src' width='$width' height='$width' onerror=".$error." > ";
     }
 }
+
+if (!function_exists('get_current_date')) {
+    /**
+     * Greeting a person
+     *
+     * @param  string $person Name
+     * @return string
+     */
+    function get_current_date(){
+        return date('Y-m-d H:i:s');
+    }
+}

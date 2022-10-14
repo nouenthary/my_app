@@ -315,13 +315,13 @@ class SaleController extends Controller
             } else if ($col->salt == 'other') {
                 $commission_sale = $col->other_commission * $col->quantity;
                 $commission = $commission + $col->other_commission * $col->quantity;
-            } else if($col->salt == "staff") {
+            } else if ($col->salt == "staff") {
                 $commission = $commission + $col->staff_commission * $col->quantity;
                 $commission_sale = $col->staff_commission * $col->quantity;
             }
 
             $value = $value . $this->html('tr',
-                    $this->html('td', $col->name  , '') .
+                    $this->html('td', $col->name, '') .
                     $this->html('td', '#' . $col->id, 'width="100px"') .
                     $this->html('td', $col->date, '') .
                     $this->html('td', $col->customer_name, '') .
@@ -456,7 +456,7 @@ class SaleController extends Controller
             } else if ($col->salt == 'other') {
                 $commission_sale = $col->other_commission * $col->quantity;
                 $commission = $commission + $col->other_commission * $col->quantity;
-            } else if($col->salt == "staff") {
+            } else if ($col->salt == "staff") {
                 $commission = $commission + $col->staff_commission * $col->quantity;
                 $commission_sale = $col->staff_commission * $col->quantity;
             }
@@ -572,6 +572,83 @@ class SaleController extends Controller
             ->select('c.*')
             ->get();
 
+        $register = DB::table('tec_registers')
+            ->where('user_id', Auth::user()->user_id)
+            ->orderByDesc('id')
+            ->first();
+
+        if (isset($_GET['cash_in_hand']) != '') {
+            $open_cash = [
+                'date' => get_current_date(),
+                'user_id' => Auth::user()->user_id,
+                'status' => 'open',
+                'store_id' => Utils::store_id(),
+                'cash_in_hand' => (float)$_GET['cash_in_hand']
+            ];
+
+            if ($register == '' || $register == null) {
+                DB::table('tec_registers')->insert($open_cash);
+            }
+
+            if ($register != null && $register->status == 'close') {
+                DB::table('tec_registers')->insert($open_cash);
+            }
+        }
+
+        if (isset($_GET['status']) != '') {
+
+            $registers = DB::table('tec_registers')
+                ->where('user_id', Auth::user()->user_id)
+                ->orderByDesc('id')
+                ->first();
+
+            if ($registers != null || $registers != '') {
+                $user_id = Auth::user()->user_id;
+                $store_id = $registers->store_id;
+                $date = $registers->date;
+                $total = DB::select("
+                SELECT
+	                COALESCE(SUM(grand_total),0) total
+                FROM
+                    `tec_sales`
+                WHERE
+                    created_by = '$user_id'
+                    AND store_id = '$store_id'
+                    AND date >= '$date'
+               ");
+
+                $close = [
+                    'closed_at' => get_current_date(),
+                    'closed_by' => Auth::user()->user_id,
+                    'status' => 'close',
+                    'total_cash' => $total[0]->total + $registers->cash_in_hand,
+                    'note' => $_GET['note'],
+                    'total_cash_submitted' => $total[0]->total
+                ];
+
+                DB::table('tec_registers')
+                    ->where('id', $registers->id)
+                    ->update($close);
+            }
+
+        }
+
+        $register = DB::table('tec_registers')
+            ->where('user_id', Auth::user()->user_id)
+            ->orderByDesc('id')
+            ->first();
+
+        if ($register == '' || $register == null) {
+            return view('sale.register');
+        }
+
+        if ($register->status == 'close') {
+            return view('sale.register');
+        }
+
+        if ($register->status == 'open') {
+            return view('sale.pos', $data);
+        }
         return view('sale.pos', $data);
     }
 

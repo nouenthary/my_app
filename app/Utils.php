@@ -34,4 +34,11 @@ class Utils
             ->where('user_id', Auth::user()->user_id)
             ->first();
     }
+
+    public static function store_id()
+    {
+        return DB::table('tec_users')
+            ->where('id', Auth::user()->user_id)
+            ->first()->store_id;
+    }
 }
