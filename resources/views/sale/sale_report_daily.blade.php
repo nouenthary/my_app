@@ -21,9 +21,16 @@
          folder instead of downloading all of them to reduce the load. -->
     <link rel="stylesheet" href="dist/css/skins/_all-skins.min.css">
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Battambang:wght@600&family=Roboto:wght@100;300;400&display=swap"
+        rel="stylesheet">
+
     <style type="text/css">
         body {
             margin: 10px;
+            font-family: 'Battambang';
         }
 
         td {
@@ -141,11 +148,18 @@
 <div style="text-align: center;">
 
     <a id="btnConvert" style="cursor: pointer">
-        <img src="/uploads/Screenshot.png" height="40px">
-        Screenshot</a>
+        <i class="fa fa-camera-retro text-blue" style="font-size: 30px"></i>
+        Screenshot
+    </a>
+    |
+    <a id="btnpdf" style="cursor: pointer">
+        <i class="fa fa-file-pdf-o text-red" style="font-size: 30px"></i>
+        PDF</a>
+
 </div>
 <script src="bower_components/jquery/dist/jquery.min.js"></script>
 <script type="text/javascript" src="https://html2canvas.hertzen.com/dist/html2canvas.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
 <script>
     function exportCanvasAsPNG() {
         html2canvas(document.querySelector("#image")).then(canvas => {
@@ -160,6 +174,40 @@
     document.querySelector('#btnConvert').addEventListener('click', function () {
         exportCanvasAsPNG();
     });
+
+    $(function () {
+
+        let filename = location.href.replace(location.host, '').replace('http:///', '');
+
+        $(document).on('click','#btnpdf',function () {
+            CreatePDFfromHTML();
+        });
+
+        function CreatePDFfromHTML() {
+            let HTML_Width = $("#image").width();
+            let HTML_Height = $("#image").height();
+            let top_left_margin = 15;
+            let PDF_Width = HTML_Width + (top_left_margin * 2);
+            let PDF_Height = (PDF_Width * 1.5) + (top_left_margin * 2);
+            let canvas_image_width = HTML_Width;
+            let canvas_image_height = HTML_Height;
+
+            let totalPDFPages = Math.ceil(HTML_Height / PDF_Height) - 1;
+
+            html2canvas($("#image")[0]).then(function (canvas) {
+                let imgData = canvas.toDataURL("image/jpeg", 1.0);
+                let pdf = new jsPDF('p', 'pt', [PDF_Width, PDF_Height]);
+                pdf.addImage(imgData, 'JPG', top_left_margin, top_left_margin, canvas_image_width, canvas_image_height);
+                for (let i = 1; i <= totalPDFPages; i++) {
+                    pdf.addPage(PDF_Width, PDF_Height);
+                    pdf.addImage(imgData, 'JPG', top_left_margin, -(PDF_Height * i) + (top_left_margin * 4), canvas_image_width, canvas_image_height);
+                }
+                pdf.save(filename + ".pdf");
+            });
+        }
+
+    });
+
     // $(function () {
     //     $("#image").each(function () {
     //         $(this).after('<div class="watermark">TIGER INSENCE</div>');
