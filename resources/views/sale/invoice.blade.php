@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" style="-webkit-print-color-adjust: exact;">
 
 <head>
     <meta charset="UTF-8">
@@ -28,6 +28,7 @@
             line-height: 1.42857143;
             margin: 0 5px;
             font-weight: bold;
+            background-color: #fff;
         }
 
         .containers {
@@ -51,7 +52,7 @@
         span,
         p,
         table {
-            font-size: 12px;
+            font-size: 10px;
         }
 
         .box-bold {
@@ -69,7 +70,27 @@
                 margin: 0;
                 width: 100%;
             }
+
+            .tr{
+                -webkit-print-color-adjust: exact !important;
+                background-color: #fff  !important;
+                color: black !important;
+            }
+
+            body {
+                -webkit-print-color-adjust: exact !important;
+            }
         }
+
+        tr, td , th{
+            /*border: 1px solid black;*/
+        }
+
+        .tr{
+            background-color: black ; color: #fff !important;
+            -webkit-print-color-adjust: exact !important;
+        }
+
     </style>
 
 
@@ -115,30 +136,30 @@
 
             <table class="table">
                 <thead>
-                    <tr>
-                        <th scope="col" width="10px">#</th>
-                        <th scope="col">បរិយាយ</th>
-                        <th scope="col">ចំនួន</th>
-                        <th scope="col">តម្លៃ</th>
-                        <th scope="col">សរុប</th>
+                    <tr class="tr">
+                        <th  scope="col" width="10px" style="border-bottom: 1px solid black; border-top: 1px solid black;">#</th>
+                        <th scope="col" style="border-bottom: 1px solid black; border-top: 1px solid black;">ឈ្មោះទំនិញ</th>
+                        <th class="text-center" scope="col" style="border-bottom: 1px solid black; border-top: 1px solid black;">ចំនួនទំនិញ</th>
+                        <th  class="text-center" scope="col" style="border-bottom: 1px solid black; border-top: 1px solid black;">តម្លៃលក់</th>
+                        <th class="text-center" scope="col" style="border-bottom: 1px solid black; border-top: 1px solid black;">សរុបទឹកប្រាក់</th>
                     </tr>
                 </thead>
                 <tbody>
 
                     @foreach ($records as $i)
                         <tr>
-                            <th scope="row"> {{ $loop->iteration }}</th>
-                            <td>{{ $i->product_name }}</td>
-                            <td class="text-center">{{ number_format($i->quantity) }}</td>
-                            <td class="text-right">{{ number_format($i->unit_price) }}​៛</td>
-                            <td class="text-right">{{ number_format($i->subtotal) }}​៛ <?php $qty = $qty + $i->quantity;
+                            <th scope="row" style="border-bottom: 1px solid black; "> {{ $loop->iteration }}</th>
+                            <td style="border-bottom: 1px solid black;">{{ $i->product_name }}</td>
+                            <td class="text-center" style="border-bottom: 1px solid black;">{{ number_format($i->quantity) }}</td>
+                            <td class="text-right" style="border-bottom: 1px solid black;">{{ number_format($i->unit_price) }}​៛</td>
+                            <td class="text-right" style="border-bottom: 1px solid black;">{{ number_format($i->subtotal) }}​៛ <?php $qty = $qty + $i->quantity;
                             $total = $total + $i->subtotal; ?></td>
                         </tr>
                     @endforeach
-                    <tr>
+                    <tr class="tr">
                         <th scope="col">សរុប</th>
                         <th scope="col"></th>
-                        <th scope="col">{{ $items }} ( {{ $qty }} )</th>
+                        <th scope="col" class="text-center">{{ $items }} ( {{ $qty }} )</th>
                         <th scope="col"></th>
                         <th scope="col" class="text-right">{{ number_format($total) }}៛</th>
                     </tr>
