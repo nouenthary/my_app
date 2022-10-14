@@ -142,8 +142,10 @@
     <script>
         $(function () {
 
-            let start_date = moment().startOf('month').format('DD-MM-YYYY');
-            let end_date = moment().endOf('month').format('DD-MM-YYYY');
+            //let start_date = moment().startOf('month').format('DD-MM-YYYY');
+            //let end_date = moment().endOf('month').format('DD-MM-YYYY');
+            let now = moment().format("DD-MM-YYYY")
+
             $('.datepicker').datepicker(
                 {
                     showButtonPanel: true,
@@ -152,8 +154,8 @@
                 }
             ).val();
 
-            $('#start_date').val(start_date);
-            $('#end_date').val(end_date);
+            $('#start_date').val(now);
+            $('#end_date').val(now);
 
             $(document).on('click', '.btn-previous', function () {
                 let page = parseInt($('#page').text());

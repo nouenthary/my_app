@@ -63,15 +63,9 @@
                                 <div class="form-group">
                                     <label for="password">Password</label>
                                     <input type="password" class="form-control" id="password" name="password"
-                                           placeholder="Enter Password" required value="admin@123">
+                                           placeholder="Enter Password" required value="user@123">
                                 </div>
 
-                                <div class="form-group">
-                                    <label for="password_confirm">Password Confirm</label>
-                                    <input type="password" class="form-control" id="password_confirm"
-                                           name="password_confirm" placeholder="Enter Password Confirm" required
-                                           value="admin@123">
-                                </div>
                             </div>
 
                             <div class="col-md-6">

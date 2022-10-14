@@ -15,7 +15,7 @@
 
             <div class="card">
 
-                <table class="table table-bordered table-striped" id="table">
+                <table class="table table-bordered table-stripeds" id="table">
                     <thead>
                         <tr>
                             <th class="col-md-1">First Name</th>
@@ -29,7 +29,7 @@
                     </thead>
                     <tfoot>
                         <tr>
-                            <th> <input class="form-control" placeholder="[First Name]" /></th>
+                            <th> </th>
                             <th>Last Name</th>
                             <th>Phone</th>
                             <th>Gender</th>

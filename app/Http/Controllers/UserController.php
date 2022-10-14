@@ -117,14 +117,14 @@ class UserController extends Controller
 
         $id = DB::table('tec_users')->insertGetId($users);
 
-//        $values = array(
-//            'name' => $request->username,
-//            'email' => $request->email,
-//            'password' => Hash::make($request->password),
-//            'user_id' => $id
-//        );
-//
-//        DB::table('users')->insert($values);
+        $values = array(
+            'name' => $request->username,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'user_id' => $id
+        );
+
+        DB::table('users')->insert($values);
 
         return ['message' => 'successfully'];
     }
