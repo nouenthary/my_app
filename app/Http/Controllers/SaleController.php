@@ -551,7 +551,7 @@ class SaleController extends Controller
                 "tec_products.other_commission",
                 "tec_users.salt"
             )
-            ->orderByDesc('tec_sales.date')
+            //->orderByDesc('tec_sales.date' ,'asc')
             ->paginate($request->page_size, ['*'], 'page', $request->page);
         return view('sale.sale_report_daily', ['data' => $data, 'store' => $store]);
     }
