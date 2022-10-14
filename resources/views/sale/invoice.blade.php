@@ -141,9 +141,9 @@
                     <tr class="tr">
                         <th  scope="col" width="10px" style="border-bottom: 1px solid black; border-top: 1px solid black;">#</th>
                         <th scope="col" style="border-bottom: 1px solid black; border-top: 1px solid black;">ឈ្មោះទំនិញ</th>
-                        <th class="text-center" scope="col" style="border-bottom: 1px solid black; border-top: 1px solid black;">ចំនួនទំនិញ</th>
-                        <th  class="text-center" scope="col" style="border-bottom: 1px solid black; border-top: 1px solid black;">តម្លៃលក់</th>
-                        <th class="text-center" scope="col" style="border-bottom: 1px solid black; border-top: 1px solid black;">សរុបទឹកប្រាក់</th>
+                        <th class="text-center" scope="col" style="border-bottom: 1px solid black; border-top: 1px solid black;">ចំនួន</th>
+                        <th  class="text-center" scope="col" style="border-bottom: 1px solid black; border-top: 1px solid black;">តម្លៃ</th>
+                        <th class="text-center" scope="col" style="border-bottom: 1px solid black; border-top: 1px solid black;">សរុប</th>
                     </tr>
                 </thead>
                 <tbody>
