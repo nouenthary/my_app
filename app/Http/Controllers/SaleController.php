@@ -235,12 +235,14 @@ class SaleController extends Controller
             __("language.branch"),
             __("language.invoice"),
             'កាលបរិច្ឆេទ',
+            lang('seller'),
             'អតិថិជន',
             __("language.product"),
             __("language.price"),
             'ចំនួន',
             'តំលៃ​សរុប',
             'កម្រៃជើងសារ',
+
         ];
 
         $cols = '';
@@ -267,7 +269,8 @@ class SaleController extends Controller
                 tec_products.staff_commission,
                 tec_products.other_commission,
                 tec_users.salt,
-                tec_sales.note
+                tec_sales.note,
+                tec_users.username
                 "
             )
             ->join('tec_sale_items', 'tec_sales.id', '=', 'tec_sale_items.sale_id')
@@ -303,6 +306,10 @@ class SaleController extends Controller
 
         if ($request->product_id != '') {
             $data = $data->where('tec_sale_items.product_id', '=', $request->product_id);
+        }
+
+        if ($request->seller_id != '') {
+            $data = $data->where('tec_sales.created_by', '=', $request->seller_id);
         }
 
         $data = $data
@@ -341,6 +348,7 @@ class SaleController extends Controller
                     $this->html('td', $col->name, '') .
                     $this->html('td', '#' . $inv, 'width="100px"') .
                     $this->html('td', $col->date, '') .
+                    $this->html('td', $col->username, 'width="100px"').
                     $this->html('td', $col->customer_name, '') .
                     $this->html('td', $col->product_name, 'class="text-left" ') .
                     $this->html('td', number_format($col->unit_price) . '៛', 'class="text-right"') .
@@ -357,10 +365,12 @@ class SaleController extends Controller
                 $this->html('th', '', 'width="100px"') .
                 $this->html('th', '', 'width="100px"') .
                 $this->html('th', '', '') .
+                $this->html('th', '', '').
                 $this->html('th', '', 'width="100px"') .
                 $this->html('th', number_format($qty), 'class="text-right" width="100px"') .
                 $this->html('th', number_format($total) . '៛', 'class="text-right" width="100px"') .
                 $this->html('th', number_format($commission) . '៛', 'class="text-right" width="100px"')
+
                 , 'class="active"');
 
         $table = $this->html('table', $this->html('tr', $cols, '') . $this->html('tr', $value, '') . $footer, 'class="table table-bordered table-stripeds" id="table"');
@@ -439,6 +449,10 @@ class SaleController extends Controller
 
         if ($request->product_id != '') {
             $data = $data->where('tec_sale_items.product_id', '=', $request->product_id);
+        }
+
+        if ($request->seller_id != '') {
+            $data = $data->where('tec_sales.created_by', '=', $request->seller_id);
         }
 
         $data = $data

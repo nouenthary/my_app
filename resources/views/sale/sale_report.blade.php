@@ -47,6 +47,10 @@
             </div>
 
             <div class="col-md-12">
+                @include('components.users',['style' => 'inline'])
+            </div>
+
+            <div class="col-md-12">
 
                 <div class="row">
                     <div class="col-md-1">
@@ -200,7 +204,8 @@
                         end_date: $('#end_date').val(),
                         page_size: $('#page_size').val() ?? 10,
                         page: parseInt($('#page').text()) ?? 1,
-                        product_id : $('#product_id').val()
+                        product_id : $('#product_id').val(),
+                        seller_id: $('#seller_id').val(),
                     },
                     success: function (data) {
                         if (data.error) {
