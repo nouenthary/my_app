@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Yajra\DataTables\DataTables;
 
 class UserController extends Controller
 {
@@ -38,7 +37,8 @@ class UserController extends Controller
         return view('dashboard.dashboard', $data);
     }
 
-    public function get_chart_sale(){
+    public function get_chart_sale()
+    {
         $utils = new Utils();
         $store_id = $utils->get_store_id();
 
@@ -62,12 +62,12 @@ class UserController extends Controller
 
                 AND date BETWEEN '$start' AND '$end'
 
-                GROUP BY DATE_FORMAT(date, \"%Y-%m-%d\")
+                GROUP BY DATE_FORMAT(date, \"%Y-%m-%d\") limit 15
 
         ";
 
         $sale = DB::select($sql);
-        $qty = 0 ;
+        $qty = 0;
         foreach ($sale as $row) {
             $qty = $qty + (int)$row->quantity;
             array_push($sold, [$row->date, (int)$row->quantity]);
@@ -81,34 +81,87 @@ class UserController extends Controller
 
     public function get_users(Request $request)
     {
-        if ($request->ajax()) {
-            $data = DB::table('users as uu')
-                ->select('u.id', 'u.id', 'u.username', 'u.email', 'u.first_name', 'u.last_name', 'u.active', 'u.phone',
-                    'u.avatar', 'u.gender', 'u.group_id', 'u.store_id'
-                )
-                ->join('tec_users as u', 'uu.user_id', '=', 'u.id')
-                ->orderBy('u.first_name')
-                ->get();
+        $columns = [
+            lang("image"),
+            lang("name"),
+            lang("username"),
+            lang('phone'),
+            lang("email"),
+            lang('gender'),
+            lang('status'),
+            lang('commission'),
+            lang('branch')
+        ];
 
-            return Datatables::of($data)
-                ->addIndexColumn()
-                ->addColumn('action', function ($row) {
-                    $actionBtn = '<a href="javascript:void(0)" class="edit btn btn-success btn-sm">Edit</a> <a href="javascript:void(0)" class="delete btn btn-danger btn-sm">Delete</a>';
-                    return $this->get_button_action($row->id);
-                })
-                ->rawColumns(['action'])
-                ->make(true);
+        $cols = '';
+
+        foreach ($columns as $col) {
+            $cols = $cols . html('th', $col, 'class="active"');
         }
-    }
 
-    function get_button_action($row)
-    {
-        return '
-            <div class="btn-group">
-            <a class="btn btn-default btn-flat btn-xs btn-pencil" id="' . $row . '"><i class="fa fa-pencil"></i></a>
-            <a class="btn btn-success btn-flat btn-xs btn-eye"><i class="fa fa-eye"></i></a>
-        </div>
-        ';
+        $data = DB::table('tec_users')
+            ->join('tec_stores', 'tec_stores.id', '=', 'tec_users.store_id')
+            ->join('tec_permission', 'tec_permission.user_id', '=', 'tec_users.id')
+            ->select(
+                'tec_users.id',
+                'tec_users.first_name',
+                'tec_users.last_name',
+                'tec_users.phone',
+                'tec_users.email',
+                'tec_users.avatar',
+                'tec_users.active',
+                'tec_users.salt',
+                'tec_users.username',
+                'tec_stores.id as store_id',
+                'tec_stores.name',
+                'tec_users.gender',
+                'tec_users.group_id',
+                'tec_users.password',
+                'tec_permission.permission',
+                'tec_permission.product',
+                'tec_permission.category',
+                'tec_permission.import',
+                'tec_permission.export',
+                'tec_permission.sale',
+                'tec_permission.user',
+                'tec_permission.setting',
+                'tec_permission.report',
+                'tec_permission.pos',
+                'tec_permission.dashboard',
+                'tec_permission.imp',
+                'tec_permission.ex'
+            )
+            ->orderBy('username', 'asc')
+            ->paginate($request->page_size, ['*'], 'page', $request->page);
+
+        $value = '';
+
+        foreach ($data as $col) {
+            $json = json_encode($col);
+            $row = "id='$col->id' data='$json' ";
+            $value = $value . html('tr',
+                    html('td', image("/users/$col->avatar", "25px"), 'class="text-center" width="50px"') .
+                    html('td', '' . $col->first_name . ' ' . $col->last_name, '') .
+                    html('td', '' . $col->username, '') .
+                    html('td', '' . $col->phone, '') .
+                    html('td', '' . $col->email, '') .
+                    html('td', '' . $col->gender, '') .
+                    html('td', '' . $col->active, '') .
+                    html('td', '' . $col->salt, '') .
+                    html('td', '' . $col->name, '')
+                    , $row);
+        }
+
+        $footer = '';
+
+        $table = html('table', html('tr', $cols, '') . html('tr', $value, '') . $footer, 'class="table table-bordered table-hover" id="table" ');
+
+        return [
+            'table' => $table,
+            'page' => $data->currentPage(),
+            'per_page' => $data->lastPage(),
+            'total' => $data->total(),
+        ];
     }
 
     // users
@@ -130,16 +183,12 @@ class UserController extends Controller
 
     public function create_users(Request $request)
     {
-        $userRecord = DB::table('tec_users')->where('username', $request->username)->first();
-
-        if ($userRecord) {
-            return ['error' => 'username has exits ...'];
-        }
-
-        $userRecord = DB::table('tec_users')->where('email', $request->email)->first();
-
-        if ($userRecord) {
-            return ['error' => 'email has exits ...'];
+        $names = $request->photo;
+        if ($request->hasFile('avatar')) {
+            $image = $request->file('avatar');
+            $names = date('Y_m_d_H_i_s') . '.' . $image->getClientOriginalExtension();
+            $destinationPath = public_path('/uploads/users');
+            $image->move($destinationPath, $names);
         }
 
         $users = array(
@@ -150,23 +199,82 @@ class UserController extends Controller
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
             'phone' => $request->phone,
-            'avatar' => $request->avatar,
+            'avatar' => $names,
             'gender' => $request->gender,
             'group_id' => $request->group_id,
             'store_id' => $request->store_id,
             'created_on' => '1',
+            'salt' => $request->salt
         );
 
-        $id = DB::table('tec_users')->insertGetId($users);
+        $permission = [
+            'permission' => $request->Permission == '' ? 0 : 1,
+            'product' => $request->Product == '' ? 0 : 1,
+            'category' => $request->Category == '' ? 0 : 1,
+            'import' => $request->Import == '' ? 0 : 1,
+            'export' => $request->Export == '' ? 0 : 1,
+            'sale' => $request->Sale == '' ? 0 : 1,
+            'user' => $request->User == '' ? 0 : 1,
+            'setting' => $request->Setting == '' ? 0 : 1,
+            'report' => $request->Report == '' ? 0 : 1,
+            'pos' => $request->POS == '' ? 0 : 1,
+            'dashboard' => $request->Dashboard == '' ? 0 : 1,
+            'ex' => $request->EX == '' ? 0 : 1,
+            'imp' => $request->IMP == '' ? 0 : 1,
+        ];
 
-        $values = array(
-            'name' => $request->username,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'user_id' => $id
-        );
+        if ($request->id == 0) {
 
-        DB::table('users')->insert($values);
+            $userRecord = DB::table('tec_users')->where('username', $request->username)->first();
+
+            if ($userRecord) {
+                return ['error' => 'username has exits ...'];
+            }
+
+            $userRecord = DB::table('tec_users')->where('email', $request->email)->first();
+
+            if ($userRecord) {
+                return ['error' => 'email has exits ...'];
+            }
+
+            $id = DB::table('tec_users')->insertGetId($users);
+
+            $values = array(
+                'name' => $request->username,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'user_id' => $id
+            );
+
+            DB::table('users')->insert($values);
+
+            $permission['user_id'] = $id;
+            DB::table('tec_permission')->insert($permission);
+        }
+
+        if($request->id > 0){
+
+            $userRecord = DB::table('tec_users')->where('username', $request->username)->where('id' ,'!=' , $request->id)->first();
+
+            if ($userRecord) {
+                return ['error' => 'username has exits ...'];
+            }
+
+            $userRecord = DB::table('tec_users')->where('email', $request->email)->where('id' ,'!=' , $request->id)->first();
+
+            if ($userRecord) {
+                return ['error' => 'email has exits ...'];
+            }
+            DB::table('tec_users')->where('id', $request->id)->update($users);
+
+
+            DB::table('users')->where('user_id', $request->id)->update([
+                'name' => $request->username
+            ]);
+
+            $permission['user_id'] = $request->id;
+            DB::table('tec_permission')->where('user_id',$request->id)->update($permission);
+        }
 
         return ['message' => 'successfully'];
     }

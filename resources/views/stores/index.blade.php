@@ -63,7 +63,7 @@
         <div class="nav-tabs-custom">
             <ul class="nav nav-tabs pull-right">
 
-                <li class="pull-left header"><i class="fa fa-th"></i> {{lang("username")}}</li>
+                <li class="pull-left header"><i class="fa fa-th"></i> {{lang("branch")}}</li>
 
                 <li class="dropdown">
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">
@@ -100,7 +100,7 @@
 
     <br/>
 
-    @include('users.modal_create')
+    @include('stores.modal_create')
 
 @endsection
 
@@ -142,7 +142,7 @@
                 };
                 let params = new URLSearchParams(data).toString();
                 $.ajax({
-                    url: "{{ url('get_users') }}" + "?" + params,
+                    url: "{{ url('get_stores') }}" + "?" + params,
                     type: 'get',
                     success: function (data) {
                         if (data.error) {
@@ -164,13 +164,11 @@
             $(document).on('click', '#btn-create', function () {
                 $('#modal-create').modal('show');
                 $('#id').val(0);
-                $('#first_name').val('');
-                $('#last_name').val('');
-                $('#phone').val('');
-                $('#email').val('');
-                $('#username').val('');
-                $('#password').val('');
-                $('input[type=checkbox]').removeAttr('checked');
+                $('#code').val('');
+                $('#name').val('');
+                $('#city').val('');
+                $('#photo').val('');
+                $('#address').text('')
             });
 
             $(document).on('submit', '#form-create', function (e) {
@@ -196,8 +194,6 @@
                         $('#modal-create').modal('hide');
                         $('#form-create').get(0).reset();
                         get_data();
-
-                        $('input[type=checkbox]').removeAttr('checked');
                     }
                 });
             });
@@ -209,32 +205,12 @@
                     let data_source = JSON.parse(data);
                     $('#modal-create').modal('show');
                     $('#id').val(data_source.id);
-                    $('#email').val(data_source.email);
+                    $('#code').val(data_source.code);
                     $('#name').val(data_source.name);
                     $('#phone').val(data_source.phone);
-                    $('#last_name').val(data_source.last_name);
-                    $('#first_name').val(data_source.first_name);
-                    $('#username').val(data_source.username);
-                    $('#photo').val(data_source.avatar);
-                    $('#store_id').val(data_source.store_id);
-                    $('#group_id').val(data_source.group_id);
-                    $('#salt').val(data_source.salt);
-                    $('#password').val(data_source.password);
-
-                    //console.log(data_source);
-                    data_source.permission == 1 ? $('#Permission').attr('checked','') : $('#Permission').removeAttr('checked');
-                    data_source.product == 1 ? $('#Product').attr('checked','') : $('#Product').removeAttr('checked');
-                    data_source.category == 1 ? $('#Category').attr('checked','') : $('#Category').removeAttr('checked');
-                    data_source.import == 1 ? $('#Import').attr('checked','') : $('#Import').removeAttr('checked');
-                    data_source.export == 1 ? $('#Export').attr('checked','') : $('#Export').removeAttr('checked');
-                    data_source.sale == 1 ? $('#Sale').attr('checked','') : $('#Sale').removeAttr('checked');
-                    data_source.user == 1 ? $('#User').attr('checked','') : $('#User').removeAttr('checked');
-                    data_source.setting == 1 ? $('#Setting').attr('checked','') : $('#Setting').removeAttr('checked');
-                    data_source.report == 1 ? $('#Report').attr('checked','') : $('#Report').removeAttr('checked');
-                    data_source.pos == 1 ? $('#POS').attr('checked','') : $('#POS').removeAttr('checked');
-                    data_source.dashboard == 1 ? $('#Dashboard').attr('checked','') : $('#Dashboard').removeAttr('checked');
-                    data_source.ex == 1 ? $('#EX').attr('checked','') : $('#EX').removeAttr('checked');
-                    data_source.imp == 1 ? $('#IMP').attr('checked','') : $('#IMP').removeAttr('checked');
+                    $('#city').val(data_source.city);
+                    $('#address').text(data_source.address1);
+                    $('#photo').val(data_source.logo);
                 }
             });
 

@@ -6,6 +6,8 @@ use App\Http\Controllers\SaleController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\BrandController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\StoreController;
+use App\Http\Controllers\CustomerController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -88,6 +90,13 @@ Route::group(['middleware' => ['auth']], function () {
     //
     Route::resource('brands', BrandController::class);
     Route::get('get_brands', [BrandController::class,'get_brands']);
+    //
+    Route::resource('stores', StoreController::class);
+    Route::get('get_stores', [StoreController::class,'get_stores']);
+    //
+    Route::resource('customers', CustomerController::class);
+    Route::get('get_customers', [CustomerController::class,'get_customers']);
+    //
 });
 
 Route::get('lang/{locale}', function ($locale) {

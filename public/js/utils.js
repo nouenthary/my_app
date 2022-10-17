@@ -1,4 +1,3 @@
-
 let lang = localStorage.getItem('lang');
 if (lang == null) {
     localStorage.setItem('lang', 'kh');
@@ -50,24 +49,32 @@ let active = window.location.pathname.replace('/', '');
 
 let list = $('.sidebar-menu li').removeClass("active");
 
-if(active === 'list_export'){
+if (active === 'list_export') {
     active = 'export';
 }
 
-if(active === 'list_import'){
+if (active === 'list_import') {
     active = 'import';
 }
 
-if(active === 'adjustment'){
+if (active === 'adjustment') {
     active = 'warehouse';
 }
 
-if(active === 'list_sale' || active == 'sale_record' || active == 'sale_report' || active == 'stock_report' || active == 'chart_report'){
+if (active === 'list_sale' || active == 'sale_record' || active == 'sale_report' || active == 'stock_report' || active == 'chart_report') {
     active = 'sale';
 }
 
-if(active === 'categories' || active == 'brands'){
+if (active === 'categories' || active == 'brands') {
     active = 'categories';
+}
+
+if (active === 'stores') {
+    active = 'setting';
+}
+
+if (active === 'customers') {
+    active = 'users';
 }
 
 $('#' + active).addClass('active');
@@ -139,27 +146,18 @@ let status = function (t) {
     if (t === 1) {
         color = 'danger';
         text = 'Lost';
-    }
-    else if (t === 0) {
+    } else if (t === 0) {
         color = 'warning';
         text = 'Broken';
-    }
-
-    else if (t === 'Import') {
+    } else if (t === 'Import') {
         color = 'success';
         text = 'Import';
-    }
-
-    else if (t === 'Export') {
+    } else if (t === 'Export') {
         color = 'danger';
         text = 'Export';
-    }
-
-    else if (t === 'Paid') {
+    } else if (t === 'Paid') {
         text = t;
-    }
-
-    else{
+    } else {
         text = t;
     }
     return `<span class="label label-` + color + `">` + text + `</span>`;

@@ -109,5 +109,14 @@ return [
     'cash_in_hand' => 'Cash in Hand',
     'note' => 'Note',
     'close_register' => 'បិទការលក់ប្រចាំថ្ងៃ',
-    'register_details' => 'ចុះឈ្មោះព័ត៌មានលម្អិត'
+    'register_details' => 'ចុះឈ្មោះព័ត៌មានលម្អិត',
+    'phone' => 'Phone',
+    'city' => 'City',
+    'address' => 'Address',
+    'new' => 'New',
+    'email' => 'Email',
+    'gender' => 'Gender',
+    'commission'  => 'Commission',
+    'name' => 'Name',
+    'group' => 'Group'
 ];

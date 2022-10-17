@@ -37,6 +37,8 @@
     <link rel="stylesheet" href="{{ URL::asset('/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css')}}">
 
     <link rel="stylesheet" href="{{ URL::asset('/css/utils.css')}}">
+
+
 </head>
 
 <body class="hold-transition fixed skin-blue-light sidebar-mini">
@@ -435,20 +437,11 @@
                         <li><a href="{{ url('users') }}"><i class="fa fa-circle-o"></i>
                                 {{ __('language.list_users') }}
                             </a></li>
-                        <li><a href="{{ url('create_export') }}"><i class="fa fa-circle-o"></i>
-                                {{ __('language.add_user') }}</a>
-                        </li>
+
                         <li><a href="{{ url('customers') }}"><i class="fa fa-circle-o"></i>
                                 {{ __('language.list_customer') }}</a></li>
-                        <li><a href="{{ url('create_customer') }}"><i class="fa fa-circle-o"></i>
-                                {{ __('language.add_customer') }}</a>
-                        </li>
-                        <li><a href="{{ url('permission') }}"><i class="fa fa-circle-o"></i>
-                                {{ __('language.permission') }}</a>
-                        </li>
-                        <li><a href="{{ url('permission') }}"><i class="fa fa-circle-o"></i>
-                                {{ __('language.login_attempt') }}</a>
-                        </li>
+
+
                     </ul>
                 </li>
 
@@ -460,12 +453,10 @@
                             </span>
                     </a>
                     <ul class="treeview-menu">
-                        <li><a href="{{ url('export') }}"><i class="fa fa-circle-o"></i>
+                        <li><a href="{{ url('stores') }}"><i class="fa fa-circle-o"></i>
                                 {{ __('language.list_store') }}
                             </a></li>
-                        <li><a href="{{ url('create_export') }}"><i class="fa fa-circle-o"></i>
-                                {{ __('language.add_store') }}</a>
-                        </li>
+
                     </ul>
                 </li>
 
