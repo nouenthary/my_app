@@ -573,6 +573,14 @@ class SaleController extends Controller
             $data = $data->where('tec_sales.date', '<=', $ends . ' 23:59:00');
         }
 
+        if ($request->product_id != '') {
+            $data = $data->where('tec_sale_items.product_id', '=', $request->product_id);
+        }
+
+        if ($request->seller_id != '') {
+            $data = $data->where('tec_sales.created_by', '=', $request->seller_id);
+        }
+
         $store = DB::table('tec_stores')->where('id', $request->store_id)->first();
 
         $data = $data

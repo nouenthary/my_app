@@ -227,7 +227,9 @@
                 let end_date = $('#end_date').val();
                 let page = parseInt($('#page').text()) ?? 1;
                 let page_size= $('#page_size').val() ?? 10;
-                let json = `?start_date=${start_date}&store_id=${storeId}&end_date=${end_date}&page=${page}&page_size=${page_size}`;
+                let seller_id = $('#seller_id').val();
+                let product_id = $('#product_id').val();
+                let json = `?start_date=${start_date}&store_id=${storeId}&end_date=${end_date}&page=${page}&page_size=${page_size}&seller_id=${seller_id}&product_id=${product_id}`;
                 window.open('/sale_report_daily' + json);
             });
 
