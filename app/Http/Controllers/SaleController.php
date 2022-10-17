@@ -50,7 +50,8 @@ class SaleController extends Controller
                 'tec_sales.status',
                 'tec_users.username',
                 'tec_sales.total_discount',
-                'tec_sales.paid'
+                'tec_sales.paid',
+                'tec_sales.note'
             )
             ->join('tec_sale_items', 'tec_sales.id', '=', 'tec_sale_items.sale_id')
             ->join('tec_users', 'tec_sales.created_by', '=', 'tec_users.id');
@@ -88,7 +89,8 @@ class SaleController extends Controller
             'tec_users.username',
             'tec_sales.total',
             'tec_sales.total_discount',
-            'tec_sales.paid'
+            'tec_sales.paid',
+            'tec_sales.note'
         )
             ->orderByDesc('tec_sales.id')
             ->paginate($request->page_size, ['*'], 'page', $request->page);
@@ -113,8 +115,13 @@ class SaleController extends Controller
                 $status = 'មិនទាន់បង់ប្រាក់';
             }
 
+            $inv = $col->id;
+            if($col->note != ''){
+                $inv =  $col->note;
+            }
+
             $value = $value . $this->html('tr',
-                    $this->html('td', '#' . $col->id, 'width="100px"') .
+                    $this->html('td', '#' . $inv, 'width="100px"') .
                     $this->html('td', $col->date, '') .
                     $this->html('td', $col->customer_name, '') .
                     $this->html('td', number_format($col->quantity), 'class="text-right" ') .
@@ -259,7 +266,8 @@ class SaleController extends Controller
                 tec_products.branch_commission,
                 tec_products.staff_commission,
                 tec_products.other_commission,
-                tec_users.salt
+                tec_users.salt,
+                tec_sales.note
                 "
             )
             ->join('tec_sale_items', 'tec_sales.id', '=', 'tec_sale_items.sale_id')
@@ -324,9 +332,14 @@ class SaleController extends Controller
                 $commission_sale = $col->staff_commission * $col->quantity;
             }
 
+            $inv = $col->id;
+            if($col->note != ''){
+                $inv =  $col->note;
+            }
+
             $value = $value . $this->html('tr',
                     $this->html('td', $col->name, '') .
-                    $this->html('td', '#' . $col->id, 'width="100px"') .
+                    $this->html('td', '#' . $inv, 'width="100px"') .
                     $this->html('td', $col->date, '') .
                     $this->html('td', $col->customer_name, '') .
                     $this->html('td', $col->product_name, 'class="text-left" ') .
@@ -664,6 +677,17 @@ class SaleController extends Controller
     {
         $utils = new Utils();
 
+        $old_sale = DB::table('tec_sales')->where('store_id', $utils->get_store_id())->orderByDesc('id')->first();
+
+        $invoice = 1;
+
+        if($old_sale != null && $old_sale->note != ''){
+            $ref = explode("-", $old_sale->note);
+            $invoice = (int) $ref[2] + 1;
+        }
+
+        $inv = str_pad($invoice,7,"0",STR_PAD_LEFT);
+
         $data = [
             'date' => date('Y-m-d H:i:s'),
             'customer_id' => $request->customer_id,
@@ -680,7 +704,7 @@ class SaleController extends Controller
             'store_id' => $utils->get_store_id(),
             'date_out' => date('Y-m-d H:i:s'),
             'waiting_number' => $utils->get_waiting_number(),
-            'note' => $request->note,
+            'note' => 'POS-' . date('Ymd-') . $inv,
         ];
 
         $id = DB::table('tec_sales')->insertGetId($data);

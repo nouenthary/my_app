@@ -115,12 +115,18 @@
                     $items = count($records);
                     $qty = 0;
                     $total = 0;
+
+                    $inv = $sales->id;
+                    if($sales->note != ''){
+                        $inv =  $sales->note;
+                    }
+
                 @endphp
             </div>
 
             <ul>
                 <li>
-                    <p class="invoice-header">វិក័យបត្រ​ : <span> {{ $sales->id }}</span></p>
+                    <p class="invoice-header">វិក័យបត្រ​ : <span> {{ $inv }}</span></p>
                 </li>
                 <li>
                     <p class="invoice-header">អតិថិជន : <span> {{ $sales->customer_name }}</span></p>
