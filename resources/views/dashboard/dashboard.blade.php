@@ -16,7 +16,7 @@
                 <div class="inner">
                     <h3>{{  number_format($qty_sold[0]->qty) }} pcs</h3>
 
-                    <p>{{ lang('stock_in') }}</p>
+                    <p>{{ lang('sold') }}</p>
                 </div>
                 <div class="icon">
                     <i class="ion ion-bag"></i>

@@ -9,6 +9,10 @@
                 @include('components.store')
             </div>
 
+            <div class="col-md-12">
+                @include('components.product')
+            </div>
+
 
             <div class="col-md-12">
                 <div class="form-group">
@@ -195,7 +199,8 @@
                         start_date: $('#start_date').val(),
                         end_date: $('#end_date').val(),
                         page_size: $('#page_size').val() ?? 10,
-                        page: parseInt($('#page').text()) ?? 1
+                        page: parseInt($('#page').text()) ?? 1,
+                        product_id : $('#product_id').val()
                     },
                     success: function (data) {
                         if (data.error) {

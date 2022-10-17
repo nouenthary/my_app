@@ -10,6 +10,10 @@
             </div>
 
             <div class="col-md-12">
+                @include('components.product')
+            </div>
+
+            <div class="col-md-12">
                 @include('components.date',['style' => 'inline'])
             </div>
 
@@ -143,7 +147,8 @@
                         store_id: $('#store_id').val(),
                         date: $('#date').val(),
                         page_size: $('#page_size').val() ?? 10,
-                        page: parseInt($('#page').text()) ?? 1
+                        page: parseInt($('#page').text()) ?? 1,
+                        product_id: $('#product_id').val(),
                     },
                     success: function (data) {
                         if (data.error) {

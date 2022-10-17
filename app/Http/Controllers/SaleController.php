@@ -293,6 +293,10 @@ class SaleController extends Controller
             $data = $data->where('tec_sales.date', '<=', $end);
         }
 
+        if ($request->product_id != '') {
+            $data = $data->where('tec_sale_items.product_id', '=', $request->product_id);
+        }
+
         $data = $data
             ->orderByDesc('tec_sales.id')
             ->paginate($request->page_size, ['*'], 'page', $request->page);
@@ -418,6 +422,10 @@ class SaleController extends Controller
         if ($end != '') {
             $ends = date('Y-m-d ', strtotime($end));
             $data = $data->where('tec_sales.date', '<=', $ends . ' 23:59:00');
+        }
+
+        if ($request->product_id != '') {
+            $data = $data->where('tec_sale_items.product_id', '=', $request->product_id);
         }
 
         $data = $data
