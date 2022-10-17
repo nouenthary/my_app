@@ -118,5 +118,8 @@ return [
     'gender' => 'Gender',
     'commission'  => 'Commission',
     'name' => 'Name',
-    'group' => 'Group'
+    'group' => 'Group',
+    'branch_commission' => 'Branch commission',
+    'staff_commission' => 'Staff commission',
+    'other_commission' => 'Other commission'
 ];

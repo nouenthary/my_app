@@ -115,5 +115,8 @@ return [
     'gender' => 'ភេទ',
     'commission'  => 'កម្រៃជើងសារ',
     'name' => 'ឈ្មោះ',
-    'group' => 'ក្រុម'
+    'group' => 'ក្រុម',
+    'branch_commission' => 'សាខា កម្រៃជើងសារ',
+    'staff_commission' => 'បុគ្គលិក កម្រៃជើងសារ',
+    'other_commission' => 'ទូទៅ កម្រៃជើងសារ'
 ];

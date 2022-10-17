@@ -1,11 +1,38 @@
 @extends('main')
 @section('content')
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    {{--    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>--}}
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
 
     <!-- /.box-header -->
     <div class="form-search">
 
         <div class="row">
 
+
+
+
+            <div class="col-md-12">
+                @include('components.brand')
+            </div>
+
+            <div class="col-md-12">
+                @include('components.category')
+            </div>
+
+            <div class="col-md-12">
+                @include('components.product')
+            </div>
+
+
+            <div class="col-md-12 ui-widgets">
+                <div class="form-group">
+                    <label for="barcode_search" class="col-md-1">{{lang('code')}}: </label>
+                    <div class="col-md-3">
+                        <input id="barcode_search" name="barcode_search" class="form-control" placeholder="{{lang('enter')}} {{lang('code')}}">
+                    </div>
+                </div>
+            </div>
 
             <div class="col-md-12">
 
@@ -77,7 +104,7 @@
                 </li>
 
                 <li>
-                    <a class="btn btn-default" id="btn-create"><i class="fa fa-file-o"></i> New </a>
+                    <a class="btn btn-default" id="btn-create"><i class="fa fa-file-o"></i> {{lang('new')}} </a>
                 </li>
 
             </ul>
@@ -139,7 +166,11 @@
                 let data = {
                     _token: "{{ csrf_token() }}",
                     page_size: $('#page_size').val() ?? 10,
-                    page: parseInt($('#page').text()) ?? 1
+                    page: parseInt($('#page').text()) ?? 1,
+                    brand_id: $('#brand_id_search').val() ?? '',
+                    category_id: $('#category_id_search').val() ?? '',
+                    product_id: $('#product_id').val() ?? '',
+                    code: $('#barcode_search').val() ?? ''
                 };
                 let params = new URLSearchParams(data).toString();
                 $.ajax({
@@ -162,7 +193,65 @@
 
             get_data();
 
-            $(document).on('click','#btn-create',function(){
+            function get_barcode() {
+                let arr = [];
+                $.ajax({
+                    url: "{{ url('get_barcode') }}",
+                    type: 'get',
+                    async: false,
+                    success: function (data) {
+                        arr = data;
+                    }
+                });
+                return arr;
+            }
+
+            // var availableTags = [
+            //     "ActionScript",
+            //     "AppleScript",
+            //     "Asp",
+            //     "BASIC",
+            //     "C",
+            //     "C++",
+            //     "Clojure",
+            //     "COBOL",
+            //     "ColdFusion",
+            //     "Erlang",
+            //     "Fortran",
+            //     "Groovy",
+            //     "Haskell",
+            //     "Java",
+            //     "JavaScript",
+            //     "Lisp",
+            //     "Perl",
+            //     "PHP",
+            //     "Python",
+            //     "Ruby",
+            //     "Scala",
+            //     "Scheme"
+            // ];
+
+
+            $("#barcode_search").autocomplete({
+                source: get_barcode(),
+                select: function (event, ui) {
+                    //console.log(ui.item.label)
+                    $('#barcode_search').val('')
+                },
+                // search: function () {
+                //console.log($(this).val())
+                // $(this).val('');
+                //}
+            });
+
+            $('#barcode_search').focus();
+
+            $(document).on('change', '#barcode_search', function () {
+                //console.log($(this).val());
+                $(this).val('');
+            });
+
+            $(document).on('click', '#btn-create', function () {
                 $('#modal-create').modal('show');
                 $('#id').val(0);
                 $('#code').val('');
@@ -170,6 +259,14 @@
                 $('#is_active').val(1);
                 $('#photo').val('');
                 $('#code').val(barcode());
+                $('#cost').val(0);
+                $('#price').val(0);
+                $('#category_id').val('');
+                $('#brand_id').val('');
+                $('#unit').val('');
+                $('#branch_commission').val(0);
+                $('#staff_commission').val(0);
+                $('#other_commission').val(0);
             });
 
             $(document).on('submit', '#form-create', function (e) {
@@ -200,7 +297,7 @@
             });
 
             // add variant
-            $(document).on('click','.add-variant',function () {
+            $(document).on('click', '.add-variant', function () {
                 let new_line = $('#list_variant').find('tr:last').clone();
                 let index = new_line.find('th').text();
                 new_line.find('th').text(parseInt(index) + 1);
@@ -210,25 +307,40 @@
 
 
             // row click
-            $(document).on('dblclick','tbody tr',function () {
+            $(document).on('dblclick', 'tbody tr', function () {
                 let data = $(this).attr('data');
-                if(data){
+                if (data) {
                     let data_source = JSON.parse(data);
+                    console.log(data_source);
                     $('#modal-create').modal('show');
                     $('#id').val(data_source.id);
                     $('#code').val(data_source.code);
-                    $('#name').val(data_source.brand_name);
+                    $('#name').val(data_source.name);
                     $('#is_active').val(data_source.is_active);
+                    $('#is_active').val(data_source.is_active).trigger('change');
                     $('#photo').val(data_source.image);
+                    $('#cost').val(data_source.cost);
+                    $('#price').val(data_source.price);
+                    $('#category_id').val(data_source.category_id);
+                    $('#category_id').val(data_source.category_id).trigger('change');
+                    $('#brand_id').val(data_source.brand_id);
+                    $('#brand_id').val(data_source.brand_id).trigger('change');
+                    $('#unit').val(data_source.unit);
+                    $('#unit').val(data_source.unit).trigger('change');
+                    $('#branch_commission').val(data_source.branch_commission);
+                    $('#staff_commission').val(data_source.staff_commission);
+                    $('#other_commission').val(data_source.other_commission);
+                    $('#barcode_symbology').val(data_source.barcode_symbology);
+                    $('#barcode_symbology').val(data_source.barcode_symbology).trigger('change');
                 }
             });
 
             // generate
-            $(document).on('click','.generate',function () {
+            $(document).on('click', '.generate', function () {
                 $('#code').val(barcode());
             });
 
-            let barcode = function(){
+            let barcode = function () {
                 return Math.floor(Math.random() * 10000000000000);
             }
 
@@ -252,7 +364,7 @@
             });
 
 
-            let filename = location.href.replace(location.host,'').replace('http:///','');
+            let filename = location.href.replace(location.host, '').replace('http:///', '');
 
             function CreatePDFfromHTML() {
                 let HTML_Width = $("#table").width();
@@ -273,7 +385,7 @@
                         pdf.addPage(PDF_Width, PDF_Height);
                         pdf.addImage(imgData, 'JPG', top_left_margin, -(PDF_Height * i) + (top_left_margin * 4), canvas_image_width, canvas_image_height);
                     }
-                    pdf.save(filename +".pdf");
+                    pdf.save(filename + ".pdf");
                 });
             }
 

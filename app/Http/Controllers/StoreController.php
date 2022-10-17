@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Store;
+use App\Utils;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -61,6 +62,8 @@ class StoreController extends Controller
         if($request->id == 0){
             DB::table('tec_stores')->updateOrInsert($data);
         }
+
+        Utils::add_product_to_stock();
 
         return [
             'message' => 'success.'

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Utils;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use PDF;
@@ -46,18 +47,27 @@ class ProductController extends Controller
                     p.category_id, p.brand_id, p.alert_quantity, p.details, p.type,
                     c.name as cate_name,
                     b.id as brand_id ,b.brand_name,
-                    (SELECT COALESCE (SUM(quantity),0) FROM `tec_product_store_qty` WHERE product_id=p.id ) as quantity
+                    (SELECT COALESCE (SUM(quantity),0) FROM `tec_product_store_qty` WHERE product_id=p.id ) as quantity,
+                    p.branch_commission,p.staff_commission,p.other_commission, p.unit, p.barcode_symbology, p.is_active
                 '
             )
-            ->join('tec_categories as c', 'p.category_id', '=', 'c.id')
-            ->join('brands as b', 'p.brand_id', '=', 'b.id');
+            ->leftJoin('tec_categories as c', 'p.category_id', '=', 'c.id')
+            ->leftJoin('brands as b', 'p.brand_id', '=', 'b.id');
 
         if ($request->product_id != '') {
             $data = $data->where('p.id', '=', $request->product_id);
         }
 
         if ($request->code != '') {
-            $data = $data->where('p.code', '=', $request->code);
+            $data = $data->where('p.code', 'LIKE', $request->code);
+        }
+
+        if ($request->brand_id != '') {
+            $data = $data->where('p.brand_id', '=', $request->brand_id);
+        }
+
+        if ($request->category_id != '') {
+            $data = $data->where('p.category_id', '=', $request->category_id);
         }
 
         $data = $data->paginate($request->page_size, ['*'], 'page', $request->page);
@@ -72,7 +82,7 @@ class ProductController extends Controller
             $qty = $qty + $col->quantity;
             $row = "id='$col->id' data='$json' ";
             $value = $value . html('tr',
-                    html('td', image("/products/$col->image", "25px"), 'class="text-center" width="25px"') .
+                    html('td', image("/$col->image", "25px"), 'class="text-center" width="25px"') .
                     html('td', '' . $col->code, 'width="100px"') .
                     html('td', '' . $col->name, '') .
                     html('td', '' . number_format($col->cost) . '៛', 'width="80px" class="text-right"') .
@@ -106,16 +116,6 @@ class ProductController extends Controller
 
     }
 
-    public function get_button_action($row)
-    {
-        return '
-            <div class="btn-group">
-            <a class="btn btn-default btn-flat btn-xs btn-pencil" id="' . $row . '"><i class="fa fa-pencil"></i></a>
-            <a class="btn btn-success btn-flat btn-xs btn-eye"><i class="fa fa-eye"></i></a>
-        </div>
-        ';
-    }
-
     /**
      * Show the form for creating a new resource.
      *
@@ -138,15 +138,14 @@ class ProductController extends Controller
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             $names = date('Y_m_d_H_i_s') . '.' . $image->getClientOriginalExtension();
-            $destinationPath = public_path('/uploads/products');
+            $destinationPath = public_path('/uploads');
             $image->move($destinationPath, $names);
         }
-
+        $id = $request->id;
         $code = DB::table('tec_products')
-            ->where('code', '=', $request->code)
-            ->first();
+            ->where('code', 'LIKE', $request->code);
 
-        if ($code != '') {
+        if ($code->first() != '' && $id == 0) {
             return ['error' => "code `$request->code` is exist..."];
         }
 
@@ -169,35 +168,26 @@ class ProductController extends Controller
             'unit' => $request->unit,
             'is_active' => $request->is_active,
             'user_id' => auth()->user()->user_id,
-            'created_at' => date('Y_m_d_H_i_s')
+            'branch_commission' => (float) $request->branch_commission,
+            'staff_commission' => (float) $request->staff_commission,
+            'other_commission' => (float) $request->other_commission
         ];
 
-        $id = $request->id;
-
         if ($id == 0) {
-            $id = DB::table('tec_products')->insertGetId($data);
+            DB::table('tec_products')->insert($data);
         }
 
-        if (count($request->variant_name) > 0) {
-            foreach ($request->variant_name as $item) {
-                $data = [
-                    'variant' => $item,
-                    'product_id' => $id
-                ];
-
-                $variant = DB::table('variants')
-                    ->where('variant', '=', $item)
-                    ->where('product_id','=',$id)
-                    ->first();
-
-                if ($variant == '') {
-                    DB::table('variants')->insert($data);
-                }
-
-            }
-
+        if ($code->where('id','!=', $id)->first() != '' && $id > 0) {
+            return ['error' => "code `$request->code` is exist..."];
         }
-        return $request->all();
+
+        if ($id > 0) {
+            DB::table('tec_products')->where('id',$id)->update($data);
+        }
+
+        Utils::add_product_to_stock();
+
+        return ['message' => 'created'];
     }
 
     /**
@@ -801,6 +791,12 @@ class ProductController extends Controller
             ->get();
 
         return view('import.receipt', $data);
+    }
+
+    // barcode
+    public function get_barcode(){
+        $barcode = DB::table('tec_products')->pluck('code');
+        return $barcode;
     }
 
 }

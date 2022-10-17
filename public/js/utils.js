@@ -97,15 +97,15 @@ $('.date-range-picker').daterangepicker({
 
 $(document).on('change', 'form input[type=text], select', function () {
 
-    if ($(this).val().length === 0 && $(this).attr('required') == '') {
-        $(this).parent().addClass('has-error');
-        $(this).parent().children('span').addClass('select2-selections')
-    }
-
-    if ($(this).val().length > 0) {
-        $(this).parent().removeClass('has-error');
-        $(this).parent().addClass('has-success');
-    }
+    // if ($(this).val().length === 0 && $(this).attr('required') == '') {
+    //     $(this).parent().addClass('has-error');
+    //     $(this).parent().children('span').addClass('select2-selections')
+    // }
+    //
+    // if ($(this).val().length > 0) {
+    //     $(this).parent().removeClass('has-error');
+    //     $(this).parent().addClass('has-success');
+    // }
 });
 
 

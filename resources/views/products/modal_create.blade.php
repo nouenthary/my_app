@@ -37,7 +37,7 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="barcode_symbology">{{lang('barcode_symbology')}} :</label>
+                                    <label for="barcode_symbology">{{lang('Barcode_symbology')}} :</label>
                                     <select class="form-control select2" id="barcode_symbology" name="barcode_symbology"
                                             style="width: 100%">
                                         <option value="Code25">Code25</option>
@@ -119,37 +119,20 @@
                             <div class="col-md-6">
 
                                 <div class="form-group">
-                                    <label for="code">{{lang('variant')}} :</label>
+                                    <label for="brand">{{lang('branch_commission')}} :</label>
+                                    <input class="form-control" id="branch_commission" name="branch_commission" value="0" placeholder="{{lang('branch_commission')}}">
 
-{{--                                    <input type="text" class="form-control" id="variant" name="variant"--}}
-{{--                                           placeholder="{{lang('enter')}} {{lang('variant')}}" value=""/>--}}
+                                </div>
 
+                                <div class="form-group">
+                                    <label for="staff">{{lang('staff_commission')}} :</label>
+                                    <input class="form-control" id="staff_commission" name="staff_commission" value="0" placeholder="{{lang('staff_commission')}}">
 
-                                    <table class="table table-sm table-bordered">
-                                        <thead>
-                                        <tr>
-                                            <th scope="col">#</th>
-                                            <th scope="col">{{lang('variant')}}</th>
-                                            <th scope="col"></th>
-                                        </tr>
-                                        </thead>
-                                        <tbody id="list_variant">
+                                </div>
 
-                                            <tr id="0">
-                                                <th scope="row">1</th>
-                                                <td>
-                                                    <input class="form-control" name="variant_name[]" value="Default" required/>
-                                                </td>
-                                                <td>
-                                                    <button type="button" class="form-control btn btn-sm add-variant"><i
-                                                            class="fa fa-plus-square "></i></button>
-                                                </td>
-                                            </tr>
-
-
-                                        </tbody>
-                                    </table>
-
+                                <div class="form-group">
+                                    <label for="other">{{lang('other_commission')}} :</label>
+                                    <input class="form-control" id="other_commission" name="other_commission" value="0" placeholder="{{lang('other_commission')}}">
 
                                 </div>
 

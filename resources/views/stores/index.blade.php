@@ -165,10 +165,11 @@
                 $('#modal-create').modal('show');
                 $('#id').val(0);
                 $('#code').val('');
+                $('#code').val(barcode());
                 $('#name').val('');
                 $('#city').val('');
                 $('#photo').val('');
-                $('#address').text('')
+                $('#address').text('');
             });
 
             $(document).on('submit', '#form-create', function (e) {

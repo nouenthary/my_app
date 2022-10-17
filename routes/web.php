@@ -97,6 +97,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('customers', CustomerController::class);
     Route::get('get_customers', [CustomerController::class,'get_customers']);
     //
+    Route::get('get_barcode', [ProductController::class,'get_barcode']);
 });
 
 Route::get('lang/{locale}', function ($locale) {
