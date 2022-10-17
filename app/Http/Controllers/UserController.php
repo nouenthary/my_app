@@ -62,7 +62,9 @@ class UserController extends Controller
 
                 AND date BETWEEN '$start' AND '$end'
 
-                GROUP BY DATE_FORMAT(date, \"%Y-%m-%d\") limit 15
+                GROUP BY DATE_FORMAT(date, \"%Y-%m-%d\")
+
+                Order By date desc limit 15
 
         ";
 
