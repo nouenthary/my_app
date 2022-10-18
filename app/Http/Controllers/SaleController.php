@@ -973,7 +973,7 @@ class SaleController extends Controller
             ->get();
 
         $products = $products->groupBy('tec_sale_items.product_name')
-            ->orderByDesc('quantity')
+            ->orderBy('quantity')
             ->get();
 
         foreach ($data as $row) {
