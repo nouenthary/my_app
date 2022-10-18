@@ -2,7 +2,7 @@
 @section('content')
     <style>
         #container {
-            height: 600px;
+            height: 500px;
         }
 
         .highcharts-figure,
@@ -102,8 +102,27 @@
     <div id="json"></div>
 
     <figure class="highcharts-figure">
-        <div id="container"></div>
 
+        <div class="box box-solid">
+            <div class="box-header with-border">
+                <h3 class="box-title">{{lang('product')}}</h3>
+
+                <div class="box-tools">
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="box-body no-padding">
+                <ul class="nav nav-pills nav-stacked">
+                    <li><a href="#"><i class="fa fa-circle-o text-red"></i> Important</a></li>
+                    <li><a href="#"><i class="fa fa-circle-o text-yellow"></i> Promotions</a></li>
+                    <li><a href="#"><i class="fa fa-circle-o text-light-blue"></i> Social</a></li>
+                </ul>
+            </div>
+            <!-- /.box-body -->
+        </div>
+
+        <div id="container"></div>
     </figure>
 @endsection
 
@@ -258,7 +277,7 @@
                     data: data,
                     success: function(r) {
                         let store = r.data;
-
+                        let products = r.total;
                         //console.log(store);
 
                         var qty = store;
@@ -267,6 +286,14 @@
 
                         for (let i in qty) {
                             summary += qty[i][1];
+                        }
+                        $('.nav-stacked').empty();
+                        for (s in products){
+                            $('.nav-stacked').append('<li  style="font-weight: bold"><a href="#">' +
+                                '<i class="fa fa-circle-o text-primary"></i> <span class="text-blue">'
+                                    + products[s].product_name +' : ' + '</span> <span class="text-red">' +
+                                    + products[s].quantity +
+                                ' pcs</span> </a> </li>');
                         }
 
                         Highcharts.chart('container', {

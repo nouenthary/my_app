@@ -925,7 +925,6 @@ class SaleController extends Controller
     public function get_chart_report(Request $request)
     {
         // print_r($request->all());
-        $data = [];
         $dataSource = [];
         $year = $request->year;
         $month = $request->month;
@@ -936,24 +935,44 @@ class SaleController extends Controller
             ->join('tec_stores', 'tec_sales.store_id', '=', 'tec_stores.id')
             ->where('tec_stores.city', '<>', 'None');
 
+        $products = DB::table('tec_sales')
+            ->select('tec_sale_items.product_name', DB::raw("SUM(tec_sale_items.quantity) quantity"))
+            ->join('tec_sale_items', 'tec_sales.id', '=', 'tec_sale_items.sale_id')
+            ->join('tec_stores', 'tec_sales.store_id', '=', 'tec_stores.id')
+            ->where('tec_stores.city', '<>', 'None');
+
         if ($request->type == 'day') {
             $time = strtotime($request->date);
             $newformat = date('Y-m-d', $time);
             $data = $data->whereDate('tec_sales.date', '>=', "$newformat");
             $data = $data->whereDate('tec_sales.date', '<=', "$newformat");
+
+            $products = $products->whereDate('tec_sales.date', '>=', "$newformat");
+            $products = $products->whereDate('tec_sales.date', '<=', "$newformat");
+
         } else if ($request->type == 'Year') {
             $start = date('Y-m-d', strtotime("$year-1-1"));
             $end = date('Y-m-d', strtotime("$year-12-31"));
             $data = $data->whereDate('tec_sales.date', '>=', $start);
             $data = $data->whereDate('tec_sales.date', '<=', $end);
+
+            $products = $products->whereDate('tec_sales.date', '>=', $start);
+            $products = $products->whereDate('tec_sales.date', '<=', $end);
         } else if ($request->type == 'Month') {
             $start = date('Y-m-d', strtotime("$year-$month-1"));
             $end = date('Y-m-d', strtotime("$year-$month-31"));
             $data = $data->whereDate('tec_sales.date', '>=', $start);
             $data = $data->whereDate('tec_sales.date', '<=', $end);
+
+            $products = $products->whereDate('tec_sales.date', '>=', $start);
+            $products = $products->whereDate('tec_sales.date', '<=', $end);
         }
 
         $data = $data->groupBy('tec_stores.city')
+            ->orderByDesc('quantity')
+            ->get();
+
+        $products = $products->groupBy('tec_sale_items.product_name')
             ->orderByDesc('quantity')
             ->get();
 
@@ -963,6 +982,7 @@ class SaleController extends Controller
 
         return [
             'data' => $dataSource,
+            'total' => $products
         ];
     }
 }
