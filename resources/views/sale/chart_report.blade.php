@@ -288,13 +288,21 @@
                             summary += qty[i][1];
                         }
                         $('.nav-stacked').empty();
+                        let amount = 0;
                         for (s in products){
+                            amount = amount + parseFloat(products[s].subtotal);
                             $('.nav-stacked').append('<li  style="font-weight: bold"><a href="#">' +
                                 '<i class="fa fa-circle-o text-primary"></i> <span class="text-blue">'
                                     + products[s].product_name +' : ' + '</span> <span class="text-red">' +
                                     + products[s].quantity +
-                                ' pcs</span> </a> </li>');
+                                ' pcs</span><span class="text-primary" style="text-align: right; float: right;">'+parseFloat(products[s].subtotal).toLocaleString()    +'៛</span> </a> </li>');
                         }
+
+                        $('.nav-stacked').append('<li  style="font-weight: bold"><a href="#">' +
+                            '<i class="fa fa-circle-o text-primary"></i> <span class="text-blue">'
+                            + 'ប្រាក់សរុប' +' : ' + '</span> <span class="text-red">' +
+                            ' </span><span class="text-primary" style="text-align: right; float: right;">'+parseFloat(amount).toLocaleString()    +'៛</span> </a> </li>');
+
 
                         Highcharts.chart('container', {
                             chart: {

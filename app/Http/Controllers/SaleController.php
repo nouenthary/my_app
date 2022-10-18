@@ -936,7 +936,7 @@ class SaleController extends Controller
             ->where('tec_stores.city', '<>', 'None');
 
         $products = DB::table('tec_sales')
-            ->select('tec_sale_items.product_name', DB::raw("SUM(tec_sale_items.quantity) quantity"))
+            ->select('tec_sale_items.product_name', DB::raw("SUM(tec_sale_items.quantity) quantity"), DB::raw("SUM(tec_sale_items.subtotal) subtotal"))
             ->join('tec_sale_items', 'tec_sales.id', '=', 'tec_sale_items.sale_id')
             ->join('tec_stores', 'tec_sales.store_id', '=', 'tec_stores.id')
             ->where('tec_stores.city', '<>', 'None');
@@ -984,5 +984,9 @@ class SaleController extends Controller
             'data' => $dataSource,
             'total' => $products
         ];
+    }
+
+    public function sale_qr_code(){
+        return view('sale.sale_qr_code');
     }
 }
