@@ -5,7 +5,8 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="csrf-token" content="{{ csrf_token() }}"/>
-    <title>POS</title>
+    <title>POS Point of Sale KS4</title>
+    <link rel="shortcut icon" href="/uploads/icon.png"/>
     <!-- Tell the browser to be responsive to screen width -->
 
     <!-- Bootstrap 3.3.7 -->
@@ -281,7 +282,7 @@
                     <div style="clear:both;"></div>
                 </div>
 
-                <div class="form-group" style="margin-bottom:5px;">
+                <div class="form-group" style="margin-bottom:5px; ">
                     <input type="text" name="hold_ref" value="" id="hold_ref"
                            class="form-control kb-text" placeholder="{{ __('language.reference_note') }}">
                 </div>

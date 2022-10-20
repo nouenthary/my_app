@@ -17,7 +17,7 @@
     <link rel="stylesheet" href="/dist/css/skins/_all-skins.min.css">
     <style type="text/css">
         #wrapper {
-            max-width: 480px;
+            width: 480px;
             margin: 0 auto;
             padding: 5px;
             font-size: 12px;
@@ -26,6 +26,14 @@
         table {
             font-size: 12px;
         }
+
+        @media print {
+            #wrapper{
+                margin: 0;
+                width: 100%;
+            }
+        }
+
     </style>
 </head>
 

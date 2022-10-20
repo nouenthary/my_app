@@ -41,9 +41,9 @@ $(function () {
 
         return num.toLocaleString() + '៛';
     }
-
+    // alert()
     let getHeight = function () {
-        var containerHeight = $('body').height() - 430;
+        let containerHeight = $('body').height() - 430;
         $('.slimScrollDiv').css('height', containerHeight + 'px');
     }
 
