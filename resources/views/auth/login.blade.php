@@ -209,6 +209,9 @@
 
         $(document).on('click', '#show-password', function () {
         });
+
+        localStorage.removeItem('items');
+
     });
 </script>
 </body>

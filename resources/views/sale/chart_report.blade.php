@@ -303,7 +303,6 @@
                             + 'ប្រាក់សរុប' +' : ' + '</span> <span class="text-red">' +
                             ' </span><span class="text-primary" style="text-align: right; float: right;">'+parseFloat(amount).toLocaleString()    +'៛</span> </a> </li>');
 
-
                         Highcharts.chart('container', {
                             chart: {
                                 type: 'column'

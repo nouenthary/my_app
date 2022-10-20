@@ -300,6 +300,17 @@ $(function () {
         let riel = $('#md-riel').text().replace(',', '').replace('៛', '');
 
         let amount = $('#amount_main').val();
+
+        if(parseFloat(riel) == parseFloat(amount)){
+            //alert(parseFloat(amount) == parseFloat(riel));
+            $('#amount_main').val(parseFloat(price));
+            $('#md-total').text(currency(price));
+            let balance = parseFloat(price) - parseFloat(riel);
+            $('#md-riel-balance').text(currency(balance));
+            $('#md-usd-balance').text('$' + parseFloat(balance / 4000).toFixed(3));
+            return;
+        }
+
         let total = parseFloat(price) + parseFloat(amount)
         $('#amount_main').val(total);
 
