@@ -699,7 +699,7 @@
                 <h4 class="modal-title"></h4>
             </div>
             <div class="modal-body">
-                <img src="{{ asset('uploads/no.jpg') }}" width="100%"/>
+                <img src="{{ asset('uploads/no.jpg') }}" style="width: 100%"/>
             </div>
         </div>
         <!-- /.modal-content -->

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Utils;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Milon\Barcode\Facades\DNS2DFacade;
 use PDF;
 use Yajra\DataTables\DataTables;
 
@@ -28,6 +29,7 @@ class ProductController extends Controller
         $columns = [
             lang("image"),
             lang("code"),
+            lang(""),
             lang("product"),
             lang('unit_cost'),
             lang('sale_price'),
@@ -84,6 +86,7 @@ class ProductController extends Controller
             $value = $value . html('tr',
                     html('td', image("/$col->image", "25px"), 'class="text-center" width="25px"') .
                     html('td', '' . $col->code, 'width="100px"') .
+                    html('td', '<img width="35px" src="data:image/png;base64,' . DNS2DFacade::getBarcodePNG($col->code, 'QRCODE') . '" alt="barcode"   />' , 'width="30px"') .
                     html('td', '' . $col->name, '') .
                     html('td', '' . number_format($col->cost) . '៛', 'width="80px" class="text-right"') .
                     html('td', '' . number_format($col->price) . '៛', 'width="80px" class="text-right"') .
@@ -101,6 +104,7 @@ class ProductController extends Controller
             html('th', '', 'class="text-right"') .
             html('th', number_format($qty) . '', 'class="text-right text-primary"') .
             html('th', '', 'class="text-right"') .
+            html('th', '', 'class="text-right"').
             html('th', '', 'class="text-right"')
 
             , 'class="active"');
