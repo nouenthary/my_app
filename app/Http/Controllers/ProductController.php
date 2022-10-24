@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Utils;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Milon\Barcode\Facades\DNS2DFacade;
 use PDF;
@@ -420,6 +421,11 @@ class ProductController extends Controller
 
         $action = '';
 
+        $permission = DB::table('tec_permission')
+            ->where('user_id','=',Auth::user()->user_id)
+            ->first();
+
+
         foreach ($data as $col) {
 
             $qty = $qty + $col->qty;
@@ -427,6 +433,11 @@ class ProductController extends Controller
             $token = csrf_token();
 
             $row = json_encode($col);
+
+            $action_return = "";
+            if($permission->setting == 1){
+                $action_return =  "<a id='$col->id' class='btn btn-xs btn-return' ><i class='fa fa-remove text-danger'></i></a>";
+            }
 
             $value = $value . $this->html('tr',
                     $this->html('td', '#' . $col->no, 'width="80px"') .
@@ -439,6 +450,7 @@ class ProductController extends Controller
                     $this->html('td', $col->ware_name, 'class="text-rights" ') .
 
                     $this->html('td', "
+                    $action_return
                     <a id='' href='/receipt?id=$col->id&token=$token' class='btn btn-xs btn-print'  target='_blank'><i class='fa fa-file-text-o'></i></a>
                 ", 'class="text-rights" ')
                     , "class='text-center' data-item='$row'");
@@ -803,4 +815,34 @@ class ProductController extends Controller
         return $barcode;
     }
 
+    // return import
+    public function return_import(Request $request){
+        $import = DB::table('tec_stock_in')->where('id',$request->id)->first();
+
+        if($import != null){
+            $data = [
+                'stock_in_id' => $import->id,
+                'product_id' => $import->fk_pro_id,
+                'store_id' => $import->fk_store_id,
+                'qty' => $import->qty,
+                'image' => $import->image,
+                'created_by' => $import->user_update ,
+                'created_date' => $import->date_update,
+                'remark' => $import->remark,
+                'warehouse_id' => $import->ware_id,
+                'reference_no' => $import->no,
+                'return_by' => Auth::user()->user_id,
+                'return_date' => date('Y-m-d H:i:s')
+            ];
+            DB::table('return_imports')->insert($data);
+
+            DB::update("
+                Update tec_warehouse set `in` = `in` + $import->qty where warehouse_id = '$import->ware_id'
+            ");
+
+            DB::table('tec_stock_in')->where('id',$request->id)->delete();
+        }
+
+        return ['message' => 'delete.'];
+    }
 }

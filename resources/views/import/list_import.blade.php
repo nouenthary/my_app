@@ -217,6 +217,25 @@
             //     $('#modal-receipt').modal('show');
             // });
 
+            $(document).on('click', '.btn-return', function (e) {
+                //alert($(this).attr('id'));
+                $.ajax({
+                    url: "{{ url('return_import') }}",
+                    type: 'post',
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        id: $(this).attr('id'),
+                    },
+                    success: function (data) {
+                        if (data.error) {
+                            alert(data.error);
+                            return;
+                        }
+                        get_data();
+                    }
+                });
+            });
+
             $('.form-search select, input').change(function () {
                 get_data();
             });

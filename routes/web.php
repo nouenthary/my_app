@@ -100,6 +100,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('get_barcode', [ProductController::class,'get_barcode']);
     //
     Route::get('sale_qr_code', [SaleController::class,'sale_qr_code']);
+
+    Route::post('return_import', [ProductController::class,'return_import']);
 });
 
 Route::get('lang/{locale}', function ($locale) {

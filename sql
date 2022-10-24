@@ -32,3 +32,19 @@ CREATE TABLE variants (
     product_id INT,
     PRIMARY KEY (id)
 );
+
+CREATE TABLE `return_imports` (
+	id BIGINT NOT NULL AUTO_INCREMENT,
+	stock_in_id INT,
+	product_id INT,
+	store_id INT,
+	qty DECIMAL,
+	image VARCHAR ( 255 ),
+	created_by INT,
+	created_date datetime,
+	remark VARCHAR ( 255 ),
+	warehouse_id INT,
+	reference_no VARCHAR ( 255 ),
+	return_by INT,
+return_date datetime,
+PRIMARY KEY ( id ));
