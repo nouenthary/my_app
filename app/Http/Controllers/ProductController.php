@@ -307,6 +307,7 @@ class ProductController extends Controller
             $image->move($destinationPath, $name);
         }
 
+        $id = 0;
 
         if (count($request->data) > 0) {
 
@@ -330,7 +331,7 @@ class ProductController extends Controller
                 );
 
                 if ($row['qty'] > 0) {
-                    DB::table('tec_stock_in')->insert($data);
+                    $id = DB::table('tec_stock_in')->insertGetId($data);
                     DB::update("
                         UPDATE `tec_warehouse`
                         SET `in` = `in` - '$qty'
@@ -348,7 +349,7 @@ class ProductController extends Controller
             }
         }
 
-        return ['message' => 'successfully.'];
+        return ['message' => 'successfully.' , 'invoice' => $id];
     }
 
     public function list_import()

@@ -199,7 +199,11 @@
                         table.draw();
                         localStorage.removeItem('products');
                         get_table()
-                        $('#submit').removeAttr('disabled')
+                        $('#submit').removeAttr('disabled');
+
+                        if(data.invoice){
+                            window.open('{{route('receipt')}}?id=' + data.invoice +'&token=' + '{{ csrf_token() }}' ,'_blank')
+                        }
                     },
                     error: function (ajaxContext) {
                         $('#submit').removeAttr('disabled')
