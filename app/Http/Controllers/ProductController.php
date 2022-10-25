@@ -87,7 +87,7 @@ class ProductController extends Controller
             $value = $value . html('tr',
                     html('td', image("/$col->image", "25px"), 'class="text-center" width="25px"') .
                     html('td', '' . $col->code, 'width="100px"') .
-                    html('td', '<img width="35px" src="data:image/png;base64,' . DNS2DFacade::getBarcodePNG($col->code, 'QRCODE') . '" alt="barcode"   />' , 'width="30px"') .
+                    html('td', '<img width="35px" src="data:image/png;base64,' . DNS2DFacade::getBarcodePNG($col->code, 'QRCODE') . '" alt="barcode"   />', 'width="30px"') .
                     html('td', '' . $col->name, '') .
                     html('td', '' . number_format($col->cost) . '៛', 'width="80px" class="text-right"') .
                     html('td', '' . number_format($col->price) . '៛', 'width="80px" class="text-right"') .
@@ -105,7 +105,7 @@ class ProductController extends Controller
             html('th', '', 'class="text-right"') .
             html('th', number_format($qty) . '', 'class="text-right text-primary"') .
             html('th', '', 'class="text-right"') .
-            html('th', '', 'class="text-right"').
+            html('th', '', 'class="text-right"') .
             html('th', '', 'class="text-right"')
 
             , 'class="active"');
@@ -173,21 +173,21 @@ class ProductController extends Controller
             'unit' => $request->unit,
             'is_active' => $request->is_active,
             'user_id' => auth()->user()->user_id,
-            'branch_commission' => (float) $request->branch_commission,
-            'staff_commission' => (float) $request->staff_commission,
-            'other_commission' => (float) $request->other_commission
+            'branch_commission' => (float)$request->branch_commission,
+            'staff_commission' => (float)$request->staff_commission,
+            'other_commission' => (float)$request->other_commission
         ];
 
         if ($id == 0) {
             DB::table('tec_products')->insert($data);
         }
 
-        if ($code->where('id','!=', $id)->first() != '' && $id > 0) {
+        if ($code->where('id', '!=', $id)->first() != '' && $id > 0) {
             return ['error' => "code `$request->code` is exist..."];
         }
 
         if ($id > 0) {
-            DB::table('tec_products')->where('id',$id)->update($data);
+            DB::table('tec_products')->where('id', $id)->update($data);
         }
 
         Utils::add_product_to_stock();
@@ -243,7 +243,13 @@ class ProductController extends Controller
     // import
     public function import()
     {
-        return view('import.import');
+        $store = DB::table('tec_stores')->select('id', 'name')->where('city', '<>', 'None')->get();
+
+        $product = DB::table('tec_products')->select('id', 'name', 'price')->get();
+
+        $warehouse = DB::table('tec_warehouse')->select('warehouse_id as id', 'ware_name as name')->get();
+
+        return view('import.import', compact('store', 'product', 'warehouse'));
     }
 
     //
@@ -282,9 +288,10 @@ class ProductController extends Controller
     // create_import
     public function create_import(Request $request)
     {
+        $store_id = $request->store_id;
         $invoice = str_pad(1, 7, '0', STR_PAD_LEFT);
         $no = DB::table('tec_stock_in')
-            ->where('fk_store_id', '=', $request->store_id_no)
+            ->where('fk_store_id', '=', $store_id)
             ->orderByDesc('id')
             ->first();
         if ($no != null) {
@@ -296,38 +303,49 @@ class ProductController extends Controller
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             $name = date('Y_m_d_H_i_s') . '.' . $image->getClientOriginalExtension();
-            $destinationPath = public_path('/uploads');
+            $destinationPath = public_path('/uploads/import');
             $image->move($destinationPath, $name);
         }
 
-        $data = array(
-            'fk_pro_id' => $request->product_id_no,
-            'fk_store_id' => $request->store_id_no,
-            'qty' => $request->qty,
-            'image' => $name,
-            'user_update' => auth()->user()->user_id,
-            'date_update' => date('Y-m-d H:i:s'),
-            'time_update' => date('Y-m-d H:i:s'),
-            'remark' => $request->remark,
-            'ware_id' => $request->warehouse_id,
-            'no' => $invoice,
-        );
 
-        if ($request->qty > 0) {
-            DB::table('tec_stock_in')->insert($data);
-            DB::update("
-                UPDATE `tec_warehouse`
-                SET `in` = `in` - '$request->qty'
-                WHERE
-                `warehouse_id` = '$request->warehouse_id'
-            ");
+        if (count($request->data) > 0) {
 
-            DB::update("
-                    UPDATE `tec_product_store_qty`
-                    SET `quantity` = `quantity` + '$request->qty'
-                    WHERE
-                    `product_id` = '$request->product_id_no' AND `store_id` = '$request->store_id_no'
-                ");
+            foreach ($request->data as $row) {
+                $product_id = $row['id'];
+                $qty = (int)$row['qty'];
+                $warehouse_id = $row['warehouse_id'];
+
+
+                $data = array(
+                    'fk_pro_id' => $product_id,
+                    'fk_store_id' => $store_id,
+                    'qty' => $qty,
+                    'image' => $name,
+                    'user_update' => auth()->user()->user_id,
+                    'date_update' => date('Y-m-d H:i:s'),
+                    'time_update' => date('Y-m-d H:i:s'),
+                    'remark' => $request->remark,
+                    'ware_id' => $warehouse_id,
+                    'no' => $invoice,
+                );
+
+                if ($row['qty'] > 0) {
+                    DB::table('tec_stock_in')->insert($data);
+                    DB::update("
+                        UPDATE `tec_warehouse`
+                        SET `in` = `in` - '$qty'
+                        WHERE
+                        `warehouse_id` = '$warehouse_id'
+                    ");
+
+                    DB::update("
+                        UPDATE `tec_product_store_qty`
+                        SET `quantity` = `quantity` + '$qty'
+                        WHERE
+                        `product_id` = '$product_id' AND `store_id` = '$store_id'
+                    ");
+                }
+            }
         }
 
         return ['message' => 'successfully.'];
@@ -422,7 +440,7 @@ class ProductController extends Controller
         $action = '';
 
         $permission = DB::table('tec_permission')
-            ->where('user_id','=',Auth::user()->user_id)
+            ->where('user_id', '=', Auth::user()->user_id)
             ->first();
 
 
@@ -435,8 +453,8 @@ class ProductController extends Controller
             $row = json_encode($col);
 
             $action_return = "";
-            if($permission->setting == 1){
-                $action_return =  "<a id='$col->id' class='btn btn-xs btn-return' ><i class='fa fa-remove text-danger'></i></a>";
+            if ($permission->setting == 1) {
+                $action_return = "<a id='$col->id' class='btn btn-xs btn-return' ><i class='fa fa-remove text-danger'></i></a>";
             }
 
             $value = $value . $this->html('tr',
@@ -618,7 +636,6 @@ class ProductController extends Controller
     // export
     public function create_export(Request $request)
     {
-
         $name = 'no_image.png';
         if ($request->hasFile('image')) {
             $image = $request->file('image');
@@ -627,34 +644,46 @@ class ProductController extends Controller
             $image->move($destinationPath, $name);
         }
 
-        $data = array(
-            'fk_pro_id' => $request->product_id_no,
-            'fk_store_id' => $request->store_id_no,
-            'qty' => $request->qty,
-            'user_update' => auth()->user()->user_id,
-            'date_update' => date('Y-m-d H:i:s'),
-            'time_update' => date('Y-m-d H:i:s'),
-            'remark' => $request->remark,
-            'ware_id' => $request->warehouse_id,
-            'status' => $request->status,
-        );
+        $store_id = $request->store_id;
+        $remark = $request->remark;
 
-        if ($request->qty > 0) {
-            DB::table('tec_stock_out')->insert($data);
+        if (count($request->data) > 0) {
 
-            DB::update("
-                UPDATE `tec_warehouse`
-                SET `in` = `in` + '$request->qty'
-                WHERE
-                `warehouse_id` = '$request->warehouse_id'
-            ");
+            foreach ($request->data as $row) {
+                $product_id = $row['id'];
+                $qty = (int)$row['qty'];
+                $warehouse_id = $row['warehouse_id'];
 
-            DB::update("
-                UPDATE `tec_product_store_qty`
-                SET `quantity` = `quantity` - '$request->qty'
-                WHERE
-                `product_id` = '$request->product_id_no' AND `store_id` = '$request->store_id_no'
-            ");
+                $data = array(
+                    'fk_pro_id' => $product_id,
+                    'fk_store_id' => $store_id,
+                    'qty' => $qty,
+                    'user_update' => auth()->user()->user_id,
+                    'date_update' => date('Y-m-d H:i:s'),
+                    'time_update' => date('Y-m-d H:i:s'),
+                    'remark' => $remark,
+                    'ware_id' => $warehouse_id,
+                    'status' => $request->status,
+                );
+
+                if ($qty > 0) {
+                    DB::table('tec_stock_out')->insert($data);
+
+                    DB::update("
+                        UPDATE `tec_warehouse`
+                        SET `in` = `in` + '$qty'
+                        WHERE
+                        `warehouse_id` = '$warehouse_id'
+                    ");
+
+                    DB::update("
+                        UPDATE `tec_product_store_qty`
+                        SET `quantity` = `quantity` - '$qty'
+                        WHERE
+                        `product_id` = '$product_id' AND `store_id` = '$store_id'
+                    ");
+                }
+            }
         }
 
         return ['message' => 'successfully.'];
@@ -797,36 +826,44 @@ class ProductController extends Controller
     //  receipt
     public function receipt(Request $request)
     {
-        $data['data'] = DB::table('tec_stock_in')
+        $row = DB::table('tec_stock_in')
             ->join('tec_products', 'tec_stock_in.fk_pro_id', '=', 'tec_products.id')
             ->where('tec_stock_in.id', $request->id)
             ->get();
 
         $data['store'] = DB::table('tec_stores')
-            ->where('id', $data['data'][0]->fk_store_id)
+            ->where('id', $row[0]->fk_store_id)
+            ->get();
+
+        $data['data'] = DB::table('tec_stock_in')
+            ->join('tec_products', 'tec_stock_in.fk_pro_id', '=', 'tec_products.id')
+            ->where('tec_stock_in.fk_store_id', $row[0]->fk_store_id)
+            ->where('tec_stock_in.no', $row[0]->no)
             ->get();
 
         return view('import.receipt', $data);
     }
 
     // barcode
-    public function get_barcode(){
+    public function get_barcode()
+    {
         $barcode = DB::table('tec_products')->pluck('code');
         return $barcode;
     }
 
     // return import
-    public function return_import(Request $request){
-        $import = DB::table('tec_stock_in')->where('id',$request->id)->first();
+    public function return_import(Request $request)
+    {
+        $import = DB::table('tec_stock_in')->where('id', $request->id)->first();
 
-        if($import != null){
+        if ($import != null) {
             $data = [
                 'stock_in_id' => $import->id,
                 'product_id' => $import->fk_pro_id,
                 'store_id' => $import->fk_store_id,
                 'qty' => $import->qty,
                 'image' => $import->image,
-                'created_by' => $import->user_update ,
+                'created_by' => $import->user_update,
                 'created_date' => $import->date_update,
                 'remark' => $import->remark,
                 'warehouse_id' => $import->ware_id,
@@ -837,12 +874,23 @@ class ProductController extends Controller
             DB::table('return_imports')->insert($data);
 
             DB::update("
-                Update tec_warehouse set `in` = `in` + $import->qty where warehouse_id = '$import->ware_id'
+                Update tec_warehouse
+                set `in` = `in` + $import->qty
+                where warehouse_id = '$import->ware_id'
             ");
 
-            DB::table('tec_stock_in')->where('id',$request->id)->delete();
+            DB::update("
+                Update tec_product_store_qty
+                set `quantity` = `quantity` - $import->qty
+                where product_id = '$import->fk_pro_id'
+                and store_id = '$import->fk_store_id'
+            ");
+
+            DB::table('tec_stock_in')->where('id', $request->id)->delete();
         }
 
         return ['message' => 'delete.'];
     }
+
+
 }
