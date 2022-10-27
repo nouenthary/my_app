@@ -304,12 +304,12 @@
                                    class="table table-striped table-bordered table-condensed table-hover list-table"
                                    style="margin:0px;" data-height="100">
                                 <thead>
-                                <tr class="info">
+                                <tr class="info text-info">
                                     <th>{{ __('language.product') }}</th>
                                     <th style="width: 80px;text-align:center;">{{ __('language.price') }}</th>
                                     <th style="width: 80px;text-align:center;">{{ __('language.qty') }}</th>
                                     <th style="width: 20%;text-align:center;">{{ __('language.amount') }}</th>
-                                    <th style="width: 20px;" class=""><i class="fa fa-trash-o"></i>
+                                    <th style="width: 20px;" class=""><i class="fa fa-remove"></i>
                                     </th>
                                 </tr>
                                 </thead>
@@ -366,10 +366,10 @@
                         <div class="col-xs-4" style="padding: 0;">
                             <div class="btn-group-vertical btn-block">
                                 <button type="button" class="btn btn-warning btn-block btn-flat"
-                                        id="suspend">{{ __('language.hold') }}
+                                        id="suspend"><i class="fa fa-tags"></i> {{ __('language.hold') }}
                                 </button>
                                 <button type="button" class="btn btn-danger btn-block btn-flat"
-                                        id="reset">{{ __('language.cancel') }}
+                                        id="reset"><i class="fa fa-remove"></i> {{ __('language.cancel') }}
                                 </button>
                             </div>
 
@@ -377,17 +377,17 @@
                         <div class="col-xs-4" style="padding: 0 5px;">
                             <div class="btn-group-vertical btn-block">
                                 <button type="button" class="btn bg-purple btn-block btn-flat"
-                                        id="print_order">{{ __('language.print_order') }}
+                                        id="print_order"><i class="fa fa-shopping-cart"></i> {{ __('language.print_order') }}
                                 </button>
 
                                 <button type="button" class="btn bg-navy btn-block btn-flat"
-                                        id="print_bill">{{ __('language.print_bill') }}
+                                        id="print_bill"><i class="fa fa-file-text-o"></i> {{ __('language.print_bill') }}
                                 </button>
                             </div>
                         </div>
                         <div class="col-xs-4" style="padding: 0;">
                             <button type="button" class="btn btn-success btn-block btn-flat" id="payment"
-                                    style="height:67px;">{{ __('language.payment') }}
+                                    style="height:67px;"><i class="fa fa-shopping-bag"></i> {{ __('language.payment') }}
                             </button>
                         </div>
                     </div>
@@ -480,7 +480,7 @@
                             <div class="modal-header">
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true" style="font-size: 27px">&times;</span></button>
-                                <h4 class="modal-title">ការទូទាត់</h4>
+                                <h4 class="modal-title"><i class="fa fa-th"></i> ការទូទាត់</h4>
                             </div>
                             <div class="modal-body">
 
@@ -596,10 +596,10 @@
 
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-default pull-left" data-dismiss="modal">បិត
-                                </button>
+{{--                                <button type="button" class="btn btn-default pull-left" data-dismiss="modal">បិត--}}
+{{--                                </button>--}}
                                 <button type="button" class="btn btn-success"
-                                        id="btn-payment">ការទូទាត់
+                                        id="btn-payment"><i class="fa fa-shopping-bag"></i> ការទូទាត់
                                 </button>
                             </div>
                         </div>

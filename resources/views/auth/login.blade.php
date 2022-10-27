@@ -125,6 +125,10 @@
             color: #fff;
         }
 
+        .btn , input , .select2-selection, .select2-selection--single, .product-item, .input-group-addon {
+            border-radius: 4px !important;
+        }
+
     </style>
 
     <!-- Google Font -->

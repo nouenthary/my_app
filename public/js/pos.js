@@ -69,7 +69,7 @@ $(function () {
                 </td>
                 <td id="t-amount" class="text-right">` + currency(item.amount) + `</td>
                 <td id="t-remove">
-                    <i class="fa fa-trash-o tip pointer pos-remove"
+                    <i class="fa fa-remove text-danger tip pointer pos-remove"
                         title="Remove"></i>
                 </td>
             </tr>
