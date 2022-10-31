@@ -167,6 +167,8 @@ $(function () {
             }
         }
 
+        //ion.sound.play("water_droplet");
+
     });
 
     let getItem = function () {
@@ -450,5 +452,17 @@ $(function () {
         });
 
     });
+
+    // ion.sound({
+    //     sounds: [
+    //         {name: "beer_can_opening"},
+    //         {name: "bell_ring"},
+    //         {name:'water_droplet'}
+    //     ],
+    //     path: "sounds/",
+    //     preload: true,
+    //     volume: 1.0,
+    //     //multiplay: true
+    // });
 
 });

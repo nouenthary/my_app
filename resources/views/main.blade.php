@@ -346,8 +346,8 @@
                     <ul class="treeview-menu">
                         <li><a href="{{ url('products') }}"><i class="fa fa-circle-o"></i>
                                 {{ __('language.list_product') }}</a></li>
-                        <li><a href="{{ url('create_product') }}"><i class="fa fa-circle-o"></i>
-                                {{ __('language.add_product') }}</a></li>
+                        <li><a href="{{ url('list_products') }}"><i class="fa fa-circle-o"></i>
+                                {{ lang('price')}}{{ lang('product') }}</a></li>
                     </ul>
                 </li>
 

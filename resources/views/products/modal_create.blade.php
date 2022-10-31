@@ -110,8 +110,8 @@
                                     <label for="is_active">{{lang('status')}} :</label>
                                     <select class="form-control select2" id="is_active" name="is_active"
                                             style="width: 100%">
-                                        <option value="0">{{lang('enable')}}</option>
-                                        <option value="1">{{lang('disable')}}</option>
+                                        <option value="1">{{lang('enable')}}</option>
+                                        <option value="0">{{lang('disable')}}</option>
                                     </select>
                                 </div>
 

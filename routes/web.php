@@ -41,7 +41,7 @@ Route::group(['middleware' => ['auth']], function () {
     //
     Route::resource('products', ProductController::class);
     Route::get('get_products', [ProductController::class,'get_products'])->name('get_products');
-
+    Route::get('list_products', [ProductController::class,'list_products'])->name('list_products');
 
     // import
     Route::get('import', [ProductController::class,'import'])->name('import');

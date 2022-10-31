@@ -77,6 +77,10 @@ if (active === 'customers') {
     active = 'users';
 }
 
+if (active === 'list_products') {
+    active = 'products';
+}
+
 $('#' + active).addClass('active');
 
 //iCheck for checkbox and radio inputs

@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Milon\Barcode\Facades\DNS2DFacade;
 use PDF;
 use Yajra\DataTables\DataTables;
+use function Symfony\Component\String\s;
 
 class ProductController extends Controller
 {
@@ -349,7 +350,7 @@ class ProductController extends Controller
             }
         }
 
-        return ['message' => 'successfully.' , 'invoice' => $id];
+        return ['message' => 'successfully.', 'invoice' => $id];
     }
 
     public function list_import()
@@ -893,5 +894,47 @@ class ProductController extends Controller
         return ['message' => 'delete.'];
     }
 
+    public function list_products()
+    {
+        $data['title'] = 'List Product';
+
+        $data['products'] = DB::table('tec_products')
+            ->select('tec_products.*', 'tec_product_store_qty.*')
+            ->join('tec_product_store_qty', 'tec_products.id', '=', 'tec_product_store_qty.product_id')
+            ->where('tec_product_store_qty.store_id', '=', Utils::store_id())
+            ->get();
+
+        $price = DB::table('tec_products')
+            ->select('tec_products.price')
+            ->join('tec_product_store_qty', 'tec_products.id', '=', 'tec_product_store_qty.product_id')
+            ->where('tec_product_store_qty.store_id', '=', Utils::store_id())
+            ->groupBy('tec_products.price')
+            ->orderBy('tec_products.price')
+            ->get();
+
+        $product = [];
+
+        if (count($price) > 0) {
+
+            foreach ($price as $p) {
+                $price_list = DB::table('tec_products')
+                    ->select('tec_products.*','tec_product_store_qty.*')
+                    ->join('tec_product_store_qty', 'tec_products.id', '=', 'tec_product_store_qty.product_id')
+                    ->where('tec_product_store_qty.store_id', '=', Utils::store_id())
+                    ->where('tec_products.price', '=', $p->price)
+                    ->get();
+
+                if ($price_list != null) {
+                    array_push($product, $price_list);
+                }
+            }
+        }
+
+        $data['product'] = $product;
+
+        //return $product;
+
+        return view('products.list_products', $data);
+    }
 
 }

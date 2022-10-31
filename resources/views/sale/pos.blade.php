@@ -27,6 +27,7 @@
           href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
 
     <link rel="stylesheet" href="{{ asset('css/pos.css') }}">
+
 </head>
 
 <body class="hold-transition fixed skin-blue-light sidebar-collapse sidebar-mini">
@@ -55,6 +56,12 @@
 
             <div class="navbar-custom-menu">
                 <ul class="nav navbar-nav">
+                    <li class="dropdown messages-menu">
+                        <a id="register_details" href="{{route('list_products')}}" class="dropdown-toggle">
+                            <i class="fa fa-shopping-basket"></i>
+                            {{lang('price')}}{{lang('product')}}{{lang('all')}}
+                        </a>
+                    </li>
                     <!-- Messages: style can be found in dropdown.less-->
                     <li class="dropdown messages-menu">
                         <a id="register_details" href="#" class="dropdown-toggle">
@@ -659,6 +666,10 @@
                     {{--                            </div> --}}
                     {{--                          </li> --}}
 
+{{--                    @php--}}
+{{--                        print_r($data);--}}
+{{--                    @endphp--}}
+
                     @foreach ($data as $item)
                         <li class="product-item" class="product-item" id="{{ $item->id }}"
                             data-name="{{ $item->name }}" data-price="{{ $item->price }}"
@@ -667,7 +678,7 @@
                                                                                    style="width: 100%;"
                                                                                    src="{{ asset('uploads/' . $item->image) }}"
                                                                                    alt="Attachment"
-                                        /onerror='this.src="{{ asset('/uploads/none.jpg') }}"'></span>
+                                        onerror='this.src="{{ asset('/uploads/none.jpg') }}"'></span>
 
                             <div class="mailbox-attachment-info">
                                 <a href="#" class="mailbox-attachment-name"> {{ $item->name }}</a>
@@ -796,7 +807,7 @@
 <script src="{{ asset('bower_components/select2/dist/js/select2.full.min.js') }}"></script>
 
 <!-- <script src="{{ asset('dist/js/demo.js') }}"></script> -->
-
+<script src="{{asset('js/ion.sound.js')}}"></script>
 <script type="text/javascript" src="{{ asset('js/pos.js') }}"></script>
 
 </body>
