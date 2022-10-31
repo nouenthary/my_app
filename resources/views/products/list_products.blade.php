@@ -34,7 +34,7 @@
                             <a href="#" class="mailbox-attachment-name"><i
                                     class="fa fa-heart text-danger"></i> {{$row->name}}</a>
                             <span class="mailbox-attachment-size">
-                            <div class="text-danger text-bold"> {{number_format($row->price)}} ៛ </div>
+                            <div class="text-danger text-bold"> {{number_format($row->sell_price)}} ៛ </div>
                             <div class="text-blue text-bold">In stock</div>
                         </span>
                         </div>
