@@ -918,7 +918,7 @@ class ProductController extends Controller
 
             foreach ($price as $p) {
                 $price_list = DB::table('tec_products')
-                    ->select('tec_products.*','tec_product_store_qty.*')
+                    ->select('tec_products.*')
                     ->join('tec_product_store_qty', 'tec_products.id', '=', 'tec_product_store_qty.product_id')
                     ->where('tec_product_store_qty.store_id', '=', Utils::store_id())
                     ->where('tec_products.price', '=', $p->price)
