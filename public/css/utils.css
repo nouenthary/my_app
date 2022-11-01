@@ -108,7 +108,7 @@ body {
 }
 
 
-.skin-blue-light , .navbar , .logo, .user-header, .bg-aqua, .sidebar-toggle:hover{
+.skin-blue-light , .navbar , .logo, .user-header, .bg-aqua,.bg-blue ,.sidebar-toggle:hover{
     background-color: #1890ff !important;
 }
 

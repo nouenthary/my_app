@@ -355,6 +355,7 @@ class ProductController extends Controller
 
     public function list_import()
     {
+        //$this->sum_stock();
         return view('import.list_import');
     }
 
@@ -918,7 +919,7 @@ class ProductController extends Controller
 
             foreach ($price as $p) {
                 $price_list = DB::table('tec_products')
-                    ->select('tec_products.*','tec_products.price as sell_price')
+                    ->select('tec_products.*', 'tec_products.price as sell_price')
                     ->join('tec_product_store_qty', 'tec_products.id', '=', 'tec_product_store_qty.product_id')
                     ->where('tec_product_store_qty.store_id', '=', Utils::store_id())
                     ->where('tec_products.price', '=', $p->price)
@@ -935,6 +936,49 @@ class ProductController extends Controller
         //return $product;
 
         return view('products.list_products', $data);
+    }
+
+    //
+    private function sum_stock()
+    {
+//        $stock = DB::select("
+//            SELECT
+//            tec_stock_in.fk_pro_id,
+//            SUM(tec_stock_in.qty) as qty
+//            FROM `tec_stock_in`
+//            INNER JOIN tec_products
+//            ON tec_stock_in.fk_pro_id = tec_products.id
+//            WHERE tec_stock_in.fk_store_id > 0
+//            GROUP BY tec_stock_in.fk_pro_id
+//        ");
+
+
+        $stock = DB::table('tec_stock_in')
+            ->join('tec_products','tec_stock_in.fk_pro_id','=','tec_products.id')
+            ->join('tec_stores','tec_stock_in.fk_store_id','=','tec_stores.id')
+            ->limit(100)
+            ->get();
+
+        foreach ($stock as $i){
+            print_r($i);
+            echo '=====';
+            echo '<br/>';
+        }
+
+        print_r(count($stock));
+        print_r($stock);
+
+        $store_id = 1;
+
+        //DB::update("UPDATE `tec_product_store_qty` SET `quantity` = '0' WHERE  store_id = '$store_id'");
+
+//        if ($stock != null) {
+//            print_r('ex');
+//            foreach ($stock as $row){
+//                DB::update("UPDATE `tec_product_store_qty` SET `quantity` = '$row->total' WHERE `product_id` = '$row->fk_pro_id' AND store_id = '$row->fk_store_id'");
+//            }
+//        }
+
     }
 
 }

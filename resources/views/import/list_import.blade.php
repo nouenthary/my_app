@@ -97,7 +97,7 @@
         <div class="nav-tabs-custom ">
             <ul class="nav nav-tabs pull-right">
 
-                <li class="pull-left header"><i class="fa fa-th"></i> {{__("language.sale_record")}}</li>
+                <li class="pull-left header"><i class="fa fa-th"></i> {{__("language.list_import")}}</li>
 
                 <li class="dropdown">
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">
