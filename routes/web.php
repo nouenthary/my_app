@@ -8,6 +8,7 @@ use App\Http\Controllers\BrandController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\StoreController;
 use App\Http\Controllers\CustomerController;
+use Illuminate\Support\Facades\Auth;
 
 /*
 |--------------------------------------------------------------------------
@@ -94,6 +95,7 @@ Route::group(['middleware' => ['auth']], function () {
     //
     Route::resource('stores', StoreController::class);
     Route::get('get_stores', [StoreController::class,'get_stores']);
+    Route::get('api/get_warehouses_stock', [StoreController::class,'get_warehouses_stock']);
     //
     Route::resource('customers', CustomerController::class);
     Route::get('get_customers', [CustomerController::class,'get_customers']);
@@ -110,6 +112,16 @@ Route::group(['middleware' => ['auth']], function () {
 
     //get_product
     Route::get('get_product_by_column', [ProductController::class,'getProductByColumn']);
+    
+    //
+    Route::get('ui',function (){
+        return view('ui');
+    });
+
+    //
+    Route::get('ui/{any}', function () { 
+        return view('ui'); 
+    })->where('any', '.*'); 
 });
 
 Route::get('lang/{locale}', function ($locale) {
@@ -125,11 +137,6 @@ Auth::routes([
 ]);
 
 Route::get('/home', [UserController::class,'dashboard'])->name('home');
-
-//
-Route::get('ui',function (){
-    return view('ui');
-});
 
 // 404
 Route::get('not_found',function (){

@@ -4,16 +4,30 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="csrf-token" content="{{ csrf_token() }}"/>
+    <meta name="access-token" content="{{auth()->user()->tokens()->first()->token}}" />
+
     <title>K STOCK</title>
     <link rel="shortcut icon" href="/uploads/icon.png"/>
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:400,500,700,400italic|Material+Icons">
-</head>
-<body>
-<div id="app"></div>
-{{--<script src="{{ mix('/js/app.js') }}"></script>--}}
-<script src="{{ asset('js/app.js') }}" defer></script>
 
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@6.x/css/materialdesignicons.min.css" rel="stylesheet">
+    
+    <style>       
+        body{
+            margin: 0;               
+        }      
+    </style>
+</head>
+<body>    
+<div id="app">
+    <app-component></app-component>  
+</div>
+<script defer  src="{{ mix('/js/app.js') }}"></script>
+<script>
+    const thary = 'app';
+</script>
 </body>
 </html>

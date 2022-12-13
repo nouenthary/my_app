@@ -48,11 +48,6 @@ class ProductController extends Controller
     #f
     public function get_products(Request $request)
     {
-        if($request->get('type') == 'option')    {
-            $host = $_SERVER['HTTP_HOST'];
-            return DB::table('tec_products')->selectRaw("id,name, IFNULL(concat('http://$host/uploads/',image), concat('http://$host/uploads/7527dd8c427584bc7f1942afeae252d1.jpg'))  as image")->take(20)->get();
-        }
-
         $columns = [
             lang("image"),
             lang("code"),

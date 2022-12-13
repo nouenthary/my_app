@@ -116,6 +116,10 @@ class StoreController extends Controller
 
     public function get_stores(Request $request)
     {
+        if($request->type == 'option'){
+            return Store::select('id','name')->orderBy('name', 'asc')->get();
+        }
+
         $columns = [
             lang("image"),
             lang("code"),
@@ -159,4 +163,34 @@ class StoreController extends Controller
             'total' => $data->total(),
         ];
     }
+
+
+    //
+    public function get_warehouses_stock(){
+
+        $host = $_SERVER['HTTP_HOST'];
+
+        $page = request()->get('page') ?? 1;
+        $page_size = request()->get('page_size') ?? 10;
+        $product_id = request()->get('product_id') ?? '';
+        $store_id = request()->get('store_id') ?? '';
+        
+        $data = DB::table(TableProduct)
+        ->selectRaw("*, tec_products.name proudct_name, IFNULL(concat('http://$host/uploads/',image), concat('http://$host/uploads/7527dd8c427584bc7f1942afeae252d1.jpg'))  as image, tec_stores.name as store_name")    
+        ->join(TableProductStoreQty,TableProduct.'.id' , '=', TableProductStoreQty.'.product_id')
+        ->join(TableStore,TableProductStoreQty.'.store_id' , '=', TableStore.'.id');
+
+        if($product_id != ''){
+            $data = $data->where(TableProduct.'.id',$product_id);
+        }
+
+        if($store_id != ''){
+            $data = $data->where(TableProductStoreQty.'.store_id',$store_id);
+        }
+
+        $data = $data->orderBy(TableProductStoreQty.'.store_id', 'asc')
+        ->paginate($page_size,['*'],'page', $page);
+        return $data;
+    }
+    
 }
