@@ -120,9 +120,10 @@
         }
 
         .login-box-body {
-            border: 1px solid #fff;
-            background-color: #0a0a0a;
+            /*border: 1px solid #fff;*/
+            background-color: #333;
             color: #fff;
+            border-radius: 8px;
         }
 
         .btn , input , .select2-selection, .select2-selection--single, .product-item, .input-group-addon {
@@ -135,9 +136,14 @@
 </head>
 <body class="hold-transition login-page">
 <div class="login-box">
-    <div class="login-logo">
+    <div class="login-logo" >
+
+        <img src="uploads/none.jpg" width="50px" height="50px" style="border-radius: 5px"/>
+
+        <br/>
+
         <a href="/">
-            <img src="uploads/logo.jpg" width="260px" height="40px"/>
+            <img src="uploads/logo.jpg" width="260px" height="40px" style="border-radius: 5px"/>
         </a>
 
     </div>
@@ -152,11 +158,13 @@
                 <span class="glyphicon glyphicon-user form-control-feedback"></span>
 
             </div>
-            <div class="form-group has-feedback">
+
+            <div class="input-group has-feedback" style="background: white; border-radius: 5px">
                 <input type="password" id="password" name="password" class="form-control" placeholder="ពាក្យសម្ងាត់"
                        value="">
-                <span class="glyphicon glyphicon-lock form-control-feedback" id="show-password"></span>
+                <span class="input-group-addon" id="show-password"><i class="fa fa-eye-slash" style="font-size: 18px"></i></span>
             </div>
+
             <div class="row">
                 <div class="col-xs-12">
                     <div class="checkbox icheck">
@@ -179,7 +187,7 @@
 
 
                 <div class="col-xs-12 social-auth-links text-center">
-                    <p>- OR -</p>
+{{--                    <p>- OR -</p>--}}
                     <a href="https://www.facebook.com/K-STOCK-4500-111362717455319/" class="btn btn-block btn-social btn-facebook btn-flat"><i class="fa fa-facebook"></i>
                         Visit on
                         Facebook</a>
@@ -212,6 +220,13 @@
         });
 
         $(document).on('click', '#show-password', function () {
+            if($('#password').attr('type') == 'password'){
+                $('#password').attr('type','text');
+                $('#show-password i').attr('class','fa fa-eye');
+            }else{
+                $('#password').attr('type','password');
+                $('#show-password i').attr('class','fa fa-eye-slash');
+            }
         });
 
         localStorage.removeItem('items');

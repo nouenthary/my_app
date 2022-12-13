@@ -9,7 +9,7 @@
     <script src="https://code.highcharts.com/modules/data.js"></script>
     <script src="https://code.highcharts.com/modules/drilldown.js"></script>
 
-    <div class="row">
+    <div class="row panel-box">
         <div class="col-lg-3 col-md-6 col-xs-12">
             <!-- small box -->
             <div class="small-box bg-aqua">

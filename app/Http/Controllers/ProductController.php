@@ -2,17 +2,36 @@
 
 namespace App\Http\Controllers;
 
+use App\Repository\ProductRepositoryInterface;
 use App\Utils;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redirect;
 use Milon\Barcode\Facades\DNS2DFacade;
 use PDF;
 use Yajra\DataTables\DataTables;
-use function Symfony\Component\String\s;
 
+/**
+ * Class ProductController
+ * @package App\Http\Controllers
+ */
 class ProductController extends Controller
 {
+    /**
+     * @var ProductRepositoryInterface
+     */
+    private $products;
+
+    /**
+     * ProductController constructor.
+     * @param ProductRepositoryInterface $products
+     */
+    public function __construct(ProductRepositoryInterface $products)
+    {
+        $this->products = $products;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -26,6 +45,7 @@ class ProductController extends Controller
         return view('products.index', $data);
     }
 
+    #f
     public function get_products(Request $request)
     {
         $columns = [
@@ -272,7 +292,16 @@ class ProductController extends Controller
                 $data = $data->where('uuu.product_id', $product_id);
             }
 
-            $data = $data->selectRaw("u.* , uu.id , uu.name as cate_name, (SELECT COALESCE(SUM(qty),0) FROM `tec_stock_in` WHERE fk_pro_id = u.id and fk_store_id = uuu.store_id ) as total, uuu.store_id, uuuu.name as store_name, u.id as product_id")
+            //(SELECT COALESCE(SUM(qty),0) FROM `tec_stock_in` WHERE fk_pro_id = u.id and fk_store_id = uuu.store_id ) as total,
+            $data = $data->selectRaw(
+                "u.* ,
+                    uu.id ,
+                    uu.name as cate_name,
+                    uuu.store_id,
+                    uuuu.name as store_name,
+                    u.id as product_id,
+                    uuu.quantity"
+            )
                 ->join('tec_products as u', 'u.category_id', '=', 'uu.id')
                 ->join('tec_product_store_qty as uuu', 'u.id', '=', 'uuu.product_id')
                 ->join('tec_stores as uuuu', 'uuu.store_id', '=', 'uuuu.id')
@@ -289,12 +318,15 @@ class ProductController extends Controller
     // create_import
     public function create_import(Request $request)
     {
+        //return $request->all();
         $store_id = $request->store_id;
         $invoice = str_pad(1, 7, '0', STR_PAD_LEFT);
+
         $no = DB::table('tec_stock_in')
             ->where('fk_store_id', '=', $store_id)
             ->orderByDesc('id')
             ->first();
+
         if ($no != null) {
             $last_no = (int)$no->no + 1;
             $invoice = str_pad($last_no, 7, '0', STR_PAD_LEFT);
@@ -310,42 +342,90 @@ class ProductController extends Controller
 
         $id = 0;
 
+        $type_import = $request->type_import;
+
         if (count($request->data) > 0) {
 
             foreach ($request->data as $row) {
                 $product_id = $row['id'];
                 $qty = (int)$row['qty'];
-                $warehouse_id = $row['warehouse_id'];
+                $warehouse_id = $request->ware_id;
 
-
-                $data = array(
-                    'fk_pro_id' => $product_id,
-                    'fk_store_id' => $store_id,
-                    'qty' => $qty,
-                    'image' => $name,
-                    'user_update' => auth()->user()->user_id,
-                    'date_update' => date('Y-m-d H:i:s'),
-                    'time_update' => date('Y-m-d H:i:s'),
-                    'remark' => $request->remark,
-                    'ware_id' => $warehouse_id,
-                    'no' => $invoice,
-                );
+                if ($type_import == 'transfer' || $type_import == 'import') {
+                    $data = array(
+                        'fk_pro_id' => $product_id,
+                        'fk_store_id' => $store_id,
+                        'qty' => $qty,
+                        'image' => $name,
+                        'user_update' => auth()->user()->user_id,
+                        'date_update' => date('Y-m-d H:i:s'),
+                        //'time_update' => date('Y-m-d H:i:s'),
+                        'remark' => $request->remark,
+                        'ware_id' => $warehouse_id,
+                        'no' => $invoice,
+                    );
+                    $id = DB::table('tec_stock_in')->insertGetId($data);
+                }
 
                 if ($row['qty'] > 0) {
-                    $id = DB::table('tec_stock_in')->insertGetId($data);
-                    DB::update("
-                        UPDATE `tec_warehouse`
-                        SET `in` = `in` - '$qty'
-                        WHERE
-                        `warehouse_id` = '$warehouse_id'
-                    ");
 
-                    DB::update("
-                        UPDATE `tec_product_store_qty`
-                        SET `quantity` = `quantity` + '$qty'
-                        WHERE
-                        `product_id` = '$product_id' AND `store_id` = '$store_id'
-                    ");
+                    if ($type_import == 'transfer') {
+
+                        DB::update("
+                            UPDATE `tec_product_store_qty`
+                            SET `quantity` = `quantity` + '$qty'
+                            WHERE
+                            `product_id` = '$product_id' AND `store_id` = '$store_id'
+                        ");
+
+                        DB::update("
+                            UPDATE `tec_product_store_qty`
+                            SET `quantity` = `quantity` - '$qty'
+                            WHERE
+                            `product_id` = '$product_id' AND `store_id` = '$warehouse_id'
+                        ");
+                    }
+
+                    if ($type_import == 'import') {
+                        DB::update("
+                            UPDATE `tec_product_store_qty`
+                            SET `quantity` = `quantity` + '$qty'
+                            WHERE
+                            `product_id` = '$product_id' AND `store_id` = '$warehouse_id'
+                        ");
+                    }
+
+                    if ($type_import == 'export') {
+
+                        $export = [
+                            'fk_pro_id' => $product_id,
+                            'fk_store_id' => $store_id,
+                            'qty' => $qty,
+                            'status' => '1',
+                            'user_update' => auth()->user()->user_id,
+                            'date_update' => date('Y-m-d H:i:s'),
+                            'remark' => $request->remark,
+                            'ware_id' => 1
+                        ];
+
+                        DB::table('tec_stock_out')->insert($export);
+
+                        DB::update("
+                            UPDATE `tec_product_store_qty`
+                            SET `quantity` = `quantity` - '$qty'
+                            WHERE
+                            `product_id` = '$product_id' AND `store_id` = '$store_id'
+                        ");
+
+                        if ($store_id > 1) {
+                            DB::update("
+                                UPDATE `tec_product_store_qty`
+                                SET `quantity` = `quantity` + '$qty'
+                                WHERE
+                                `product_id` = '$product_id' AND `store_id` = '$warehouse_id'
+                            ");
+                        }
+                    }
                 }
             }
         }
@@ -365,11 +445,11 @@ class ProductController extends Controller
             __("language.invoice"),
             __("language.date"),
             __("language.product"),
-            __("language.qty") . 'កាត់ / ដក',
+            __("language.qty") . 'បញ្ជូល',
             __("language.username"),
             __("language.remark"),
             __("language.branch"),
-            __("language.warehouse"),
+            lang('from_branch'),
             __("language.action"),
         ];
 
@@ -389,14 +469,14 @@ class ProductController extends Controller
                 'tec_stores.name as store_name',
                 'tec_users.username',
                 'tec_stock_in.remark',
-                'tec_warehouse.ware_name',
+                's.name as ware_name',
                 'tec_stores.name as store_name',
                 'tec_stores.city'
             )
             ->join('tec_products', 'tec_stock_in.fk_pro_id', '=', 'tec_products.id')
             ->join('tec_stores', 'tec_stock_in.fk_store_id', '=', 'tec_stores.id')
             ->join('tec_users', 'tec_stock_in.user_update', '=', 'tec_users.id')
-            ->join('tec_warehouse', 'tec_stock_in.ware_id', '=', 'tec_warehouse.warehouse_id');
+            ->join('tec_stores as s', 'tec_stock_in.ware_id', '=', 's.id');
 
         if ($request->store_id != '') {
             $data = $data->where('tec_stock_in.fk_store_id', '=', $request->store_id);
@@ -465,10 +545,10 @@ class ProductController extends Controller
                     $this->html('td', '' . $col->date, 'width="160px"') .
                     $this->html('td', $col->product_name, 'class="text-left"') .
                     $this->html('td', number_format($col->qty) . ' pcs', 'class="text-right"') .
-                    $this->html('td', $col->username, 'class="text-rights" ') .
-                    $this->html('td', $col->remark, 'class="text-rights" ') .
-                    $this->html('td', $col->store_name, 'class="text-rights" ') .
-                    $this->html('td', $col->ware_name, 'class="text-rights" ') .
+                    $this->html('td', $col->username, 'class="text-left" ') .
+                    $this->html('td', $col->remark, 'class="text-left" ') .
+                    $this->html('td', $col->store_name, 'class="text-left" ') .
+                    $this->html('td', $col->ware_name, 'class="text-left" ') .
 
                     $this->html('td', "
                     $action_return
@@ -541,12 +621,12 @@ class ProductController extends Controller
                 'tec_stores.name as store_name',
                 'tec_users.username',
                 'tec_stock_out.remark',
-                'tec_warehouse.ware_name'
+                's.name as ware_name'
             )
             ->join('tec_products', 'tec_stock_out.fk_pro_id', '=', 'tec_products.id')
             ->join('tec_stores', 'tec_stock_out.fk_store_id', '=', 'tec_stores.id')
             ->join('tec_users', 'tec_stock_out.user_update', '=', 'tec_users.id')
-            ->join('tec_warehouse', 'tec_stock_out.ware_id', '=', 'tec_warehouse.warehouse_id');
+            ->join('tec_stores as s', 'tec_stock_out.ware_id', '=', 's.id');
 
         if ($request->store_id != '') {
             $data = $data->where('tec_stock_out.fk_store_id', '=', $request->store_id);
@@ -876,11 +956,11 @@ class ProductController extends Controller
             ];
             DB::table('return_imports')->insert($data);
 
-            DB::update("
-                Update tec_warehouse
-                set `in` = `in` + $import->qty
-                where warehouse_id = '$import->ware_id'
-            ");
+//            DB::update("
+//                Update tec_warehouse
+//                set `in` = `in` + $import->qty
+//                where warehouse_id = '$import->ware_id'
+//            ");
 
             DB::update("
                 Update tec_product_store_qty
@@ -888,6 +968,15 @@ class ProductController extends Controller
                 where product_id = '$import->fk_pro_id'
                 and store_id = '$import->fk_store_id'
             ");
+
+            if ($import->fk_store_id > 1) {
+                DB::update("
+                Update tec_product_store_qty
+                set `quantity` = `quantity` + $import->qty
+                where product_id = '$import->fk_pro_id'
+                and store_id = '$import->ware_id'
+            ");
+            }
 
             DB::table('tec_stock_in')->where('id', $request->id)->delete();
         }
@@ -938,47 +1027,345 @@ class ProductController extends Controller
         return view('products.list_products', $data);
     }
 
-    //
-    private function sum_stock()
+    public function import_stock()
     {
-//        $stock = DB::select("
-//            SELECT
-//            tec_stock_in.fk_pro_id,
-//            SUM(tec_stock_in.qty) as qty
-//            FROM `tec_stock_in`
-//            INNER JOIN tec_products
-//            ON tec_stock_in.fk_pro_id = tec_products.id
-//            WHERE tec_stock_in.fk_store_id > 0
-//            GROUP BY tec_stock_in.fk_pro_id
-//        ");
 
-
-        $stock = DB::table('tec_stock_in')
-            ->join('tec_products','tec_stock_in.fk_pro_id','=','tec_products.id')
-            ->join('tec_stores','tec_stock_in.fk_store_id','=','tec_stores.id')
-            ->limit(100)
-            ->get();
-
-        foreach ($stock as $i){
-            print_r($i);
-            echo '=====';
-            echo '<br/>';
+        if (isset($_GET['import_type']) == '') {
+            return Redirect::to('/list_import');
         }
 
-        print_r(count($stock));
-        print_r($stock);
+        if ($this->get_permission()->permission == 0) {
+            return Redirect::to('/list_import');
+        }
 
-        $store_id = 1;
+        $type_import = $_GET['import_type'];
 
-        //DB::update("UPDATE `tec_product_store_qty` SET `quantity` = '0' WHERE  store_id = '$store_id'");
+        $main_store = '';
 
-//        if ($stock != null) {
-//            print_r('ex');
-//            foreach ($stock as $row){
-//                DB::update("UPDATE `tec_product_store_qty` SET `quantity` = '$row->total' WHERE `product_id` = '$row->fk_pro_id' AND store_id = '$row->fk_store_id'");
-//            }
-//        }
+        if ($type_import == 'import') {
+            $main_store = 1;
+        }
 
+        $main_store = 1;
+
+        $product = $this->get_product();
+        $store = $this->products->getStore();
+        return view('import.import_stock', compact('product', 'store', 'type_import', 'main_store'));
+    }
+
+    //
+    public function get_current_stock()
+    {
+        print_r($this->sum_qty());
+        //print_r($this->transfer());
+    }
+
+    private function sum_qty()
+    {
+        $stock = DB::table('tec_stock_in')
+            ->selectRaw(
+                '
+                tec_products.id,
+                tec_products.name pro_name,
+                tec_stores.id store_id,
+                tec_stores.name store,
+                SUM(tec_stock_in.qty) as in_qty,
+
+                (
+                    SELECT
+                    COALESCE(SUM(tec_sale_items.quantity),0)
+                    FROM `tec_sales`
+                    INNER JOIN tec_sale_items
+                    ON tec_sales.id = tec_sale_items.sale_id
+                    WHERE tec_sale_items.product_id = tec_products.id
+                    AND tec_sales.store_id = tec_stores.id
+                ) sale_qty,
+
+                (
+                    SELECT
+                    COALESCE(SUM(qty),0)
+                    FROM `tec_stock_out`
+                    WHERE fk_pro_id = tec_products.id
+                    AND fk_store_id = tec_stores.id
+                ) out_qty,
+
+               (
+                 SUM(tec_stock_in.qty)
+                 -
+               (
+                    SELECT
+                    COALESCE(SUM(qty),0)
+                    FROM `tec_stock_out`
+                    WHERE fk_pro_id = tec_products.id
+                    AND fk_store_id = tec_stores.id
+                )
+
+                -
+
+                (
+                    SELECT
+                    COALESCE(SUM(tec_sale_items.quantity),0)
+                    FROM `tec_sales`
+                    INNER JOIN tec_sale_items
+                    ON tec_sales.id = tec_sale_items.sale_id
+                    WHERE tec_sale_items.product_id = tec_products.id
+                    AND tec_sales.store_id = tec_stores.id
+                )
+
+                ) total
+
+
+                '
+            )
+            ->join('tec_products', 'tec_stock_in.fk_pro_id', '=', 'tec_products.id')
+            ->join('tec_stores', 'tec_stock_in.fk_store_id', '=', 'tec_stores.id')
+            ->groupBy('tec_products.id', 'tec_products.name', 'tec_stores.id', 'tec_stores.name')
+            ->orderBy('tec_stores.id')
+            ->get();
+
+        if ($stock != null) {
+            foreach ($stock as $i) {
+                DB::table('tec_product_store_qty')
+                ->where('product_id',$i->id)
+                ->where('store_id', $i->store_id)
+                ->update([
+                    'quantity' => $i->total
+                ]);
+            }
+        }
+        return $stock;
+    }
+
+    private function transfer()
+    {
+        $transfer = DB::table('tec_transfers')->get();
+
+        if ($transfer != null) {
+            foreach ($transfer as $i) {
+
+                $store_id = 1;
+                $product_id = 5;
+
+                $qty = $i->qty;
+                $date = $i->date;
+                $user_id = $i->transfer_by;
+                $note = $i->note;
+
+                if ($i->ware_id < 4 && $i->status == 'Import') {
+
+                    $has = DB::select("
+                        select count(*) count from tec_stock_in
+                        where fk_pro_id = '$product_id'
+                        and fk_store_id = '$store_id'
+                        and qty = '$qty'
+                        and date_update = '$date'
+                    ");
+
+                    if ($has[0]->count == 0) {
+
+                        $invoice = str_pad(1, 7, '0', STR_PAD_LEFT);
+                        $no = DB::table('tec_stock_in')
+                            ->where('fk_store_id', '=', $store_id)
+                            ->orderByDesc('id')
+                            ->first();
+                        if ($no != null) {
+                            $last_no = (int)$no->no + 1;
+                            $invoice = str_pad($last_no, 7, '0', STR_PAD_LEFT);
+                        }
+
+                        DB::table('tec_stock_in')->insert([
+                            'fk_pro_id' => $product_id,
+                            'fk_store_id' => $store_id,
+                            'qty' => $qty,
+                            'image' => 'no_image.png',
+                            'user_update' => $user_id,
+                            'date_update' => $date,
+                            'time_update' => $date,
+                            'remark' => $note,
+                            'no' => $invoice,
+                            'ware_id' => 1
+                        ]);
+
+                    }
+
+                }
+                if ($i->ware_id == 5 && $i->status == 'Import') {
+                    $product_id = 6;
+
+                    $has = DB::select("
+                        select count(*) count from tec_stock_in
+                        where fk_pro_id = '$product_id'
+                        and fk_store_id = '$store_id'
+                        and qty = '$qty'
+                        and date_update = '$date'
+                    ");
+
+                    if ($has[0]->count == 0) {
+
+                        $invoice = str_pad(1, 7, '0', STR_PAD_LEFT);
+                        $no = DB::table('tec_stock_in')
+                            ->where('fk_store_id', '=', $store_id)
+                            ->orderByDesc('id')
+                            ->first();
+                        if ($no != null) {
+                            $last_no = (int)$no->no + 1;
+                            $invoice = str_pad($last_no, 7, '0', STR_PAD_LEFT);
+                        }
+
+                        DB::table('tec_stock_in')->insert([
+                            'fk_pro_id' => $product_id,
+                            'fk_store_id' => $store_id,
+                            'qty' => $qty,
+                            'image' => 'no_image.png',
+                            'user_update' => $user_id,
+                            'date_update' => $date,
+                            'time_update' => $date,
+                            'remark' => $note,
+                            'no' => $invoice,
+                            'ware_id' => 1
+                        ]);
+
+                    }
+
+                }
+                if ($i->ware_id == 6 && $i->status == 'Import') {
+                    $product_id = 7;
+
+                    $has = DB::select("
+                        select count(*) count from tec_stock_in
+                        where fk_pro_id = '$product_id'
+                        and fk_store_id = '$store_id'
+                        and qty = '$qty'
+                        and date_update = '$date'
+                    ");
+
+                    if ($has[0]->count == 0) {
+
+                        $invoice = str_pad(1, 7, '0', STR_PAD_LEFT);
+                        $no = DB::table('tec_stock_in')
+                            ->where('fk_store_id', '=', $store_id)
+                            ->orderByDesc('id')
+                            ->first();
+                        if ($no != null) {
+                            $last_no = (int)$no->no + 1;
+                            $invoice = str_pad($last_no, 7, '0', STR_PAD_LEFT);
+                        }
+
+                        DB::table('tec_stock_in')->insert([
+                            'fk_pro_id' => $product_id,
+                            'fk_store_id' => $store_id,
+                            'qty' => $qty,
+                            'image' => 'no_image.png',
+                            'user_update' => $user_id,
+                            'date_update' => $date,
+                            'time_update' => $date,
+                            'remark' => $note,
+                            'no' => $invoice,
+                            'ware_id' => 1
+                        ]);
+
+                    }
+                }
+                if ($i->ware_id == 7 && $i->status == 'Import') {
+                    $product_id = 9;
+
+                    $has = DB::select("
+                        select count(*) count from tec_stock_in
+                        where fk_pro_id = '$product_id'
+                        and fk_store_id = '$store_id'
+                        and qty = '$qty'
+                        and date_update = '$date'
+                    ");
+
+                    if ($has[0]->count == 0) {
+
+                        $invoice = str_pad(1, 7, '0', STR_PAD_LEFT);
+                        $no = DB::table('tec_stock_in')
+                            ->where('fk_store_id', '=', $store_id)
+                            ->orderByDesc('id')
+                            ->first();
+                        if ($no != null) {
+                            $last_no = (int)$no->no + 1;
+                            $invoice = str_pad($last_no, 7, '0', STR_PAD_LEFT);
+                        }
+
+                        DB::table('tec_stock_in')->insert([
+                            'fk_pro_id' => $product_id,
+                            'fk_store_id' => $store_id,
+                            'qty' => $qty,
+                            'image' => 'no_image.png',
+                            'user_update' => $user_id,
+                            'date_update' => $date,
+                            'time_update' => $date,
+                            'remark' => $note,
+                            'no' => $invoice,
+                            'ware_id' => 1
+                        ]);
+
+                    }
+                }
+                if ($i->ware_id == 8 && $i->status == 'Import') {
+                    $product_id = 8;
+
+                    $has = DB::select("
+                        select count(*) count from tec_stock_in
+                        where fk_pro_id = '$product_id'
+                        and fk_store_id = '$store_id'
+                        and qty = '$qty'
+                        and date_update = '$date'
+                    ");
+
+                    if ($has[0]->count == 0) {
+
+                        $invoice = str_pad(1, 7, '0', STR_PAD_LEFT);
+                        $no = DB::table('tec_stock_in')
+                            ->where('fk_store_id', '=', $store_id)
+                            ->orderByDesc('id')
+                            ->first();
+                        if ($no != null) {
+                            $last_no = (int)$no->no + 1;
+                            $invoice = str_pad($last_no, 7, '0', STR_PAD_LEFT);
+                        }
+
+                        DB::table('tec_stock_in')->insert([
+                            'fk_pro_id' => $product_id,
+                            'fk_store_id' => $store_id,
+                            'qty' => $qty,
+                            'image' => 'no_image.png',
+                            'user_update' => $user_id,
+                            'date_update' => $date,
+                            'time_update' => $date,
+                            'remark' => $note,
+                            'no' => $invoice,
+                            'ware_id' => 1
+                        ]);
+
+                    }
+                }
+
+            }
+        }
+
+        return $transfer;
+    }
+
+    private function get_product()
+    {
+        return DB::table('tec_products')->where('is_active', 1)->limit(5)->orderBy('id')->get();
+    }
+
+    private function get_permission()
+    {
+        return DB::table('tec_permission')->where('user_id', Auth::user()->user_id)->first();
+    }
+
+
+    /**
+     * @return mixed
+     */
+    public function getProductByColumn()
+    {
+        return $this->products->findProductByColumn();
     }
 
 }

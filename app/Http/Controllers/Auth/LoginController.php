@@ -48,7 +48,7 @@ class LoginController extends Controller
         ];
 
         if (Auth::attempt($credentials)) {
-            return redirect()->route('pos');
+            return redirect()->route('dashboard');
         }
 
         return view('auth.login');

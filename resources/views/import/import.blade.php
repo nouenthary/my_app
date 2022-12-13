@@ -35,12 +35,12 @@
                             <th class="col-md-1">{{__("language.category")}}</th>
                             <th class="col-md-1">{{__("language.sell_price")}}</th>
                             <th lass="col-md-1">{{__("language.balance")}}</th>
-                            <th width="5px" align="center">{{__("language.action")}}</th>
+{{--                            <th width="5px" align="center">{{__("language.action")}}</th>--}}
                         </tr>
                         </thead>
                         <tfoot>
                         <tr>
-                            <th colspan="6" class="text-uppercase">{{__("language.total")}}</th>
+                            <th colspan="5" class="text-uppercase">{{__("language.total")}}</th>
                             <th class="col-md-1" align="center">{{__("language.balance")}}</th>
                             <th></th>
                         </tr>
@@ -128,22 +128,22 @@
                     },
 
                     {
-                        data: 'total',
-                        name: 'total',
+                        data: 'quantity',
+                        name: 'quantity',
                         render: intQty
                     },
-                    {
-                        data: 'store_id',
-                        name: 'store_id',
-                        render: function (data, type, full, meta) {
-                            let imports = `<button class="btn btn-success btn-xs btn-import" id="` + full.store_id + `" data-id=" ` + full.product_id + ` "><i class="fa fa-plus"></i></button>`;
-                            let exports = ``;
-                            if(permission == 1){
-                                exports = `<button class="btn btn-danger btn-xs btn-export" id="` + full.store_id + ` " data-id="` + full.product_id + `"><i class="fa fa-minus"></i></button>`;
-                            }
-                            return imports + " | " + exports;
-                        }
-                    },
+                    // {
+                    //     data: 'store_id',
+                    //     name: 'store_id',
+                    //     render: function (data, type, full, meta) {
+                    //         let imports = `<button class="btn btn-success btn-xs btn-import" id="` + full.store_id + `" data-id=" ` + full.product_id + ` "><i class="fa fa-plus"></i></button>`;
+                    //         let exports = ``;
+                    //         if(permission == 1){
+                    //             exports = `<button class="btn btn-danger btn-xs btn-export" id="` + full.store_id + ` " data-id="` + full.product_id + `"><i class="fa fa-minus"></i></button>`;
+                    //         }
+                    //         return imports + " | " + exports;
+                    //     }
+                    // },
                 ],
                 "lengthMenu": [
                     [10, 20, 50, 100, -1],

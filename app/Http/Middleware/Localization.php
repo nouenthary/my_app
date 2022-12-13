@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Session;
 
+
 class Localization
 {
     /**
@@ -23,4 +24,5 @@ class Localization
         }
         return $next($request);
     }
+
 }

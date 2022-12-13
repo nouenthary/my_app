@@ -121,5 +121,10 @@ return [
     'group' => 'Group',
     'branch_commission' => 'Branch commission',
     'staff_commission' => 'Staff commission',
-    'other_commission' => 'Other commission'
+    'other_commission' => 'Other commission',
+    'from_branch' => "From Branch",
+    'import_stock' => 'Import Stock',
+    'transfer_stock' => 'Transfer Stock',
+    'return_stock' => 'Return Stock',
+    'sale_of_point' => 'Sale of Point',
 ];

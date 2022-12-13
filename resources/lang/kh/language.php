@@ -118,5 +118,10 @@ return [
     'group' => 'ក្រុម',
     'branch_commission' => 'សាខា កម្រៃជើងសារ',
     'staff_commission' => 'បុគ្គលិក កម្រៃជើងសារ',
-    'other_commission' => 'ទូទៅ កម្រៃជើងសារ'
+    'other_commission' => 'ទូទៅ កម្រៃជើងសារ',
+    'from_branch' => "ពីសាខា",
+    'import_stock' => 'បន្ថែមទំនិញចូលឃ្លាំង',
+    'transfer_stock' => "បញ្ចូនទំនិញតាមសាខា",
+    'return_stock' => 'កាត់ស្តុកតាមសាខា',
+    'sale_of_point' => 'ការបញ្ជាលក់'
 ];

@@ -63,8 +63,36 @@
             padding: 10px;
         }
 
+        .pos-phone{
+            display:  none;
+        }
+
+
+        .pos-pc{
+            display: block;
+        }
+
+        @media (max-width: 687px) {
+
+            .containers {
+                margin: auto;
+                width: 300px;
+            }
+
+            .pos-phone{
+                display: block;
+            }
+
+
+            .pos-pc{
+                display: none;
+            }
+
+        }
+
+
         @media print {
-            .printPageButton {
+            .printPageButton , .pos-phone, .pos-pc{
                 display: none;
             }
 
@@ -93,6 +121,7 @@
             -webkit-print-color-adjust: exact !important;
         }
 
+
     </style>
 
 
@@ -101,7 +130,11 @@
 <body>
     <br />
     <div class="containers">
-        <a href="{{ route('pos') }}" class="btn btn-lg btn-info btn-block printPageButton">
+        <a href="{{ url('sale_qr_code') }}" class="btn btn-lg btn-info btn-block printPageButton pos-phone">
+            <h4>ត្រឡប់ទៅបញ្ជាលក់</h4>
+        </a>
+
+        <a href="{{ route('pos') }}" class="btn btn-lg btn-info btn-block printPageButton pos-pc">
             <h4>ត្រឡប់ទៅបញ្ជាលក់</h4>
         </a>
 

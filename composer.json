@@ -10,10 +10,11 @@
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
         "laravel/framework": "^8.75",
-        "laravel/sanctum": "^2.11",
+        "laravel/sanctum": "^2.15",
         "laravel/tinker": "^2.5",
         "laravel/ui": "^3.4",
         "milon/barcode": "^9.0",
+        "tymon/jwt-auth": "^1.0",
         "yajra/laravel-datatables-oracle": "^9.21"
     },
     "require-dev": {
@@ -30,7 +31,7 @@
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
         },
-        "files": ["app/Helpers.php"]
+        "files": ["app/Helpers.php", "app/Constants.php"]
     },
     "autoload-dev": {
         "psr-4": {

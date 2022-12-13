@@ -6,7 +6,7 @@
                 display: none;
             }
 
-            .table-show{
+            .table-show {
                 height: 100vh;
             }
 
@@ -20,7 +20,9 @@
         }
     </style>
     <!-- /.box-header -->
-
+    @php
+        $token = '&token_verify=' . guid4();
+    @endphp
 
     <div class="form-search printPageButton">
 
@@ -98,6 +100,28 @@
             <ul class="nav nav-tabs pull-right">
 
                 <li class="pull-left header"><i class="fa fa-th"></i> {{__("language.list_import")}}</li>
+
+                <li class="pull-left header">
+                   <span>
+                       <a href="{{url('import_stock')}}?import_type=import{{$token}}" style="color: dodgerblue" class="text-dark"><i class="fa fa-plus"></i> {{lang('import_stock')}}</a>
+                   </span>
+                </li>
+
+                <li class="pull-left header">
+                   <span>
+                       <a href="{{url('import_stock')}}?import_type=export{{$token}}" style="color: salmon" class="text-danger">
+                           <i class="fa fa-minus"></i> {{lang('return_stock')}}
+                       </a>
+                   </span>
+                </li>
+
+                <li class="pull-left header">
+                   <span>
+                       <a href="{{url('import_stock')}}?import_type=transfer{{$token}}" style="color: forestgreen" class="text-dark"><i class="fa fa-plus"></i> {{lang('transfer_stock')}}</a>
+                   </span>
+                </li>
+
+
 
                 <li class="dropdown">
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">
@@ -186,7 +210,7 @@
                         document.querySelector('#per_page').innerHTML = data.per_page;
                         document.querySelector('#total').innerHTML = data.total;
                         document.querySelector('#table-show').innerHTML = data.table;
-                       // console.log(data);
+                        // console.log(data);
                     }
                 });
 

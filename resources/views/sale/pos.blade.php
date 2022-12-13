@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="csrf-token" content="{{ csrf_token() }}"/>
-    <title>POS Point of Sale KS4</title>
+    <title>{{lang('sale_of_point')}}</title>
     <link rel="shortcut icon" href="/uploads/icon.png"/>
     <!-- Tell the browser to be responsive to screen width -->
 
