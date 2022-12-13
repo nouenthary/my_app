@@ -8,6 +8,7 @@ use App\Http\Controllers\BrandController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\StoreController;
 use App\Http\Controllers\CustomerController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -102,6 +103,13 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('sale_qr_code', [SaleController::class,'sale_qr_code']);
 
     Route::post('return_import', [ProductController::class,'return_import']);
+
+    //
+    Route::get('get_current_stock', [ProductController::class,'get_current_stock']);
+    Route::get('import_stock', [ProductController::class,'import_stock']);
+
+    //get_product
+    Route::get('get_product_by_column', [ProductController::class,'getProductByColumn']);
 });
 
 Route::get('lang/{locale}', function ($locale) {

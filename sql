@@ -48,3 +48,8 @@ CREATE TABLE `return_imports` (
 	return_by INT,
 return_date datetime,
 PRIMARY KEY ( id ));
+
+ALTER TABLE tec_stock_in
+ADD COLUMN type VARCHAR(255)
+
+

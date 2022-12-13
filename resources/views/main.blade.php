@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="csrf-token" content="{{ csrf_token() }}"/>
-    <title>K STOCK</title>
+    <title>K STOCK </title>
     <link rel="shortcut icon" href="/uploads/icon.png"/>
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
@@ -318,6 +318,9 @@
                             class="fa fa-desktop"></i>
                         <span>{{ __('language.pos') }}</span></a></li>
 
+                <li style="display: {{ $pos }}" class=""><a href="{{ url('sale_qr_code') }}"><i
+                            class="fa fa-qrcode"></i>
+                        <span>ស្កេន{{ __('language.pos') }}</span></a></li>
 
                 <li class="treeview" id="categories" style="display: {{ $category }}">
                     <a href="#">
@@ -469,10 +472,10 @@
     <div class="content-wrapper" style="background-color: #fff">
         <!-- Content Header (Page header) -->
         <section class="content-header">
-            <h1>
+            <p>
                 {{lang('dashboard')}}
                 <small></small>
-            </h1>
+            </p>
             <ol class="breadcrumb">
                 <li><a href="#"><i class="fa fa-dashboard"></i> {{lang('home')}}</a></li>
                 <li class="active">{{lang('dashboard')}}</li>
@@ -767,10 +770,10 @@
 </script>
 
 <script src="{{ URL::asset('js/utils.js')}}"></script>
+
 {{-- <script src="{{ mix('/js/appj.ts') }}"></script> --}}
 
 @stack('scripts')
-
 </body>
 
 </html>

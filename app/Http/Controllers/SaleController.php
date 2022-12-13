@@ -31,7 +31,7 @@ class SaleController extends Controller
             'តំលៃ​សរុប',
             'ប្រាក់ត្រូវបង់',
             'ស្ថានភាព	',
-            'អ្នកលក់	',
+            'អ្នកលក់',
             'ប្រតិបត្តិការ',
         ];
 
@@ -992,4 +992,5 @@ class SaleController extends Controller
     public function sale_qr_code(){
         return view('sale.sale_qr_code');
     }
+
 }

@@ -26,6 +26,13 @@ function isDecimalInt(key) {
 
 $(function () {
 
+    //let containerHeight = $('body').width();
+    //console.log(containerHeight)
+    //alert(navigator.platform)
+    // if(navigator.platform != 'Win32'){
+    //     window.location.href = '/sale_qr_code';
+    // }
+
     let key = 'items';
 
     let lang = localStorage.getItem('lang');

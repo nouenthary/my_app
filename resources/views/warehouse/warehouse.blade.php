@@ -19,12 +19,12 @@
                             <th style="width: 20px">{{__("language.photo")}}</th>
                             <th class="col-md-1"> {{__("language.warehouse")}}</th>
                             <th lass="col-md-1">{{__("language.qty")}} {{__("language.balance")}}</th>
-                            <th width="5px" align="center">{{__("language.action")}}</th>
+{{--                            <th width="5px" align="center">{{__("language.action")}}</th>--}}
                         </tr>
                         </thead>
                         <tfoot>
                         <tr>
-                            <th colspan="3" class="text-uppercase">{{__("language.total")}}</th>
+                            <th colspan="2" class="text-uppercase">{{__("language.total")}}</th>
                             <th colspan="2"  align="center">{{__("language.balance")}}</th>
                         </tr>
                         </tfoot>
@@ -86,16 +86,16 @@
                         name: 'in',
                         render: intQty
                     },
-                    {
-                        data: 'store_id',
-                        name: 'store_id',
-                        render: function (data, type, full, meta) {
-                            return `
-                                <button class="btn btn-success btn-xs btn-import" id="` + full.warehouse_id + `"><i class="fa fa-plus"></i></button>
-                                <button class="btn btn-danger btn-xs btn-export" id="` + full.warehouse_id + ` " ><i class="fa fa-minus"></i></button>
-                            `;
-                        }
-                    },
+                    // {
+                    //     data: 'store_id',
+                    //     name: 'store_id',
+                    //     render: function (data, type, full, meta) {
+                    //         return `
+                    //             <button class="btn btn-success btn-xs btn-import" id="` + full.warehouse_id + `"><i class="fa fa-plus"></i></button>
+                    //             <button class="btn btn-danger btn-xs btn-export" id="` + full.warehouse_id + ` " ><i class="fa fa-minus"></i></button>
+                    //         `;
+                    //     }
+                    // },
                 ],
                 "lengthMenu": [
                     [10, 20, 50, 100, -1],

@@ -3,20 +3,10 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\Model;
 
-class Tec_users extends Authenticatable
+class Tec_users extends Model
 {
-    use HasApiTokens, HasFactory, Notifiable;
-
-    protected $guarded = ['id'];
-    protected $hidden = [
-        'username','password', 'remember_token',
-    ];
-    public function getAuthPassword()
-    {
-        return $this->password;
-    }
+    use HasFactory;
+    protected $table = 'tec_users';
 }

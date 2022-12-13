@@ -10,13 +10,20 @@ class SaleController extends Controller
 {
     public function get_product()
     {
+        $perPage = 10;
+        $page = 1;
+
+        if(request()->get('per_page') != '') $perPage = request()->get('per_page');
+
+        if(request()->get('page') != '') $page = request()->get('page');
+
         $host = $_SERVER['HTTP_HOST'];
-        $product = DB::table('tec_products')
+
+        return DB::table('tec_products')
             ->selectRaw(
                 "id, name, code, CAST(price AS DECIMAL) as price , IFNULL(concat('http://$host/uploads/',image), concat('http://$host/uploads/7527dd8c427584bc7f1942afeae252d1.jpg'))  as image "
             )
-            ->paginate(10);
-
-        return $product;
+            ->orderByDesc('name')
+            ->paginate($perPage, '','',$page);
     }
 }

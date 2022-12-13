@@ -22,7 +22,6 @@
 }
 
 body {
-    /*font-family: 'Nokora', 'auto';*/
     font-size: 14px;
 }
 
@@ -55,7 +54,7 @@ body {
 input[type=file]::file-selector-button {
     border: none;
     background: #00a65a;
-    padding: 0px 20px;
+    padding: 0 20px;
     border-radius: 3px;
     color: #fff;
     cursor: pointer;
@@ -92,7 +91,7 @@ img {
 }
 
 body {
-    font-family: 'Khmer OS Battambang Regular';
+    font-family: 'Khmer OS Battambang Regular', serif;
 }
 
 .btn-danger, .bg-red{
@@ -136,3 +135,27 @@ body {
 .btn , input , .select2-selection, .select2-selection--single, .product-item, .input-group-addon {
     border-radius: 4px !important;
 }
+
+
+.list-group-item-sale {
+    padding: 5px !important;
+}
+
+i {
+    cursor: pointer;
+}
+
+.list-item-sale {
+    padding-left: 5px;
+    font-size: 10px;
+}
+
+.item-row-sale {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.input-sale{
+    width: 80px;
+}
+
