@@ -98,3 +98,26 @@ body {
 .btn , input , .select2-selection, .select2-selection--single, .product-item, .input-group-addon {
     border-radius: 4px !important;
 }
+
+.slimScrollDiv {
+    background-color: #fff;
+}
+
+.table-condensed>tbody>tr>td, .table-condensed>tbody>tr>th, .table-condensed>tfoot>tr>td, .table-condensed>tfoot>tr>th, .table-condensed>thead>tr>td, .table-condensed>thead>tr>th {
+    padding: 10px;
+}
+
+.tr-head{
+    background-color: #1890ff !important;
+    color:#fff;
+}
+
+#totaltbl > tbody > tr > td {
+    background-color: #1890ff !important; 
+    color:#fff;  
+}
+
+#totaltbl > tbody > tr > td > a{
+    background-color: #1890ff !important; 
+    color:#fff;  
+}

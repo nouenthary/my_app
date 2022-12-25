@@ -7,6 +7,7 @@ use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class LoginController extends Controller
 {
@@ -47,10 +48,31 @@ class LoginController extends Controller
             'password' => $request['password'],
         ];
 
-        if (Auth::attempt($credentials)) {
+        if (Auth::attempt($credentials)) {        
+            $token = auth()->guard('api')->attempt($credentials);
+            //$this->store_access_token($token, 'web');
             return redirect()->route('dashboard');
         }
 
         return view('auth.login');
     }
+
+    // private function store_access_token($token, $device = 'android')
+    // {
+    //     $user_id = auth('api')->user()->id;
+    //     $personal_access_tokens = DB::table('personal_access_tokens')->where('tokenable_id', $user_id)->first();
+
+    //     if ($personal_access_tokens == '') {
+    //         DB::table('personal_access_tokens')->insert([
+    //             'tokenable_type' => 'App\Models\User',
+    //             'tokenable_id' => $user_id,
+    //             'name' => $device,
+    //             'token' => $token,
+    //             'abilities' => '["*"]',
+    //             //'last_used_at' => date('Y-m-d H:i:s'),
+    //             'created_at' => date('Y-m-d H:i:s'),
+    //             'updated_at' => date('Y-m-d H:i:s')
+    //         ]);
+    //     }
+    // }
 }

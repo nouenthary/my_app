@@ -289,7 +289,7 @@
                     <div style="clear:both;"></div>
                 </div>
 
-                <div class="form-group" style="margin-bottom:5px; ">
+                <div class="form-group" style="margin-bottom:5px; display: none;">
                     <input type="text" name="hold_ref" value="" id="hold_ref"
                            class="form-control kb-text" placeholder="{{ __('language.reference_note') }}">
                 </div>
@@ -308,15 +308,15 @@
                         <div id="list-table-div" style="overflow: hidden; width: auto; height: 491px;">
 
                             <table id="posTable"
-                                   class="table table-striped table-bordered table-condensed table-hover list-table"
+                                   class="table table-striped table-bordere table-condensed table-hover list-table table-md"
                                    style="margin:0px;" data-height="100">
                                 <thead>
-                                <tr class="info text-info">
-                                    <th>{{ __('language.product') }}</th>
-                                    <th style="width: 80px;text-align:center;">{{ __('language.price') }}</th>
-                                    <th style="width: 80px;text-align:center;">{{ __('language.qty') }}</th>
-                                    <th style="width: 20%;text-align:center;">{{ __('language.amount') }}</th>
-                                    <th style="width: 20px;" class=""><i class="fa fa-remove"></i>
+                                <tr class="success text-infos">
+                                    <th class="tr-head">{{ __('language.product') }}</th>
+                                    <th class="tr-head" style="width: 80px;text-align:center;">{{ __('language.price') }}</th>
+                                    <th class="tr-head" style="width: 80px;text-align:center;">{{ __('language.qty') }}</th>
+                                    <th class="tr-head" style="width: 20%;text-align:center;">{{ __('language.amount') }}</th>
+                                    <th class="tr-head" style="width: 20px;" class=""><i class="fa fa-remove"></i>
                                     </th>
                                 </tr>
                                 </thead>
@@ -336,14 +336,14 @@
                     <div id="totaldiv">
                         <table id="totaltbl" class="table table-condensed totals" style="margin-bottom:10px;">
                             <tbody>
-                            <tr class="info">
+                            <tr class="infos">
                                 <td width="25%"> {{ __('language.total_items') }}</td>
                                 <td class="text-right" style="padding-right:10px;"><span id="count">0
                                                 (0)</span></td>
                                 <td width="25%">{{ __('language.total') }}</td>
                                 <td class="text-right" colspan="2"><span id="total">$0.00</span></td>
                             </tr>
-                            <tr class="info">
+                            <tr class="infos">
                                 <td width="25%"><a href="#"
                                                    id="add_discount">{{ __('language.discount') }}</a></td>
                                 <td class="text-right" style="padding-right:10px;"><span
@@ -352,7 +352,7 @@
                                                    id="add_tax">{{ __('language.tax') }}</a></td>
                                 <td class="text-right"><span id="ts_con">$0.00</span></td>
                             </tr>
-                            <tr class="info">
+                            <tr class="infos">
                                 <td colspan="2" style="font-weight:bold;">
                                     {{ __('language.total_payable') }} ​ <a role="button"
                                                                             data-toggle="modal"
@@ -375,6 +375,7 @@
                                 <button type="button" class="btn btn-warning btn-block btn-flat"
                                         id="suspend"><i class="fa fa-tags"></i> {{ __('language.hold') }}
                                 </button>
+                                 <div style="padding-top: 3px"></div>
                                 <button type="button" class="btn btn-danger btn-block btn-flat"
                                         id="reset"><i class="fa fa-remove"></i> {{ __('language.cancel') }}
                                 </button>
@@ -383,18 +384,18 @@
                         </div>
                         <div class="col-xs-4" style="padding: 0 5px;">
                             <div class="btn-group-vertical btn-block">
-                                <button type="button" class="btn bg-purple btn-block btn-flat"
+                                <button type="button" class="btn bg-secondary btn-block btn-flat"
                                         id="print_order"><i class="fa fa-shopping-cart"></i> {{ __('language.print_order') }}
                                 </button>
-
-                                <button type="button" class="btn bg-navy btn-block btn-flat"
+                                <div style="padding-top: 3px"></div>
+                                <button type="button" class="btn bg-primary btn-block btn-flat"
                                         id="print_bill"><i class="fa fa-file-text-o"></i> {{ __('language.print_bill') }}
                                 </button>
                             </div>
                         </div>
                         <div class="col-xs-4" style="padding: 0;">
                             <button type="button" class="btn btn-success btn-block btn-flat" id="payment"
-                                    style="height:67px;"><i class="fa fa-shopping-bag"></i> {{ __('language.payment') }}
+                                    style="height:72px; font-size: 18px;"><i class="fa fa-shopping-bag"></i> {{ __('language.payment') }}
                             </button>
                         </div>
                     </div>

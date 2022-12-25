@@ -1,0 +1,96 @@
+:root {
+    --fontSize: 14px;
+}
+
+@font-face {
+    font-family: 'Khmer OS Battambang Regular';
+    src: url("/css/KhmerOSBattambangRegular.ttf");
+}
+
+#app, body , label{
+    font-family: 'Khmer OS Battambang Regular', serif;
+    font-size: var(--fontSize) !important;
+    /*font-style: italic;*/
+}
+
+th,
+td {
+    white-space: nowrap;
+}
+
+.t-border > th,
+td {
+    /*border-left: thin solid rgba(0, 0, 0, .12);*/
+}
+
+.text-size {
+    font-size: var(--fontSize);
+}
+
+/* width */
+::-webkit-scrollbar {
+    width: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    width: 5px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #888;
+    width: 5px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+    width: 5px;
+}
+
+.v-data-table > .v-data-table__wrapper > table > tbody > tr > td,
+.v-data-table > .v-data-table__wrapper > table > tfoot > tr > td,
+.v-data-table > .v-data-table__wrapper > table > thead > tr > td {
+    font-size: var(--fontSize);
+}
+
+.v-data-table > .v-data-table__wrapper > table > tbody > tr > th,
+.v-data-table > .v-data-table__wrapper > table > tfoot > tr > th,
+.v-data-table > .v-data-table__wrapper > table > thead > tr > th {
+    font-size: var(--fontSize);
+    font-weight: 500;
+
+}
+
+.theme--light.v-data-table > .v-data-table__wrapper > table > thead > tr > th {
+    color: #000;
+}
+
+.v-pagination>li{
+    font-size: var(--fontSize);
+}
+
+.container--fluid{
+    /*background-color: #eeeeee;*/
+}
+
+main{
+    background-color: #eee;
+}
+
+.v-application--wrap{
+    min-height: 0;
+}
+
+video {
+    width: 100% ;
+}
+
+@media print {
+
+    .filter, .app-bar {
+        display: none;
+    }
+}

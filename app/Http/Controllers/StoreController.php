@@ -116,6 +116,14 @@ class StoreController extends Controller
 
     public function get_stores(Request $request)
     {
+        if($request->type == 'option'){
+            $host = $_SERVER['HTTP_HOST'];
+            return Store::selectRaw("id,name,IFNULL(concat('http://$host/uploads/stores/',logo), concat('http://$host/uploads/7527dd8c427584bc7f1942afeae252d1.jpg')) as image")
+             ->where('city','!=','None')
+            ->orderBy('name', 'asc')
+            ->get();
+        }
+
         $columns = [
             lang("image"),
             lang("code"),
@@ -159,4 +167,5 @@ class StoreController extends Controller
             'total' => $data->total(),
         ];
     }
+
 }

@@ -385,6 +385,10 @@
                         <li style="display: {{ $imp }}"><a href="{{ url('list_import') }}"><i
                                     class="fa fa-circle-o"></i> {{ __('language.list_all_import') }}</a>
                         </li>
+
+                        <li style="display: {{ $import }}"><a href="{{ url('ui/add_stock') }}"><i
+                                    class="fa fa-circle-o"></i> ស្កេនទំនិញចូលតាមសាខា
+                            </a></li>
                     </ul>
                 </li>
 
