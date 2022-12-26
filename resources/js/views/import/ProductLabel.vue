@@ -287,13 +287,13 @@
                 } else if (price === 8000) {
                     return '#FCE4EC';
                 } else if (price === 10000) {
-                    return '#FFE0B2';
+                    return '#FFCC80';
                 } else if (price === 15000) {
                     return '#64B5F6';
                 } else if (price === 18000) {
                     return '#EC407A';
                 } else if (price === 25000) {
-                    return '#A5D6A7';
+                    return '#69F0AE';
                 } else {
                     return '#FFEB3B';
                 }
