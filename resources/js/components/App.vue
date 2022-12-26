@@ -3,7 +3,7 @@
 
         <v-app>
 
-            <v-navigation-drawer app absolute v-model="drawer" style="z-index: 100" height="100%" class="app-bar">
+            <v-navigation-drawer app absolute v-model="drawer" style="z-index: 100; min-height: 100vh"  class="app-bar">
                 <v-list-item class="primary">
                     <v-list-item-content>
                         <v-list-item-title class="text-center white--text font-weight-regular">
@@ -142,7 +142,8 @@
             },
             toPage(page) {
                 this.$router.push('/ui' + page);
-            }
+            },
+
         },
         mounted() {
             this.fetch_options();

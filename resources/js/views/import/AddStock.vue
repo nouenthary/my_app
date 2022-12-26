@@ -18,13 +18,25 @@
                     <br>
                 </template>
 
+                <v-btn
+                    @click="onSubmit"
+                    block
+                    color="primary"
+                    :loading="loading"
+                    :disabled="store_id !== '' && items.length > 0  ? disabled : ''">
+                    <v-icon>mdi-plus-circle</v-icon>
+                    បន្ថែមចូលឃ្លាំង
+                </v-btn>
+
+                <br/>
+
+
                 <v-autocomplete
                     v-model="store_id"
                     :items="store"
-                    item-text="name"
+                    item-text="city"
                     item-value="id"
                     label="សាខា"
-                    @change="onChange"
                     dense
                     outlined
                     prepend-inner-icon="mdi-store">
@@ -59,15 +71,7 @@
 
                 </v-row>
 
-                <v-btn
-                    @click="onSubmit"
-                    block
-                    color="primary"
-                    :loading="loading"
-                    :disabled="store_id !== '' && items.length > 0  ? disabled : ''">
-                    <v-icon>mdi-plus-circle</v-icon>
-                    បន្ថែមចូលឃ្លាំង
-                </v-btn>
+
 
             </v-card-text>
 
@@ -78,37 +82,37 @@
 
                 <div style="display: flex">
 
-                    <v-list-item-avatar size="80" rounded>
+                    <v-list-item-avatar size="60" rounded>
                         <v-img :src="item.avatar"></v-img>
                     </v-list-item-avatar>
 
                     <div>
 
-                        <p> ឈ្មោះទំនិញ : {{ item.name }}</p>
+                        <p> ឈ្មោះ : {{ item.name }}</p>
 
 
                         <div style="display: flex; width: 100%">
 
-                            <v-btn color="red" class="py-5" @click="remove(item)">
-                                <v-icon color="white">mdi-close</v-icon>
+                            <v-btn color="red" class="py-5" @click="remove(item)" x-small>
+                                <v-icon color="white">mdi-close-circle</v-icon>
                             </v-btn>
 
                             <div class="pa-1"></div>
 
-                            <v-text-field type="number" outlined dense disabled maxlength="10" :value="item.qty"
-                                          style="min-width: 80px"
-                                          v-on:keypress="isLetterOrNumber($event)"></v-text-field>
+                            <v-text-field type="number" outlined dense maxlength="10" :value="item.qty"
+                                          style="min-width: 80px; text-align: center"
+                                          v-on:keypress="isLetterOrNumber($event)" @change="onChange" @focusin="onFocus(index)"></v-text-field>
 
                             <div class="pa-1"></div>
 
-                            <v-btn color="primary" class="py-5" @click="minus(item)" disabled>
-                                <v-icon color="white">mdi-minus</v-icon>
+                            <v-btn color="primary" class="py-5" @click="minus(item)" x-small>
+                                <v-icon color="white">mdi-minus-circle</v-icon>
                             </v-btn>
 
                             <div class="pa-1"></div>
 
-                            <v-btn color="primary" class="py-5" @click="plus(item)" disabled>
-                                <v-icon color="white">mdi-plus</v-icon>
+                            <v-btn color="green" class="py-5" @click="plus(item)" x-small>
+                                <v-icon color="white">mdi-plus-circle</v-icon>
                             </v-btn>
 
                         </div>
@@ -144,7 +148,8 @@
                 code: '',
                 items: [],
                 disabled: false,
-                loading: false
+                loading: false,
+                index: 0
             }
         },
         methods: {
@@ -153,19 +158,28 @@
             },
             isLetterOrNumber(e) {
                 let char = String.fromCharCode(e.keyCode);
-                if (/^[A-Za-z0-9]+$/.test(char)) return true;
-                else e.preventDefault();
+                if (/^[A-Za-z0-9]+$/.test(char)) {
+                    return true;
+                }
+                else {
+                    e.preventDefault();
+                }
+
+                this.setStorage();
             },
             plus(item) {
                 item.qty = item.qty + 1;
+                this.setStorage();
             },
             minus(item) {
                 if (item.qty > 1) {
                     item.qty = item.qty - 1;
                 }
+                this.setStorage();
             },
             remove(item) {
                 this.items = this.items.filter(i => i.id !== item.id);
+                this.setStorage();
             },
             async onDecode(code) {
                 let camera_flashing_2 = document.getElementById("camera_flashing_2");
@@ -225,8 +239,18 @@
                     this.items = items;
                 }
             },
-            onChange() {
+            onChange(value) {
                 //
+                //console.log(value);
+
+                if(value == '' || value == null){
+                    value = 1;
+                }
+
+                this.items[this.index].qty = parseInt(value);
+
+                this.setStorage();
+
             },
             async onSubmit() {
 
@@ -236,9 +260,13 @@
                 let data = {
                     store_id: this.store_id,
                     data: this.items,
-                    type_import: 'import',
+                    type_import: 'transfer',
                     ware_id : 1,
                 };
+
+                if(this.store_id === 1 || this.store_id == 1){
+                    data.type_import = 'import';
+                }
 
                 if(this.store_id === ''){
                     return;
@@ -265,7 +293,11 @@
                     });
 
                // console.log(data);
-            }
+            },
+            onFocus(i) {
+                //console.log(i);
+                this.index = i;
+            },
         },
         mounted() {
             this.getStorage();
