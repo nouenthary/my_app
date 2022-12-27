@@ -1356,7 +1356,7 @@ class ProductController extends Controller
 
     private function get_product()
     {
-        return DB::table('tec_products')->where('is_active', 1)->limit(5)->orderBy('id')->get();
+        return DB::table('tec_products')->where('is_active', 1)->orderBy('price')->get();
     }
 
     private function get_permission()
