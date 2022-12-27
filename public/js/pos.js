@@ -64,7 +64,6 @@ $(function () {
         getHeight();
     });
 
-
     let addRow = function (item) {
         return `
             <tr id="` + item.id + `" data-name="` + item.name + `" data-code="` + item.code + `">
@@ -471,5 +470,33 @@ $(function () {
     //     volume: 1.0,
     //     //multiplay: true
     // });
+
+    const isMobile = {
+        Android: function() {
+            return navigator.userAgent.match(/Android/i);
+        },
+        BlackBerry: function() {
+            return navigator.userAgent.match(/BlackBerry/i);
+        },
+        iOS: function() {
+            return navigator.userAgent.match(/iPhone|iPad|iPod/i);
+        },
+        Opera: function() {
+            return navigator.userAgent.match(/Opera Mini/i);
+        },
+        Windows: function() {
+            return navigator.userAgent.match(/IEMobile/i) || navigator.userAgent.match(/WPDesktop/i);
+        },
+        any: function() {
+            return (isMobile.Android() || isMobile.BlackBerry() || isMobile.iOS() || isMobile.Opera() || isMobile.Windows());
+        }
+    };
+
+    if( isMobile.any() ) {
+        $('.product-item').css('width','350px');
+        $('.product-item  > .mailbox-attachment-icon  > img').css('height','350px');
+        getHeight();
+    }
+
 
 });
