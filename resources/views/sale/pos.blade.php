@@ -372,11 +372,11 @@
                     <div class="row">
                         <div class="col-xs-4" style="padding: 0;">
                             <div class="btn-group-vertical btn-block">
-                                <button type="button" class="btn btn-warning btn-block btn-flat"
+                                <button type="button" class="btn btn-secondary btn-block btn-flat"
                                         id="suspend"><i class="fa fa-tags"></i> {{ __('language.hold') }}
                                 </button>
                                  <div style="padding-top: 3px"></div>
-                                <button type="button" class="btn btn-danger btn-block btn-flat"
+                                <button type="button" class="btn btn-primary btn-block btn-flat"
                                         id="reset"><i class="fa fa-remove"></i> {{ __('language.cancel') }}
                                 </button>
                             </div>
@@ -698,17 +698,50 @@
     <!-- /.content-wrapper -->
 
     <!-- Control Sidebar -->
-    <aside class="control-sidebar control-sidebar-dark ">
+    <aside class="control-sidebar control-sidebar-light ">
         <!-- Create the tabs -->
-        <ul class="nav nav-tabs nav-justified control-sidebar-tabs">
-            <li><a href="#control-sidebar-home-tab" data-toggle="tab"><i class="fa fa-home"></i></a></li>
-            <li><a href="#control-sidebar-settings-tab" data-toggle="tab"><i class="fa fa-gears"></i></a></li>
-        </ul>
+{{--        <ul class="nav nav-tabs nav-justified control-sidebar-tabs">--}}
+{{--            <li><a href="#control-sidebar-home-tab" data-toggle="tab"><i class="fa fa-home"></i></a></li>--}}
+{{--        </ul>--}}
         <!-- Tab panes -->
-        <div class="tab-content">
+        <div class="tab-content" style="padding: 0 5px;">
             <!-- Home tab content -->
-            <div class="tab-pane" id="control-sidebar-home-tab">
+            <div class="tab-pane active" id="control-sidebar-home-tab">
 
+{{--                Category--}}
+
+                @foreach($list_category as $row)
+
+                <div class="box box-solid collapsed-box product-tab" style="margin-bottom: 5px; cursor: pointer" id="{{$row['id']}}">
+                    <div class="box-header with-border">
+
+                        <img height="40px" width="40px" style="border-radius: 40%"
+                             src="{{ asset('uploads/categories/' . $item->image) }}"
+                             alt="Attachment"
+                             onerror='this.src="{{ asset('/uploads/none.jpg') }}"'>
+
+                        <h3 class="box-title">{{$row['name']}}</h3>
+
+                        <div class="box-tools">
+                                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="box-body no-padding" style="">
+                        <ul class="nav nav-pills nav-stacked">
+                            @foreach($row['product'] as $product)
+                                <li class="text-list" id="{{$product->id}}" data-id="{{$row['id']}}">
+                                    <a href="#"><i class="fa fa-circle-o text-red"></i> {{$product->name}}</a>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+
+                    @endforeach
+
+{{--                Category--}}
 
             </div>
             <!-- /.tab-pane -->

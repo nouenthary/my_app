@@ -37,4 +37,8 @@ Route::group([
 
     Route::get('get_products_import', [StoresController::class,'get_products_import']);
     Route::get('search_product', [StoresController::class,'search_product']);
+
+    //
+    Route::resource('transfers', \App\Http\Controllers\api\TransferController::class);
+
 });

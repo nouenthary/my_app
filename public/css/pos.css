@@ -121,3 +121,10 @@ body {
     background-color: #1890ff !important;
     color:#fff;
 }
+
+.text-list{
+    width: 200px;
+    text-decoration: none;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}

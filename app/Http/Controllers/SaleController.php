@@ -116,8 +116,8 @@ class SaleController extends Controller
             }
 
             $inv = $col->id;
-            if($col->note != ''){
-                $inv =  $col->note;
+            if ($col->note != '') {
+                $inv = $col->note;
             }
 
             $value = $value . $this->html('tr',
@@ -340,15 +340,15 @@ class SaleController extends Controller
             }
 
             $inv = $col->id;
-            if($col->note != ''){
-                $inv =  $col->note;
+            if ($col->note != '') {
+                $inv = $col->note;
             }
 
             $value = $value . $this->html('tr',
                     $this->html('td', $col->name, '') .
                     $this->html('td', '#' . $inv, 'width="100px"') .
                     $this->html('td', $col->date, '') .
-                    $this->html('td', $col->username, 'width="100px"').
+                    $this->html('td', $col->username, 'width="100px"') .
                     $this->html('td', $col->customer_name, '') .
                     $this->html('td', $col->product_name, 'class="text-left" ') .
                     $this->html('td', number_format($col->unit_price) . '៛', 'class="text-right"') .
@@ -365,7 +365,7 @@ class SaleController extends Controller
                 $this->html('th', '', 'width="100px"') .
                 $this->html('th', '', 'width="100px"') .
                 $this->html('th', '', '') .
-                $this->html('th', '', '').
+                $this->html('th', '', '') .
                 $this->html('th', '', 'width="100px"') .
                 $this->html('th', number_format($qty), 'class="text-right" width="100px"') .
                 $this->html('th', number_format($total) . '៛', 'class="text-right" width="100px"') .
@@ -421,12 +421,14 @@ class SaleController extends Controller
                 "tec_products.branch_commission",
                 "tec_products.staff_commission",
                 "tec_products.other_commission",
-                "tec_users.salt"
+                "tec_users.salt",
+                "c.name as category_name"
             )
             ->join('tec_sale_items', 'tec_sales.id', '=', 'tec_sale_items.sale_id')
             ->join('tec_products', 'tec_sale_items.product_id', '=', 'tec_products.id')
             ->join('tec_users', 'tec_sales.created_by', '=', 'tec_users.id')
-            ->join('tec_stores', 'tec_sales.store_id', '=', 'tec_stores.id');
+            ->join('tec_stores', 'tec_sales.store_id', '=', 'tec_stores.id')
+            ->join('tec_categories as c', 'tec_products.category_id', '=', 'c.id');
 
 
         if ($request->store_id != '') {
@@ -455,6 +457,10 @@ class SaleController extends Controller
             $data = $data->where('tec_sales.created_by', '=', $request->seller_id);
         }
 
+        if ($request->category_id != '') {
+            $data = $data->where('c.id', '=', $request->category_id);
+        }
+
         $data = $data
             ->groupBy(
                 DB::raw("DATE_FORMAT(tec_sales.date, '%d/%m/%Y') "),
@@ -464,7 +470,8 @@ class SaleController extends Controller
                 "tec_products.branch_commission",
                 "tec_products.staff_commission",
                 "tec_products.other_commission",
-                "tec_users.salt"
+                "tec_users.salt",
+                "c.name"
             )
             ->orderByDesc('tec_sales.date')
             ->paginate($request->page_size, ['*'], 'page', $request->page);
@@ -609,7 +616,7 @@ class SaleController extends Controller
             ->select('p.*')
             ->join('tec_product_store_qty as s', 'p.id', '=', 's.product_id')
             ->where('s.store_id', $data['store_id'])
-            ->where('p.is_active','1')
+            ->where('p.is_active', '1')
             ->get();
 
         $data['customer'] = DB::table('tec_customers as c')
@@ -682,6 +689,28 @@ class SaleController extends Controller
             ->orderByDesc('id')
             ->first();
 
+        $data['category'] = DB::table(TableCategory)
+            ->select('id', 'name', 'image')
+            ->orderByDesc('name')
+            ->get();
+
+        $data['list_category'] = [];
+
+        foreach ($data['category'] as $row) {
+            $product = DB::table(TableProduct)
+                ->select('id', 'name', 'image')
+                ->where('category_id', $row->id)
+                ->get();
+
+            array_push($data['list_category'], [
+                'id' => $row->id,
+                'name' => $row->name,
+                'image' => $row->image,
+                'product' => $product
+            ]);
+        }
+
+        //return $data['list_category'];
 
         if ($register == '' || $register == null) {
             return view('sale.register');
@@ -706,12 +735,12 @@ class SaleController extends Controller
 
         $invoice = 1;
 
-        if($old_sale != null && $old_sale->note != ''){
+        if ($old_sale != null && $old_sale->note != '') {
             $ref = explode("-", $old_sale->note);
-            $invoice = (int) $ref[2] + 1;
+            $invoice = (int)$ref[2] + 1;
         }
 
-        $inv = str_pad($invoice,7,"0",STR_PAD_LEFT);
+        $inv = str_pad($invoice, 7, "0", STR_PAD_LEFT);
 
         $data = [
             'date' => date('Y-m-d H:i:s'),
@@ -989,8 +1018,30 @@ class SaleController extends Controller
         ];
     }
 
-    public function sale_qr_code(){
+    public function sale_qr_code()
+    {
         return view('sale.sale_qr_code');
+    }
+
+    //
+    public function search_product()
+    {
+        $category_id = request()->get('category_id');
+
+        if ($category_id != null) {
+            $data = DB::table(TableProduct)
+                ->select('id','name','price', 'code','image')
+                ->where('category_id', $category_id)
+                ->get();
+
+            if($data != null){
+                return $data;
+            }
+        }
+
+        return [
+            'error' => 'not found.',
+        ];
     }
 
 }

@@ -309,7 +309,7 @@ $(function () {
 
         let amount = $('#amount_main').val();
 
-        if(parseFloat(riel) == parseFloat(amount)){
+        if (parseFloat(riel) == parseFloat(amount)) {
             //alert(parseFloat(amount) == parseFloat(riel));
             $('#amount_main').val(parseFloat(price));
             $('#md-total').text(currency(price));
@@ -389,7 +389,7 @@ $(function () {
             $('#btn-payment').attr('disabled', 'disabled');
             let items = JSON.parse(localStorage.getItem(key));
 
-            if(items.length == 0){
+            if (items.length == 0) {
                 location.reload();
                 return;
             }
@@ -472,31 +472,64 @@ $(function () {
     // });
 
     const isMobile = {
-        Android: function() {
+        Android: function () {
             return navigator.userAgent.match(/Android/i);
         },
-        BlackBerry: function() {
+        BlackBerry: function () {
             return navigator.userAgent.match(/BlackBerry/i);
         },
-        iOS: function() {
+        iOS: function () {
             return navigator.userAgent.match(/iPhone|iPad|iPod/i);
         },
-        Opera: function() {
+        Opera: function () {
             return navigator.userAgent.match(/Opera Mini/i);
         },
-        Windows: function() {
+        Windows: function () {
             return navigator.userAgent.match(/IEMobile/i) || navigator.userAgent.match(/WPDesktop/i);
         },
-        any: function() {
+        any: function () {
             return (isMobile.Android() || isMobile.BlackBerry() || isMobile.iOS() || isMobile.Opera() || isMobile.Windows());
         }
     };
 
-    if( isMobile.any() ) {
-        $('.product-item').css('width','350px');
-        $('.product-item  > .mailbox-attachment-icon  > img').css('height','350px');
+    if (isMobile.any()) {
+        $('.product-item').css('width', '350px');
+        $('.product-item  > .mailbox-attachment-icon  > img').css('height', '350px');
         getHeight();
     }
 
+
+    // on search products
+    $(document).on('click', '.product-tab', function () {
+        console.log($(this).attr('id'));
+
+        $.ajax({
+            url: "/search_product?category_id=" + $(this).attr('id'),
+            type: 'GET',
+            success: function (res) {
+
+                if (res !== null) {
+                    $('.mailbox-attachments').empty();
+                    res.forEach(function (i) {
+                        console.log(i);
+                        $('.mailbox-attachments').append(`
+                            <li class="product-item" id="` + i.id + `" data-name="` + i.name + `" data-price="` + i.price + `" data-code="` + i.code + `">
+                                 <span class="mailbox-attachment-icon has-img">
+                                     <img height="200px" style="width: 100%;" src="/uploads/` + i.image + `" alt="Attachment" onerror="this.src=/uploads/none.jpg;"></span>
+                                <div class="mailbox-attachment-info">
+                                 <a href="#" class="mailbox-attachment-name"> ` + i.name + `</a>
+                                </div>
+                            </li>
+                        `);
+                    });
+                }
+            }
+        })
+
+    });
+
+    $(document).on('click', '.text-list', function () {
+        console.log($(this).attr('id'))
+    });
 
 });

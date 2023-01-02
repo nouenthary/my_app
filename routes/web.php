@@ -112,16 +112,17 @@ Route::group(['middleware' => ['auth']], function () {
 
     //get_product
     Route::get('get_product_by_column', [ProductController::class,'getProductByColumn']);
-    
+    Route::get('search_product', [SaleController::class,'search_product']);
+
     //
     Route::get('ui',function (){
         return view('ui');
     });
 
     //
-    Route::get('ui/{any}', function () { 
-        return view('ui'); 
-    })->where('any', '.*'); 
+    Route::get('ui/{any}', function () {
+        return view('ui');
+    })->where('any', '.*');
 });
 
 Route::get('lang/{locale}', function ($locale) {

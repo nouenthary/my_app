@@ -10,6 +10,10 @@
             </div>
 
             <div class="col-md-12">
+                @include('components.category')
+            </div>
+
+            <div class="col-md-12">
                 @include('components.product')
             </div>
 
@@ -206,6 +210,7 @@
                         page: parseInt($('#page').text()) ?? 1,
                         product_id : $('#product_id').val(),
                         seller_id: $('#seller_id').val(),
+                        category_id: $('#category_id_search').val(),
                     },
                     success: function (data) {
                         if (data.error) {
@@ -216,7 +221,7 @@
                         document.querySelector('#per_page').innerHTML = data.per_page;
                         document.querySelector('#total').innerHTML = data.total;
                         document.querySelector('#table-show').innerHTML = data.table;
-                        console.log(data);
+                        //console.log(data);
                     }
                 });
             }
