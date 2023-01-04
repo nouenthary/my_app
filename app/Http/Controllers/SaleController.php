@@ -617,6 +617,7 @@ class SaleController extends Controller
             ->join('tec_product_store_qty as s', 'p.id', '=', 's.product_id')
             ->where('s.store_id', $data['store_id'])
             ->where('p.is_active', '1')
+            ->where('p.category_id', '1')
             ->get();
 
         $data['customer'] = DB::table('tec_customers as c')

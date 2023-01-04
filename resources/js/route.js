@@ -5,6 +5,8 @@ import Export from './components/import/Export.vue';
 import ImportStock from "./views/import/ImportStock";
 import AddStock from "./views/import/AddStock";
 import ProductLabel from "./views/import/ProductLabel";
+import Transfer from "./views/transfer/Transfer";
+import Dashboard from "./views/Dashboard";
 Vue.use(VueRouter);
 // api
 const API_PREFIX = '/api/auth';
@@ -20,11 +22,12 @@ const EXPORT = `${DEFAULT_ROUTE}/export`;
 const IMPORT_STOCK = `${DEFAULT_ROUTE}/import_stock`;
 const ADD_STOCK = `${DEFAULT_ROUTE}/add_stock`;
 const PRODUCT_LABEL = `${DEFAULT_ROUTE}/product_label`;
+const TRANSFER = `${DEFAULT_ROUTE}/transfer`;
 
 const routes = [
     {
         path: DEFAULT_ROUTE,
-        component: Import
+        component: Dashboard
     },
     {
         path: LIST_WAREHOUSE,
@@ -49,6 +52,10 @@ const routes = [
     {
         path: PRODUCT_LABEL,
         component: ProductLabel
+    },
+    {
+        path: TRANSFER,
+        component: Transfer
     },
 
 ];

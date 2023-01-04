@@ -123,6 +123,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('ui/{any}', function () {
         return view('ui');
     })->where('any', '.*');
+
+    //
 });
 
 Route::get('lang/{locale}', function ($locale) {
